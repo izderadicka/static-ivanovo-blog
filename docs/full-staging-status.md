@@ -66,8 +66,14 @@ without requesting them; no claim is made about third-party availability.
 
 ## Remaining acceptance work
 
-This is full content staging, not a production release. Desktop/mobile visual
-review, actual media playback, gist loading, and PayPal behavior are unverified.
+The subsequent [live-site comparison](live-site-audit.md) confirms coverage of
+all 175 published bodies and exact block/inline code text, while identifying
+remaining highlighting, automatic-embed, responsive-image, and visual parity gaps.
+
+This is full content staging, not a production release. Representative
+desktop/mobile views and gist/media loading have now been reviewed in the live
+audit. Exhaustive visual review, full media playback, and PayPal behavior remain
+unverified.
 Typography/layout remain the scaffold defaults. Required taxonomies are retained
 in metadata, but their archive pages and navigation still need implementation.
 
