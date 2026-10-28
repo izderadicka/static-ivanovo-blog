@@ -5,13 +5,14 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+import shutil
+import subprocess
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from defusedxml.common import DefusedXmlException
-from migration_source import content_slugs, load_config, local_file, normalize, routes, write_json
-from migration_convert import convert, fence
-from migrate import generate_pilot, validate
+from migration_source import attachment_routes, content_slugs, load_config, local_file, normalize, routes, write_json
+from migration_convert import convert
+from migrate import generate_site, validate
 
 WXR = '''<rss xmlns:wp="http://wordpress.org/export/1.2/"
 xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -89,14 +90,15 @@ class MigrationTests(unittest.TestCase):
             '<pre>\tif x &lt; 2:\n\n  print(&quot;&amp;lt;&quot;)\n```\n</pre>'
             '<pre>next\n</pre>')
         self.assertEqual(code[0]['payload'], '\tif x < 2:\n\n  print("&lt;")\n```\n')
-        self.assertIn('````\n' + code[0]['payload'] + '````', markdown)
-        self.assertIn('```\nnext\n```', markdown)
+        self.assertIn('````\n' + code[0]['payload'] + '\n````', markdown)
+        self.assertIn('```\nnext\n\n```', markdown)
         self.assertFalse(issues)
 
     def test_code_in_list_retained_as_html(self):
         markdown, _, code, issues = self.render('<ol><li>Run<pre>\t&lt;x&gt; &amp;amp;\n</pre></li></ol>')
         self.assertEqual(code[0]['payload'], '\t<x> &amp;\n')
-        self.assertIn('<pre><code>\t&lt;x&gt; &amp;amp;\n</code></pre>', markdown)
+        from bs4 import BeautifulSoup
+        self.assertEqual(BeautifulSoup(markdown, 'html.parser').pre.get_text(), '\t<x> &amp;\n')
         self.assertFalse(issues)
 
     def test_unicode_prose_and_quotes_stay_readable(self):
@@ -141,9 +143,11 @@ class MigrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             content_slugs([self.record, other, third])
 
-    def test_zola_delimiters_block(self):
-        _, _, _, issues = self.render('<pre>{{ dangerous() }}</pre>')
-        self.assertTrue(any(x['severity'] == 'error' for x in issues))
+    def test_zola_delimiters_are_preserved_as_literal_code(self):
+        markdown, _, code, issues = self.render('<pre>{{ dangerous() }} {% value %}</pre>')
+        self.assertIn('&#123;{ dangerous() }} &#123;% value %}', markdown)
+        self.assertEqual(code[0]['payload'], '{{ dangerous() }} {% value %}')
+        self.assertFalse(issues)
 
     def test_gists_remain_remote_and_other_scripts_block(self):
         url = 'https://gist.github.com/example/123abc.js'
@@ -190,22 +194,72 @@ class MigrationTests(unittest.TestCase):
 
     def test_deterministic_output_and_editorial_protection(self):
         config = dict(source={'site_url': self.site_url}, pilot={'ids': ['1']})
-        first = generate_pilot(config, self.paths, [self.record])
-        second = generate_pilot(config, self.paths, [self.record])
+        first = generate_site(config, self.paths, [self.record])
+        second = generate_site(config, self.paths, [self.record])
         self.assertEqual(first, second)
         self.assertEqual(validate(self.paths), [])
         target = self.paths['site'] / 'content/posts/example/index.md'
         target.write_text('editorial change')
         with self.assertRaises(ValueError):
-            generate_pilot(config, self.paths, [self.record])
+            generate_site(config, self.paths, [self.record])
         self.assertTrue(validate(self.paths))
         self.assertEqual(target.read_text(), 'editorial change')
 
     def test_private_cannot_be_selected_for_pilot(self):
         self.record['eligible'] = False
         with self.assertRaises(ValueError):
-            generate_pilot(dict(source={'site_url': self.site_url}, pilot={'ids': ['1']}),
+            generate_site(dict(source={'site_url': self.site_url}, pilot={'ids': ['1']}),
                            self.paths, [self.record])
+
+    def test_attachment_routes_respect_private_parents_and_reviewed_aliases(self):
+        attachment = dict(self.record, id='2', post_type='attachment', status='inherit',
+                          eligible=False, post_parent='1', url='http://example.test/example/image/',
+                          attachment_url='http://example.test/wp-content/uploads/image.png')
+        records = [self.record, attachment]
+        mapped = attachment_routes(records, self.site_url, {'/old-image/': '/wp-content/uploads/image.png'})
+        self.assertEqual(mapped['/old-image/'], '/wp-content/uploads/image.png')
+        self.record['eligible'] = False
+        self.assertEqual(attachment_routes(records, self.site_url), {})
+        with self.assertRaises(ValueError):
+            attachment_routes(records, self.site_url, {'/old-image/': '/wp-content/uploads/image.png'})
+
+    def test_query_routes_keep_other_parameters_and_fragments(self):
+        markdown, _, _, issues = self.render('<a href="http://example.test/?p=1&amp;view=full#part">link</a>')
+        self.assertIn('href="/example/?view=full#part"', markdown)
+        self.assertFalse(issues)
+
+    @unittest.skipUnless(shutil.which('zola'), 'Zola unavailable')
+    def test_full_build_preserves_code_and_detects_bad_links_and_rendered_changes(self):
+        body = ('<p>Unicode β and literal quotes.</p><h2 id="part">Part</h2>'
+                '<ul><li>Text before marker<!--more--></li><li>Another item</li></ul>'
+                '<p>Call <code>__get__</code> in <code>~/.local/share</code>.</p>'
+                '<p><strong>Method <code>__init__</code></strong></p>'
+                '<p>Multiline inline <code>a\n\n b</code></p>'
+                '<img src="/wp-content/uploads/image.png">'
+                '<a href="/example/#part">anchor</a>'
+                '<pre class="lang:python">print("hello")\n</pre>'
+                '<pre>plain\n</pre><pre>no final newline</pre>'
+                '<pre>{{ value }} {% template %}\n</pre>'
+                '<ol><li>Run<pre>one\n\n    indented\n</pre></li></ol>')
+        self.wxr.write_text(WXR.replace('<p>Hello</p>', body))
+        (self.paths['uploads'] / 'image.png').write_bytes(b'original image bytes')
+        records = normalize(self.wxr)
+        config = dict(source={'site_url': self.site_url}, selection={'scope': 'all'})
+        generate_site(config, self.paths, records)
+        self.assertIn('Build the full staging site before validation', validate(self.paths))
+        result = subprocess.run(['zola', '--root', str(self.paths['site']), 'build'], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(validate(self.paths), [])
+        target = self.paths['site'] / 'public/example/index.html'
+        built = target.read_text()
+        target.write_text(built.replace('href="/example/#part"', 'href="/example/#missing"'))
+        self.assertTrue(any('Missing fragment' in x for x in validate(self.paths)))
+        target.write_text(built.replace('no final newline', 'tampered code'))
+        self.assertTrue(any('Rendered code differs' in x for x in validate(self.paths)))
+        target.write_text(built)
+        image = self.paths['site'] / 'public/wp-content/uploads/image.png'
+        image.write_bytes(b'changed image')
+        self.assertTrue(any('Built media differs' in x for x in validate(self.paths)))
 
 
 if __name__ == '__main__':

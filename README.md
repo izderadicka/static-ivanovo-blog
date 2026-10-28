@@ -2,15 +2,16 @@
 
 Zola site with Markdown articles and Python migration tooling for the
 existing WordPress content. The templates are a minimal starting point, not the
-final visual design. A nine-article WordPress pilot is staged separately under
-`migration/work/pilot-candidate/`; curated content has not been promoted.
+final visual design. All 175 published WordPress posts/pages are staged under
+`migration/work/full-site/`; curated content has not been promoted. See the
+[full staging report](docs/full-staging-status.md).
 
 ## Local workflow
 
 Use **Zola 0.23.6**, pinned in `.zola-version`, from the
 [official release](https://github.com/getzola/zola/releases/tag/v0.23.6).
 It is installed at `~/.local/bin/zola` in this environment. The scaffold and
-nine-page pilot both pass `zola build` and `zola check --skip-external-links`.
+full staging site both pass `zola build` and `zola check --skip-external-links`.
 
 ```sh
 zola serve --drafts
@@ -31,11 +32,11 @@ python3 -m venv .venv
 ```
 
 Install migration dependencies with `python3 -m pip install -r requirements-migration.txt`.
-See [migration commands](scripts/README.md) for inventory, normalization, pilot
-conversion, validation, and tests. To preview the pilot:
+See [migration commands](scripts/README.md) for inventory, normalization,
+conversion, validation, and tests. To preview the full staging site:
 
 ```sh
-zola --root migration/work/pilot-candidate serve
+zola --root migration/work/full-site serve
 ```
 
 ## Planned search

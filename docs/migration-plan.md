@@ -12,8 +12,9 @@ export, backup, and mirror inspection is recorded in [source-inventory.md](sourc
 154 published posts, 21 published pages, 3 drafts, and 128 attachments. Existing
 comments will be omitted; Docker host configuration remains unresolved. The new
 site will retain a similar visual appearance and run in Docker with mounted build
-output. Inventory, normalization, and a restricted nine-article conversion pilot
-are implemented; full conversion and acceptance remain planned. The Zola templates
+output. Inventory, normalization, and full staged content conversion
+are implemented; see [full-staging-status.md](full-staging-status.md). Visual design,
+search, archive/feed routes, and final acceptance remain outstanding. The Zola templates
 are still a starter scaffold. No deployment or change to the old site is part of
 this step.
 

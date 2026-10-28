@@ -2,11 +2,11 @@
 import html
 import json
 import re
-from urllib.parse import urljoin, urlsplit, urlunsplit, unquote
+from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit, unquote
 
 from bs4 import BeautifulSoup, Comment, NavigableString
 
-from migration_source import local_file
+from migration_source import attachment_routes, local_file
 
 PILOT_IDS = ['94', '209', '139', '834', '1096', '1137', '1466', '2112', '2336']
 
@@ -23,17 +23,51 @@ def markdown_text(text):
 
 
 def fence(payload, language=''):
+    if not payload.endswith('\n') or '{{' in payload or '{%' in payload:
+        return '\n\n' + code_html(payload) + '\n\n'
     runs = [len(x) for x in re.findall(r'`+', payload)]
     delimiter = '`' * max(3, max(runs, default=0) + 1)
     # One structural newline belongs to the fence, not the payload.
-    return '\n\n' + delimiter + language + '\n' + payload + ('' if payload.endswith('\n') else '\n') + delimiter + '\n\n'
+    # Giallo joins highlighted lines without their final newline. An empty
+    # structural last line preserves the source's terminating newline in HTML.
+    return '\n\n' + delimiter + language + '\n' + payload + '\n' + delimiter + '\n\n'
 
 
-def convert(record, records, paths, site_url, route_map):
+def literal_delimiters(text):
+    return text.replace('{{', '&#123;{').replace('{%', '&#123;%')
+
+
+def code_html(payload, compact=False):
+    escaped = literal_delimiters(html.escape(payload, quote=False))
+    if compact:
+        # Blank lines terminate CommonMark HTML blocks such as lists/divs.
+        # Character references preserve code newlines inside those blocks.
+        escaped = escaped.replace('\n', '&#10;')
+    return '<pre><code>' + escaped + '</code></pre>'
+
+
+def inline_code(payload):
+    delimiter = '`' * (max((len(x) for x in re.findall(r'`+', payload)), default=0) + 1)
+    padding = ' ' if payload and (payload[0] in ' `' or payload[-1] in ' `') else ''
+    return delimiter + padding + payload + padding + delimiter
+
+
+def inline_code_html(payload):
+    escaped = literal_delimiters(html.escape(payload, quote=False))
+    # Inline HTML tags alone do not suppress Markdown interpretation inside them.
+    escaped = re.sub(r'[\\`*_~\[\]\n\r]', lambda m: f'&#{ord(m[0])};', escaped)
+    return '<code>' + escaped + '</code>'
+
+
+def convert(record, records, paths, site_url, route_map, attachment_aliases=None):
     issues, assets, code = [], {}, []
     def issue(message, severity='error'):
         issues.append(dict(id=record['id'], url=record['url'], severity=severity, explanation=message))
     source = BeautifulSoup(record['html'], 'html.parser')
+    for comment in source.find_all(string=lambda n: isinstance(n, Comment)):
+        if str(comment).strip() == 'more':
+            anchor = source.new_tag('span', id='more-' + record['id'])
+            comment.replace_with(anchor)
     tokens = {}
     html_tokens = {}
     # Protect code before shortcode processing. Decode entities exactly once via HTML parser.
@@ -44,18 +78,29 @@ def convert(record, records, paths, site_url, route_map):
             inner = node.find('code')
             classes = node.get('class', []) + (inner.get('class', []) if inner else [])
             language = next((x[9:] for x in classes if x.startswith('language-')), '')
-        language = {'js': 'javascript', 'py': 'python', 'rs': 'rust'}.get(language, language)
-        if language and language not in ('python', 'rust', 'javascript', 'bash', 'sh', 'text', 'html', 'css', 'json', 'sql', 'c', 'cpp', 'xml'):
+            if not language:
+                language = next((x[5:] for x in classes if x.startswith('lang:')), '')
+        language = {'js': 'javascript', 'py': 'python', 'rs': 'rust', 'shell': 'bash',
+                    'no-highlight': 'text', 'xhtml': 'html', 'plsql': 'sql', 'pgsql': 'sql'}.get(language, language)
+        if language and language not in ('python', 'rust', 'javascript', 'bash', 'sh', 'text', 'html', 'css', 'json', 'sql', 'c', 'cpp', 'xml', 'php', 'yaml', 'apache', 'lisp'):
             issue(f'Unknown code language {language}; retained as plain code', 'warning')
             language = ''
-        if '{{' in payload or '{%' in payload:
-            issue('Code contains Zola shortcode delimiters; requires a tested escaping strategy')
         token = f'MIGRATIONCODE{index}PLACEHOLDER'
         if token in record['html']:
             raise ValueError('Code placeholder collision')
         tokens[token] = fence(payload, language)
-        html_tokens[token] = '<pre><code>' + html.escape(payload, quote=False) + '</code></pre>'
+        html_tokens[token] = code_html(payload, compact=True)
         code.append(dict(index=index, language=language, payload=payload))
+        node.replace_with(NavigableString(token))
+    for index, node in enumerate(source.find_all('code')):
+        payload = node.get_text()
+        token = f'MIGRATIONINLINE{index}PLACEHOLDER'
+        if token in record['html']:
+            raise ValueError('Inline code placeholder collision')
+        markup = inline_code_html(payload)
+        tokens[token] = (markup if not payload.strip() or '\n' in payload or '{{' in payload or '{%' in payload
+                         else inline_code(payload))
+        html_tokens[token] = markup
         node.replace_with(NavigableString(token))
     body = str(source)
     def attrs(value):
@@ -127,6 +172,7 @@ def convert(record, records, paths, site_url, route_map):
 
     known_hosts = {urlsplit(site_url).hostname}
     known_paths = set(route_map.values())
+    attachments = attachment_routes(records, site_url, attachment_aliases)
     def rewrite(value, asset=False):
         parsed = urlsplit(value)
         if parsed.scheme and parsed.scheme not in ('http', 'https', 'mailto'):
@@ -135,6 +181,12 @@ def convert(record, records, paths, site_url, route_map):
         url = urlsplit(urljoin(record['url'], value))
         if url.hostname not in known_hosts:
             return value
+        query = parse_qsl(url.query, keep_blank_values=True)
+        ident = next((v for k, v in query if k in ('p', 'page_id')), None)
+        if ident in route_map:
+            url = url._replace(path=route_map[ident], query=urlencode([(k, v) for k, v in query if k not in ('p', 'page_id')]))
+        if url.path in attachments:
+            url = url._replace(path=attachments[url.path])
         if url.path.startswith('/wp-content/uploads/'):
             relative = unquote(url.path[len('/wp-content/uploads/'):])
             file = local_file(paths['uploads'], relative)
@@ -174,9 +226,9 @@ def convert(record, records, paths, site_url, route_map):
             text = str(node)
             pattern = '(' + '|'.join(re.escape(t) for t in tokens) + ')' if tokens else None
             if pattern:
-                return ''.join(tokens[chunk] if chunk in tokens else markdown_text(chunk)
+                return ''.join(tokens[chunk] if chunk in tokens else literal_delimiters(markdown_text(chunk))
                                for chunk in re.split(pattern, text))
-            return markdown_text(text)
+            return literal_delimiters(markdown_text(text))
         tag = node.name
         if id(node) in approved_behavior:
             return '\n\n' + str(node) + '\n\n'
@@ -187,13 +239,16 @@ def convert(record, records, paths, site_url, route_map):
             prefix = '#' * int(tag[1]) + ' ' if tag.startswith('h') else ''
             return '\n\n' + anchor + prefix + ''.join(render(x) for x in node.children) + '\n\n'
         if tag in ('strong', 'b', 'em', 'i', 'a', 'code', 'span', 'br', 'img', 'sup', 'sub', 'del'):
-            return str(node)
+            markup = str(node)
+            for token, replacement in html_tokens.items():
+                markup = markup.replace(token, replacement)
+            return literal_delimiters(markup)
         # Preserve rich blocks as HTML instead of flattening tables/lists/captions.
         if tag in ('ul', 'ol', 'table', 'blockquote', 'figure', 'video', 'audio', 'iframe', 'div', 'dl', 'hr'):
             markup = str(node)
             for token, replacement in html_tokens.items():
                 markup = markup.replace(token, replacement)
-            return '\n\n' + markup + '\n\n'
+            return '\n\n' + literal_delimiters(markup) + '\n\n'
         issue(f'Unsupported HTML element: {tag}')
         return str(node)
     markdown = render(soup).strip() + '\n'
@@ -204,7 +259,7 @@ def convert(record, records, paths, site_url, route_map):
         issue('Zola template/shortcode delimiters need escaping')
     for item in code:
         if (fence(item['payload'], item['language']).strip() not in markdown
-                and '<pre><code>' + html.escape(item['payload'], quote=False) + '</code></pre>' not in markdown):
+                and code_html(item['payload'], compact=True) not in markdown):
             issue(f"Code payload {item['index']} is absent or changed")
     meta = ['+++', 'title = ' + json.dumps(record['title'], ensure_ascii=False),
             'path = ' + json.dumps(route_map[record['id']], ensure_ascii=False),

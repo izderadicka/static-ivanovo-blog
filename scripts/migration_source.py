@@ -104,7 +104,13 @@ def normalize(wxr):
                       comment_count=len(item.findall('wp:comment', NS)),
                       timezone_evidence='WXR local and GMT timestamps; no named timezone inferred')
         record['eligible'] = record['status'] == 'publish' and record['post_type'] in ('post', 'page')
-        record['exclusion_reason'] = None if record['eligible'] else 'Only published posts/pages are public'
+        record['exclusion_reason'] = None
+        if not record['eligible']:
+            record['exclusion_reason'] = {
+                'attachment': 'Not an article; eligible attachments are handled as media and routes',
+                'ml-slider': 'Not an article; sliders are converted in referring pages',
+                'nav_menu_item': 'Not an article; navigation metadata retained for theme work',
+            }.get(record['post_type'], 'Nonpublic or unsupported article status excluded from output')
         # Comment bodies, email addresses, and IPs are intentionally never normalized.
         records.append(record)
     return sorted(records, key=lambda r: int(r['id']))
@@ -124,7 +130,7 @@ def routes(records, site_url):
         path = url.path
         if not path.startswith('/') or path in seen:
             raise ValueError(f'Duplicate/invalid public route: {path}')
-        if path in ('/', '/sitemap.xml', '/atom.xml', '/robots.txt', '/404.html') or path.startswith(('/wp-content/', '/css/')):
+        if path in ('/', '/posts/', '/sitemap.xml', '/atom.xml', '/robots.txt', '/404.html') or path.startswith(('/wp-content/', '/css/')):
             raise ValueError(f'Reserved public route: {path}')
         seen.add(path)
         result[record['id']] = path
@@ -151,6 +157,37 @@ def content_slugs(records):
     if len({slug.casefold() for slug in slugs.values()}) != len(slugs) or not all(slugs.values()):
         raise ValueError('Content directory collision; review source slugs and public paths')
     return slugs
+
+
+def attachment_routes(records, site_url, aliases=None):
+    """Only attachments of published items or unattached public media are eligible."""
+    public_ids = {r['id'] for r in records if r['eligible']}
+    host = urlsplit(site_url).hostname
+    result = {}
+    for record in records:
+        if record['post_type'] != 'attachment' or record['status'] != 'inherit':
+            continue
+        if record['post_parent'] not in public_ids | {'0'}:
+            continue
+        old, target = urlsplit(record['url']), urlsplit(record['attachment_url'])
+        if old.hostname != host or target.hostname != host or not target.path.startswith('/wp-content/uploads/'):
+            raise ValueError(f"Unsupported attachment URL for ID {record['id']}")
+        safe_relative(old.path.lstrip('/'))
+        safe_relative(target.path[len('/wp-content/uploads/'):])
+        if not old.path.endswith('/') or old.query or target.query:
+            raise ValueError('Ambiguous attachment route')
+        if old.path in result:
+            raise ValueError('Attachment route collision')
+        result[old.path] = target.path
+    approved_targets = set(result.values())
+    for old, target in (aliases or {}).items():
+        if not old.startswith('/') or not old.endswith('/') or urlsplit(old).netloc or urlsplit(old).query or urlsplit(old).fragment:
+            raise ValueError('Invalid historical attachment path')
+        safe_relative(old.lstrip('/'))
+        if target not in approved_targets or old in result:
+            raise ValueError('Historical attachment mapping must name a public original and a new route')
+        result[old] = target
+    return result
 
 
 def inventory(records, paths, site_url):
