@@ -1,0 +1,4 @@
+# Tested with Python 3.11+; only used by local migration commands.
+defusedxml==0.7.1
+beautifulsoup4==4.12.3
+soupsieve==2.5

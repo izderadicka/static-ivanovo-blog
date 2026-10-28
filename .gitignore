@@ -1,0 +1,10 @@
+/public/
+/.zola-cache/
+/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+/migration/source/
+/migration/work/
+/migration/reports/
+.env

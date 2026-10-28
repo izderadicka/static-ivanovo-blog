@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ config.title }}</h1>
+<p>{{ config.description }}</p>
+{% set articles = get_section(path="posts/_index.md") %}
+<ul>{% for article in articles.pages %}
+  <li><a href="{{ article.permalink }}">{{ article.title }}</a></li>
+{% endfor %}</ul>
+{% endblock content %}

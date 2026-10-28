@@ -1,0 +1,10 @@
+# Replace before publishing. Local preview overrides this URL.
+base_url = "https://example.invalid"
+title = "Technical notes"
+description = "Articles about technology and programming"
+default_language = "en"
+compile_sass = false
+build_search_index = false
+
+[markdown.highlighting]
+theme = "github-light"

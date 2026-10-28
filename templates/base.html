@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+  <link rel="stylesheet" href="{{ get_url(path='css/site.css') }}">
+</head>
+<body>
+  <header><a href="{{ get_url(path='/') }}">{{ config.title }}</a></header>
+  <main>{% block content %}{% endblock content %}</main>
+</body>
+</html>
