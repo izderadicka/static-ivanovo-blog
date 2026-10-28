@@ -229,6 +229,20 @@ class MigrationTests(unittest.TestCase):
         self.assertFalse(issues)
 
     @unittest.skipUnless(shutil.which('zola'), 'Zola unavailable')
+    def test_highlighting_preserves_code_without_a_final_newline(self):
+        from bs4 import BeautifulSoup
+        payload = 'fn main() { let x = 1; }'
+        self.wxr.write_text(WXR.replace('<p>Hello</p>', '<pre class="lang:rust">' + payload + '</pre>'))
+        config = dict(source={'site_url': self.site_url}, selection={'scope': 'all'})
+        generate_site(config, self.paths, normalize(self.wxr))
+        result = subprocess.run(['zola', '--root', str(self.paths['site']), 'build'], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        built = self.paths['site'] / 'public/example/index.html'
+        code = BeautifulSoup(built.read_text(), 'html.parser').article.pre
+        self.assertEqual(code.get_text(), payload)
+        self.assertTrue(code.select('span[style*="color:"]'), 'Rust sample has no syntax colors')
+
+    @unittest.skipUnless(shutil.which('zola'), 'Zola unavailable')
     def test_full_build_preserves_code_and_detects_bad_links_and_rendered_changes(self):
         body = ('<p>Unicode β and literal quotes.</p><h2 id="part">Part</h2>'
                 '<ul><li>Text before marker<!--more--></li><li>Another item</li></ul>'

@@ -23,7 +23,7 @@ def markdown_text(text):
 
 
 def fence(payload, language=''):
-    if not payload.endswith('\n') or '{{' in payload or '{%' in payload:
+    if '{{' in payload or '{%' in payload:
         return '\n\n' + code_html(payload) + '\n\n'
     runs = [len(x) for x in re.findall(r'`+', payload)]
     delimiter = '`' * max(3, max(runs, default=0) + 1)

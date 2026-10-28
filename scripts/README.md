@@ -65,6 +65,8 @@ HTML blocks use character references to avoid CommonMark block termination.
 Highlighted fences include a structural empty last line because Giallo otherwise
 removes the source's final newline. The rendered-code check verifies this behavior
 against the pinned Zola release. Legacy `lang:` labels are mapped explicitly.
+Samples without a final newline also use fences: Giallo removes the structural
+newline, preserving the original payload while keeping syntax highlighting.
 
 Read-more comments become `more-ID` anchors, preserving their surrounding text;
 Zola's summary marker can discard text when it occurs inside a source list line.

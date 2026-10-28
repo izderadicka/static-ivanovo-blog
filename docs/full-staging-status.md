@@ -44,9 +44,14 @@ attachment image, then recorded explicitly in the full configuration.
 
 ## Verification and reports
 
-The 24 regression tests pass, including a real Zola build of synthetic samples,
+The 25 regression tests pass, including a real Zola build of synthetic samples,
 negative checks for altered rendered code, broken fragments, and changed media,
 and checks for private attachment parents and query-route rewriting.
+
+Code highlighting also covers fenced samples without a final newline. An earlier
+HTML fallback preserved their text but skipped highlighting; it was removed after
+a regression test reproduced the problem. All nine samples in
+`/tiny-etude-in-generics/` now have syntax colors, with exact code payloads intact.
 
 Full conversion reruns deterministically. `zola build`,
 `zola check --skip-external-links`, and migration validation pass with zero blocking
