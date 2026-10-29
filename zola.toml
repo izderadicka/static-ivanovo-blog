@@ -1,8 +1,9 @@
-# Replace before publishing. Local preview overrides this URL.
-base_url = "https://example.invalid"
+# Production URL; the preview command overrides this locally.
+base_url = "https://zderadicka.eu"
 title = "Ivanovo"
 description = "My Digital Bits And Pieces"
 default_language = "en"
+author = "ivan"
 compile_sass = false
 build_search_index = false
 generate_feeds = true

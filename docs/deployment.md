@@ -11,11 +11,10 @@ proposal pending the host, existing reverse proxy, and HTTPS arrangement. If a
 Docker-managed named volume is preferred, a publisher container must mount it
 read-write; do not manipulate Docker's internal volume directories directly.
 
-Migration now emits Nginx adapter examples in the generated site’s `redirects/`
-directory, covering legacy queries and extensionless RSS routes. These have not
+The regular build emits Nginx adapter examples in `.build/redirects/`, covering legacy queries and extensionless RSS routes. These have not
 been deployed or syntax-tested by Nginx here. No publishing script is implemented yet. This document
-specifies their intended behavior. Keep migration tooling separate from routine
-publishing: an article publish must never rerun the WordPress import.
+specifies their intended behavior. The accepted WordPress snapshot is final and promoted; regular publishing uses
+only the source Markdown in this repository.
 
 ## Filesystem layout
 
@@ -46,11 +45,11 @@ references the daemon host's filesystem, not the publishing workstation.
 ## Everyday author workflow
 
 1. Create `content/posts/article-slug/index.md` with title, date, and `draft = true`.
-   Put new article images alongside it. A future Python `new` command should
-   scaffold this structure and refuse to overwrite an existing article.
-2. Edit in VS Code and use `zola serve --drafts` for fast local feedback.
-3. Preview the production build with Pagefind when testing search or release
-   readiness. Draft previews must stay separate from production artifacts.
+   Put new article images alongside it. `python3 scripts/new_post.py SLUG --title "Title"` scaffolds a draft and refuses
+   to overwrite an existing article.
+2. Edit in VS Code and use `python3 scripts/preview.py --drafts` for local review.
+   Restart the preview after edits.
+3. Use `python3 scripts/build_site.py` to generate a production build with Pagefind. Draft previews must stay separate from production artifacts.
 4. Remove the draft flag when ready, review the diff, and commit the article.
 5. Run one Python publish command that builds, validates, transfers, activates,
    and checks the release. The publisher should use a clean committed revision
@@ -112,7 +111,7 @@ hard-linked assets in place. Keep original media separately backed up.
 ## Container and host configuration
 
 Planned implementation files: `deploy/compose.yaml`, web-server configuration,
-`migration`-independent publishing configuration, and `scripts/publish.py`.
+publishing configuration, and `scripts/publish.py`.
 
 - Pin the serving image version/digest and update it deliberately.
 - Mount release storage read-only in the web server; grant writes only to the publisher.
@@ -142,3 +141,10 @@ versus CI publishing trigger. These do not block migration inventory work.
 - [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/)
 - [Docker storage and named volumes](https://docs.docker.com/engine/storage/)
 - [Pagefind build integration](https://pagefind.app/docs/running-pagefind/)
+
+## Initial cutover
+
+The existing accepted snapshot is final, as confirmed by the owner. No new
+WordPress export is required. Deploy the reviewed production artifact after host
+integration and keep the previous WordPress server configuration available for
+rollback during the observation period.

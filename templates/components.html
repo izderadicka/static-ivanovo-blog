@@ -16,7 +16,7 @@
   </header>
   <div class="entry-summary">
     <div class="summary-text">{{ item.excerpt_html | safe }}</div>
-    {% if item.image %}<a href="{{ get_url(path=item.image.href) }}"><img src="{{ item.image.src }}" {% if item.image.srcset %}srcset="{{ item.image.srcset }}" sizes="{{ item.image.sizes }}"{% endif %} {% if item.image.width %}width="{{ item.image.width }}" height="{{ item.image.height }}"{% endif %} alt="{{ item.image.alt }}" loading="lazy" decoding="async"></a>{% endif %}
+    {% if item.image %}<a href="{{ item.image.href }}"><img src="{{ item.image.src }}" {% if item.image.srcset %}srcset="{{ item.image.srcset }}" sizes="{{ item.image.sizes }}"{% endif %} {% if item.image.width %}width="{{ item.image.width }}" height="{{ item.image.height }}"{% endif %} alt="{{ item.image.alt }}" loading="lazy" decoding="async"></a>{% endif %}
     <p><a class="more-link" href="{{ get_url(path=item.url) }}">Continue reading <span class="visually-hidden">{{ item.title }}</span> →</a></p>
     {% if labels[item.id].tags %}<div class="tag-links">{% for term in labels[item.id].tags %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% endfor %}</div>{% endif %}
   </div>

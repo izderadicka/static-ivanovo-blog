@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit
 
 from build_site import build
-from migration_source import ROOT, load_config
+from site_content import ROOT
 
 
 class PreviewHandler(SimpleHTTPRequestHandler):
@@ -61,20 +61,23 @@ class PreviewHandler(SimpleHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--config', type=Path, default=ROOT / 'migration/full.example.toml')
+    parser.add_argument('--drafts', action='store_true', help='Include drafts for local review')
     parser.add_argument('--port', type=int, default=1111)
     parser.add_argument('--bind', default='127.0.0.1')
     parser.add_argument('--no-build', action='store_true', help='Serve an existing indexed build')
     args = parser.parse_args()
     if args.no_build:
-        _, paths = load_config(args.config)
-        if not (paths['site'] / 'public/index.html').is_file():
+        public = ROOT / 'public'
+        context = ROOT / '.build/context.json'
+        if not (public / 'index.html').is_file() or not context.is_file():
             parser.error('No existing build; omit --no-build')
+        built = json.loads(context.read_text())
+        if built != dict(base_url=f'http://{args.bind}:{args.port}', drafts=args.drafts):
+            parser.error('Existing build has different URLs/draft settings; omit --no-build')
     else:
-        paths = build(args.config, f'http://{args.bind}:{args.port}')
-    report = json.loads((paths['reports'] / 'conversion.json').read_text())
-    PreviewHandler.routes = {a['id']: a['path'] for a in report['articles'] if a['ready']}
-    handler = partial(PreviewHandler, directory=str(paths['site'] / 'public'))
+        public = build(f'http://{args.bind}:{args.port}', args.drafts)
+    PreviewHandler.routes = json.loads((ROOT / '.build/legacy-routes.json').read_text())
+    handler = partial(PreviewHandler, directory=str(public))
     with ThreadingHTTPServer((args.bind, args.port), handler) as server:
         print(f'Preview including search: http://{args.bind}:{args.port}', flush=True)
         try:

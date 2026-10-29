@@ -1,0 +1,2 @@
+# Preserve original whitespace in migrated prose and source-code examples.
+content/posts/** -whitespace

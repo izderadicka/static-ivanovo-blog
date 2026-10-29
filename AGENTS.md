@@ -1,58 +1,40 @@
-# Repository Guidelines
+# Repository guidelines
 
-## Project Structure & Module Organization
+This is the migrated Ivanovo Zola site. The accepted WordPress snapshot is final;
+editable Markdown is authoritative. Read README.md for authoring and build behavior.
+Read docs/deployment.md before changing hosting or publishing.
 
-This repository contains a Zola blog scaffold and plans for migrating WordPress.
-Articles live in `content/posts/`, Tera templates in `templates/`, and public assets
-in `static/`. Use `content/posts/article-slug/index.md` for new articles with
-adjacent media. Python migration tools belong in `scripts/`; sanitized fixtures
-belong in `tests/fixtures/`. Generated site output is `public/`.
+## Structure and conventions
 
-Before changing conversion, URLs, media handling, search, or deployment, read
-`docs/migration-plan.md`. Read `scripts/README.md` before implementing migration
-commands; those interfaces are currently planned, not runnable.
+- Articles and standalone pages: content/posts/<descriptive-slug>/index.md, with
+  new media adjacent to the article. Preserve existing explicit public paths.
+- Templates: templates/; shared CSS, JavaScript, fonts, and historical uploads: static/.
+- Authoring/build/preview/validation tools: scripts/; synthetic regression tests: tests/.
+- Taxonomy URL overrides: data/taxonomy-slugs.json.
+- Generated, ignored output: public/, .build/, content/_generated/, data/site.json.
 
-## Build, Test, and Development Commands
+Use four spaces in Python, two in HTML/Tera, and match surrounding CSS/TOML style.
+Write prose in UTF-8 and use language-labelled code fences. Preserve migrated code
+whitespace, original media, WordPress IDs/GUIDs, and source dates when editing posts.
+Comments are omitted. Keep gists as remote GitHub embeds without downloading code.
 
-- `zola serve --drafts`: preview locally, including draft articles.
-- `zola check`: check the site's content and links.
-- `zola build`: generate production files in `public/`.
-- `python3 -m venv .venv`: create the Python development environment.
-- `. .venv/bin/activate`: activate it in a POSIX shell.
-- `git diff --check`: check tracked changes for whitespace errors.
+## Verification
 
-Install and pin a tested Zola release before migration. Python requires 3.11+.
-Pagefind search is planned as a post-build step; integration is not implemented.
+Use python3 scripts/build_site.py for complete production builds and offline local
+link/feed validation. Use python3 scripts/preview.py --drafts for local draft review;
+restart after edits. Plain Zola commands omit archive preparation and search indexing.
 
-## Coding Style & Naming Conventions
+Run python3 -m unittest discover -s tests -v after tooling changes. Add tests for
+publication behavior, privacy, routing, or content integrity risks rather than
+mirroring implementation. Run git diff --check; preserve intentional source code
+whitespace in migrated articles. For visual changes, review desktop/mobile output
+and report checks that could not be performed.
 
-Use four-space indentation and snake_case names for Python; use two-space
-indentation in HTML/Tera. Match surrounding CSS and TOML formatting. No formatter
-or linter is configured yet. Use descriptive, hyphenated article directory names
-and language-labelled fenced code blocks. Preserve migrated public URLs explicitly.
+## Publishing and commits
 
-Keep conversion deterministic and write generated results to staging. Preserve
-code whitespace and original media. Maintain visual similarity to the existing
-WordPress site; the current templates are placeholders.
+Publish only public/. Keep credentials and private material outside the site tree.
+Production build commands exclude drafts; avoid publishing a local draft preview.
+Hosting and automated publishing remain unconfigured until the deployment stage.
 
-## Testing Guidelines
-
-No test framework, test suite, or coverage threshold exists yet. Add migration
-tests as conversion logic is implemented; name Python test files `test_*.py` and
-document the selected runner command. Cover entity decoding, code fences, media
-references, route collisions, and private-content exclusion with sanitized fixtures.
-For site changes, run Zola checks/builds and review representative desktop/mobile
-pages. Report unavailable tools and unverified checks explicitly.
-
-## Commit & Pull Request Guidelines
-
-There are no commits yet, so no established message convention exists. Use concise,
-imperative subjects such as `Add WordPress media inventory`. Keep changes focused.
-PR descriptions should explain the result, validation, and remaining limitations;
-link relevant issues and include screenshots for visual changes.
-
-## Security & Configuration
-
-Keep backups in ignored `migration/source/` and generated migration data in
-`migration/work/` or `migration/reports/`. Commit only sanitized fixtures. Publish
-only `public/`, and replace the placeholder domain before deployment.
+Use concise imperative commit subjects. Commit completed changes as requested by
+the owner. Explain the resulting behavior, validation, and material limitations.

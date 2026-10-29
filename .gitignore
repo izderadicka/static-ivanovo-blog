@@ -1,10 +1,11 @@
 /public/
 /.zola-cache/
+/.build/
+/content/_generated/
+/data/site.json
 /.venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-/migration/source/
-/migration/work/
-/migration/reports/
+/migration/
 .env

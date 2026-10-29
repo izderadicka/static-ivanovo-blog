@@ -1,14 +1,13 @@
 [project]
-name = "blog-migration"
-version = "0.1.0"
-description = "Local WordPress to Zola migration tooling"
+name = "ivanovo-blog"
+version = "1.0.0"
+description = "Zola blog authoring and build tools"
 requires-python = ">=3.11"
 dependencies = [
-    "defusedxml==0.7.1",
     "beautifulsoup4==4.12.3",
     "soupsieve==2.5",
-    "Pygments==2.17.2",
+    "markdown-it-py==3.0.0",
+    "mdurl==0.1.2",
 ]
 
-# Tested migration dependency set is also pinned in requirements-migration.txt.
-# Scripts run directly from the repository; this is not a packaged library.
+# Run scripts directly from the repository; this is not a packaged library.
