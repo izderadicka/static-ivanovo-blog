@@ -13,9 +13,8 @@ export, backup, and mirror inspection is recorded in [source-inventory.md](sourc
 comments will be omitted; Docker host configuration remains unresolved. The new
 site will retain a similar visual appearance and run in Docker with mounted build
 output. Inventory, normalization, and full staged content conversion
-are implemented; see [full-staging-status.md](full-staging-status.md). Visual design,
-search, archive/feed routes, and final acceptance remain outstanding. The Zola templates
-are still a starter scaffold. No deployment or change to the old site is part of
+are implemented; see [full-staging-status.md](full-staging-status.md). The [audit fixes](parity-fixes.md) implement visual design, search, and archive/feed
+routes; final hosting integration and acceptance remain outstanding. The Tera templates now reproduce the original layout with accessible enhancements. No deployment or change to the old site is part of
 this step.
 
 ## Decisions and principles
@@ -206,7 +205,8 @@ in staging and review a diff, or apply reviewed overrides before regeneration.
 
 Requirement: build the full-text index with the site and query it in the browser,
 without a backend service. Recommended implementation: **Pagefind**, subject to
-pilot validation on real articles. Search is planned, not implemented in this scaffold.
+pilot validation on real articles. Search is implemented with pinned Pagefind 1.5.2; `scripts/build_site.py` runs the
+post-build step and `scripts/preview.py` serves the indexed result.
 
 Zola can generate indexes for Elasticlunr or Fuse, but the search interface still
 needs integration. Pagefind indexes the final HTML, provides a search UI, and loads

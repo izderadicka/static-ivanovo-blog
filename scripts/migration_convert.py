@@ -7,6 +7,7 @@ from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit, un
 from bs4 import BeautifulSoup, Comment, NavigableString
 
 from migration_source import attachment_routes, local_file
+from migration_highlight import highlighted_html
 
 PILOT_IDS = ['94', '209', '139', '834', '1096', '1137', '1466', '2112', '2336']
 
@@ -24,7 +25,7 @@ def markdown_text(text):
 
 def fence(payload, language=''):
     if '{{' in payload or '{%' in payload:
-        return '\n\n' + code_html(payload) + '\n\n'
+        return '\n\n' + code_html(payload, language=language) + '\n\n'
     runs = [len(x) for x in re.findall(r'`+', payload)]
     delimiter = '`' * max(3, max(runs, default=0) + 1)
     # One structural newline belongs to the fence, not the payload.
@@ -37,13 +38,8 @@ def literal_delimiters(text):
     return text.replace('{{', '&#123;{').replace('{%', '&#123;%')
 
 
-def code_html(payload, compact=False):
-    escaped = literal_delimiters(html.escape(payload, quote=False))
-    if compact:
-        # Blank lines terminate CommonMark HTML blocks such as lists/divs.
-        # Character references preserve code newlines inside those blocks.
-        escaped = escaped.replace('\n', '&#10;')
-    return '<pre><code>' + escaped + '</code></pre>'
+def code_html(payload, compact=False, language=''):
+    return highlighted_html(payload, language=language, compact=compact)
 
 
 def inline_code(payload):
@@ -89,7 +85,7 @@ def convert(record, records, paths, site_url, route_map, attachment_aliases=None
         if token in record['html']:
             raise ValueError('Code placeholder collision')
         tokens[token] = fence(payload, language)
-        html_tokens[token] = code_html(payload, compact=True)
+        html_tokens[token] = code_html(payload, compact=True, language=language)
         code.append(dict(index=index, language=language, payload=payload))
         node.replace_with(NavigableString(token))
     for index, node in enumerate(source.find_all('code')):
@@ -119,8 +115,26 @@ def convert(record, records, paths, site_url, route_map, attachment_aliases=None
         return f'<{kind} controls preload="metadata"{poster}>' + ''.join(sources) + f'</{kind}>'
     body = re.sub(r'\[(video|audio)\b([^\]]*)\]', media, body)
     body = re.sub(r'\[/(?:video|audio)\]', '', body)
-    body = re.sub(r'\[tab\b([^\]]*)\]', lambda m: '<h2>' + html.escape(attrs(m.group(1)).get('name', 'Section')) + '</h2>', body)
-    body = re.sub(r'\[(?:/tab|end_tabset)\]', '', body)
+    tab_count = 0
+    tab_open = False
+    tab_group = -1
+    def tab_markup(match):
+        nonlocal tab_count, tab_open, tab_group
+        marker = match.group(1)
+        if marker.startswith('tab'):
+            if not tab_open:
+                tab_group += 1
+                tab_count = 0
+            prefix = '' if tab_open else '<div class="tabset" id="tabs_' + record['id'] + '_' + str(tab_group) + '" data-tabs>'
+            tab_open = True
+            tab_count += 1
+            name = attrs(marker[3:]).get('name', 'Section')
+            return prefix + '<section class="tab-panel" id="tabs-' + record['id'] + '-' + str(tab_group) + '-' + str(tab_count - 1) + '"><h2>' + html.escape(name) + '</h2>'
+        if marker == '/tab':
+            return '</section>'
+        tab_open = False
+        return '</div>'
+    body = re.sub(r'\[(tab\b[^\]]*|/tab|end_tabset)\]', tab_markup, body)
     baseline_path = local_file(paths['baseline'], urlsplit(record['url']).path.lstrip('/') + 'index.html')
     baseline = BeautifulSoup(baseline_path.read_text(), 'html.parser') if baseline_path.is_file() else None
     def gallery(match):
@@ -140,21 +154,59 @@ def convert(record, records, paths, site_url, route_map, attachment_aliases=None
                 original = src
             figures.append('<figure><a href="' + html.escape(original, quote=True) + '"><img src="' + html.escape(src, quote=True) + '" alt="' + html.escape(image.get('alt', ''), quote=True) + '"></a><figcaption>' + html.escape(caption) + '</figcaption></figure>')
         issue(f'Slider {slider_id} converted to a static gallery preserving order and captions', 'review')
-        return ''.join(figures)
+        return '<div class="gallery" id="metaslider_' + slider_id + '" data-gallery>' + ''.join(figures) + '</div>'
     body = re.sub(r'\[metaslider\b([^\]]*)\]', gallery, body)
+    def youtube_markup(url):
+        url = html.unescape(url.strip())
+        parsed = urlsplit(url)
+        if parsed.hostname in ('www.youtube.com', 'youtube.com'):
+            video_id = dict(parse_qsl(parsed.query)).get('v', '')
+        elif parsed.hostname == 'youtu.be':
+            video_id = parsed.path.strip('/')
+        else:
+            return None
+        if not re.fullmatch(r'[A-Za-z0-9_-]{11}', video_id):
+            return None
+        escaped = html.escape(url.strip(), quote=True)
+        return ('<div class="video-embed"><iframe title="YouTube video" loading="lazy" '
+                'width="560" height="315" allowfullscreen src="https://www.youtube.com/embed/'
+                + video_id + '"></iframe></div><p class="embed-fallback"><a href="' + escaped
+                + '">Watch on YouTube</a></p>')
     def embed(match):
         url = html.unescape(match.group(1).strip())
-        parsed = urlsplit(url)
-        if parsed.hostname in ('www.youtube.com', 'youtube.com', 'youtu.be'):
-            frames = baseline.find_all('iframe') if baseline else []
-            video_id = parsed.path.lstrip('/') if parsed.hostname == 'youtu.be' else parsed.query.split('v=')[-1].split('&')[0]
-            frame = next((f for f in frames if video_id and '/embed/' + video_id in f.get('src', '')), None)
-            if frame:
-                return '<iframe title="YouTube video" loading="lazy" allowfullscreen src="' + html.escape(frame['src'], quote=True) + '"></iframe>'
+        markup = youtube_markup(url)
+        if markup:
+            return markup
         issue(f'Embed needs reviewed provider mapping: {url}')
         return html.escape(url)
     body = re.sub(r'\[embed\](.*?)\[/embed\]', embed, body, flags=re.S)
+    body = re.sub(r'(?m)^[ \t]*(https?://(?:youtu\.be/|(?:www\.)?youtube\.com/watch\?)[^\s<>]+)[ \t]*$',
+                  lambda m: youtube_markup(m.group(1)) or m.group(0), body)
     soup = BeautifulSoup(body, 'html.parser')
+    for paragraph in list(soup.find_all('p')):
+        if len(paragraph.contents) == 1 and isinstance(paragraph.contents[0], NavigableString):
+            markup = youtube_markup(paragraph.get_text().strip())
+            if markup:
+                paragraph.replace_with(BeautifulSoup(markup, 'html.parser'))
+    # WordPress adds responsive candidates at render time, outside WXR bodies.
+    baseline_images = {}
+    if baseline:
+        for image in baseline.find_all('img'):
+            key = unquote(urlsplit(urljoin(record['url'], image.get('src', ''))).path)
+            baseline_images.setdefault(key, image)
+    for index, image in enumerate(soup.find_all('img')):
+        key = unquote(urlsplit(urljoin(record['url'], image.get('src', ''))).path)
+        old = baseline_images.get(key)
+        if old:
+            for name in ('srcset', 'sizes', 'width', 'height'):
+                if old.has_attr(name) and not image.has_attr(name):
+                    if name == 'srcset':
+                        image[name] = ', '.join(urljoin(record['url'], c.split()[0]) + ' ' + ' '.join(c.split()[1:])
+                                                for c in old[name].split(',') if c.split())
+                    else:
+                        image[name] = old[name]
+        image['loading'] = old.get('loading', 'eager' if index == 0 else 'lazy') if old else ('eager' if index == 0 else 'lazy')
+        image['decoding'] = 'async'
     approved_behavior = set()
     for node in soup.find_all(['script', 'form']):
         if (node.name == 'script' and set(node.attrs) == {'src'}
@@ -232,8 +284,13 @@ def convert(record, records, paths, site_url, route_map, attachment_aliases=None
         tag = node.name
         if id(node) in approved_behavior:
             return '\n\n' + str(node) + '\n\n'
+        if tag == 'section' or 'tabset' in node.get('class', []):
+            opening = str(node).split('>', 1)[0] + '>'
+            return '\n\n' + opening + '\n\n' + ''.join(render(x) for x in node.children) + '\n\n</' + tag + '>\n\n'
         if tag == '[document]':
             return ''.join(render(x) for x in node.children)
+        if tag == 'p' and 'embed-fallback' in node.get('class', []):
+            return '\n\n' + str(node) + '\n\n'
         if tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
             anchor = '<a id="' + html.escape(node['id'], quote=True) + '"></a>\n' if node.get('id') else ''
             prefix = '#' * int(tag[1]) + ' ' if tag.startswith('h') else ''
@@ -248,6 +305,8 @@ def convert(record, records, paths, site_url, route_map, attachment_aliases=None
             markup = str(node)
             for token, replacement in html_tokens.items():
                 markup = markup.replace(token, replacement)
+            if tag == 'table':
+                markup = '<div class="table-scroll" tabindex="0" role="region" aria-label="Reference table">' + markup + '</div>'
             return '\n\n' + literal_delimiters(markup) + '\n\n'
         issue(f'Unsupported HTML element: {tag}')
         return str(node)
@@ -259,14 +318,18 @@ def convert(record, records, paths, site_url, route_map, attachment_aliases=None
         issue('Zola template/shortcode delimiters need escaping')
     for item in code:
         if (fence(item['payload'], item['language']).strip() not in markdown
-                and code_html(item['payload'], compact=True) not in markdown):
+                and code_html(item['payload'], compact=True, language=item['language']) not in markdown):
             issue(f"Code payload {item['index']} is absent or changed")
     meta = ['+++', 'title = ' + json.dumps(record['title'], ensure_ascii=False),
             'path = ' + json.dumps(route_map[record['id']], ensure_ascii=False),
             'date = ' + json.dumps(record['post_date'].replace(' ', 'T')),
+            'include_in_feeds = ' + ('true' if record['post_type'] == 'post' else 'false'),
             '[extra]', 'wordpress_id = ' + record['id'],
+            'kind = ' + json.dumps(record['post_type']),
+            'node_key = ' + json.dumps(record['id']),
             'author = ' + json.dumps(record['author'], ensure_ascii=False),
             'source_url = ' + json.dumps(record['url']),
+            'source_guid = ' + json.dumps(record.get('guid', ''), ensure_ascii=False),
             'source_date_gmt = ' + json.dumps(record['post_date_gmt']),
             'taxonomies_json = ' + json.dumps(json.dumps(record['taxonomies'], ensure_ascii=False), ensure_ascii=False), '+++', '']
     return '\n'.join(meta) + markdown, assets, code, issues

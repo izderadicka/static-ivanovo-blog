@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Archives | {{ config.title }}{% endblock title %}
+{% block content %}
+<h1 class="entry-title">Archives</h1>
+<ul class="archive-months">{% for month in site.months %}<li><a href="{{ get_url(path=month.url) }}">{{ month.label }}</a></li>{% endfor %}</ul>
+<h2>Categories</h2><ul>{% for term in site.categories %}<li><a href="{{ get_url(path=term.url) }}">{{ term.label }}</a> ({{ term.count }})</li>{% endfor %}</ul>
+<h2>Tags</h2><div class="tag-links">{% for term in site.tags %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% endfor %}</div>
+{% endblock content %}

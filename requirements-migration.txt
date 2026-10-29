@@ -2,3 +2,4 @@
 defusedxml==0.7.1
 beautifulsoup4==4.12.3
 soupsieve==2.5
+Pygments==2.17.2

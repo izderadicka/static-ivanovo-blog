@@ -1,91 +1,119 @@
-# Python migration tools
+# Migration, build, and preview tools
 
-Python 3.11+ is required. Install the tested dependencies with
-`python3 -m pip install -r requirements-migration.txt` in a virtual environment.
-XML uses defusedxml with DTDs, entities, and external access forbidden; HTML uses
-Beautiful Soup's built-in HTML parser. Zola is pinned to 0.23.6 in `.zola-version`.
+Python 3.11+ is required. Install local migration dependencies in a virtual
+environment with `python3 -m pip install -r requirements-migration.txt`.
+XML parsing uses defusedxml with DTDs/entities/external access forbidden; HTML
+uses Beautiful Soup. Pygments 2.17.2 highlights retained HTML code. Zola 0.23.6
+and Pagefind 1.5.2 are pinned in `.zola-version` and `.pagefind-version`.
 
-Run the full workflow from the repository root:
+From the repository root:
 
 ```sh
 python3 scripts/migrate.py --config migration/full.example.toml inventory
 python3 scripts/migrate.py --config migration/full.example.toml normalize
 python3 scripts/migrate.py --config migration/full.example.toml convert
-zola --root migration/work/full-site build
-zola --root migration/work/full-site check --skip-external-links
-python3 scripts/migrate.py --config migration/full.example.toml validate
+python3 scripts/build_site.py
 python3 -m unittest discover -s tests -v
-zola --root migration/work/full-site serve
+python3 scripts/preview.py
 ```
 
-`migration/full.example.toml` selects all published posts/pages with
+`build_site.py` builds Zola, generates Pagefind, runs offline Zola checks, and
+validates the migration. `preview.py` rebuilds with local URLs and serves the
+complete indexed site at `http://127.0.0.1:1111`. Stop an older server first.
+Use `--port`, `--bind`, `--config`, or `--no-build` as needed. Raw `zola serve`
+does not run Pagefind and should not be used as the search acceptance check.
+
+`migration/full.example.toml` selects all published posts/pages using
 `[selection] scope = "all"`. The original `migration/config.example.toml` selects
-nine pilot IDs. To regenerate that older pilot with the revised converter, copy
-its config into `migration/work/` and choose a fresh `output.site` directory.
+nine pilot IDs. To regenerate an older output after converter changes, copy its
+config into `migration/work/` and choose a fresh `output.site` directory.
 
-Configuration paths resolve from the repository root even when invoked elsewhere.
-Sources are read-only; records and site output must be under `migration/work/`,
-reports under `migration/reports/`. Source/output overlap, traversal, asset symlink
-escapes, and public route collisions are refused. These directories are ignored.
+## Data boundaries
 
-- `inventory`: status counts, public routes, upload sizes/hashes, case collisions,
-  omitted comment count, and WXR fingerprint.
-- `normalize`: stable records sorted by WordPress ID, original HTML, local/GMT
-  dates, authors, taxonomies, attachment relationships, routes, and exclusions.
-  Comment text, emails, and IPs are omitted. Nonpublic original article HTML is
-  retained only in ignored records; never publish that directory.
-- `convert`: writes a separate Zola scaffold, selected eligible articles, public
-  attachment originals and HTML redirects, and referenced resized media. Produces
-  `conversion.json` with results, code/prose evidence, review items, and output
-  SHA-256 fingerprints. Articles with errors are withheld; blocking errors return
-  a nonzero exit status. No changes are made to curated `content/`.
-- `validate`: checks source/staging fingerprints, metadata, public IDs, rendered
-  block/inline code, prose retention, media checksums, internal URLs, and fragment
-  targets. Full conversion requires an existing build. Detailed results are in
-  `validation.json` and `rendered-validation.json`. External links are listed,
-  without network requests. Browser review is still required.
+Paths resolve from the repository root regardless of invocation directory.
+Sources remain read-only. Site/record output must stay under `migration/work/`,
+reports under `migration/reports/`. Source/output overlap, traversal, asset
+symlink escapes, unsafe taxonomy slugs, and route collisions are refused.
+Those directories are ignored; never publish their parent or normalized records.
 
-Identical reruns are permitted, including after a build. Build output under
-`public/` and `.zola-cache/` is excluded from the input comparison. Changed or
-edited staging inputs are never overwritten: choose a fresh output directory.
-Reports are regenerated; edited staging content is protected.
+`inventory` writes status counts, route lists, upload hashes, case collisions,
+comment counts, and a WXR fingerprint. `normalize` retains stable IDs, original
+HTML, local/GMT dates, authors, taxonomies, hierarchy/menu order, attachments,
+and exclusion reasons. Nonpublic HTML stays only in ignored normalization data;
+comment text, contact addresses, and IPs are not normalized.
 
-Article directories use descriptive WordPress slugs (falling back to the title).
-Duplicate slugs are qualified by their public parent paths; unresolved collisions
-are refused. Public URLs remain controlled by front matter `path`; IDs remain
-in `extra.wordpress_id` and reports. Prose uses literal UTF-8 quotes and apostrophes.
-Only syntax Markdown would interpret is escaped.
+`convert` writes selected eligible articles, explicit public paths, original and
+responsive media, attachment redirects, navigation/archive models, RSS templates,
+and generated archive/search pages. It also emits Nginx adapter examples outside
+`public/`. Results, code/prose evidence, review items, and SHA-256 fingerprints are
+in `conversion.json`. Blocking article errors return a nonzero status and withhold
+that article. Curated root `content/` is never overwritten.
 
-The converter handles code fences, legacy HTML, tabs as headings, sliders as
-static galleries, uploaded audio/video, and YouTube embeds confirmed against the
-mirror. Tables/lists/captions remain HTML for fidelity. Inline code uses Markdown
-spans or escaped HTML. Nested code and samples with Django/Zola delimiters use
-HTML where needed to preserve exact payloads. Newlines in code inside retained
-HTML blocks use character references to avoid CommonMark block termination.
-Highlighted fences include a structural empty last line because Giallo otherwise
-removes the source's final newline. The rendered-code check verifies this behavior
-against the pinned Zola release. Legacy `lang:` labels are mapped explicitly.
-Samples without a final newline also use fences: Giallo removes the structural
-newline, preserving the original payload while keeping syntax highlighting.
+Identical reruns are allowed, including after building. Only `public/` and
+`.zola-cache/` are excluded from the input comparison. Edited or changed staging
+inputs are protected: regenerate into a fresh directory and review a diff.
 
-Read-more comments become `more-ID` anchors, preserving their surrounding text;
-Zola's summary marker can discard text when it occurs inside a source list line.
-Unknown elements, unsafe URLs, unsupported scripts/forms, and missing media block
-conversion. Unknown code language labels are retained as plain code and reported.
+## Content conversion
 
-Owner policy omits comments and retains remote GitHub gist script embeds. No gist
-content is downloaded. Its code depends on GitHub/JavaScript and is absent from
-static search. The encrypted PayPal contribution form is retained for review;
-submissions are not tested automatically.
+Directories use descriptive WordPress slugs or titles; repeated slugs use parent
+paths and unresolved collisions fail. IDs stay in metadata/reports. Prose keeps
+literal UTF-8 quotes and apostrophes, escaping only Markdown syntax when needed.
 
-Full staging preserves attachment URLs with HTML redirect pages linking to their
-original files. These are not HTTP 301/308 responses; host-specific rules remain
-for deployment. The one historical attachment alias in `full.example.toml` was
-verified against the mirror. Aliases may target only eligible attachment originals.
-WordPress `?p=ID`/`?page_id=ID` links in article content are rewritten to known
-published routes while retaining other parameters and fragments. Arbitrary inbound
-query routing still needs host configuration.
+Ordinary code uses fenced Markdown. Nested HTML code and samples containing
+literal template delimiters use Pygments with the mapped language. Newlines in
+retained HTML blocks use character references so Markdown cannot terminate or
+reinterpret those blocks. Giallo fences include the structural last line needed
+to preserve exact code text, including the absence of a terminating newline.
 
-Full staging uses the real site origin and title but retains placeholder styling.
-Archives/feed routes, theme completion, Pagefind, browser review, and deployment
-remain subsequent work. See `docs/full-staging-status.md` for current evidence.
+Tabs and galleries preserve content/anchors server-side, with accessible keyboard
+and previous/next enhancements from local JavaScript. Tables keep their structure
+and receive scroll containers. WordPress read-more comments become `more-ID`
+anchors without dropping surrounding list text. Standalone YouTube URLs and
+explicit embed shortcodes get responsive players and normal fallback links;
+URLs within code or ordinary prose are not replaced.
+
+The configured mirror supplies responsive image attributes. Every local candidate
+is checked inside approved uploads and copied with its source checksum. Originals,
+filename case, alt text, captions, and full-size links are retained. Nonpublic
+plugin data, logs, temporary PHP, and backups are not bulk-copied from uploads.
+Unknown elements/languages or unresolved behavior are reported, with blocking
+failures for unsafe URLs, missing assets, and unsupported scripts/forms.
+
+Comments remain omitted. All GitHub gist scripts remain remote and therefore do
+not contribute their dynamic code to the static search index. The original
+PayPal contribution form is retained; automated checks never submit it.
+
+## Navigation, feeds, and search
+
+Selected public metadata drives the project hierarchy, 45 most-used sidebar tags,
+category/author/date archives, post-only homepage with ten items per page, and
+previous/next links. Project pages use a distinct presentation without post dates.
+RSS includes full rendered post contents, excludes project pages, and is exposed
+at `/rss.xml`, `/feed/`, and matching archive feed routes. The sitemap excludes
+feed/search duplicates. `data/site.json` is generated input, not a public export.
+These models describe migration staging; routine authoring/publishing after
+promotion must update the corresponding models when new posts are added.
+
+Pagefind indexes only `[data-pagefind-body]` article regions. Drafts/private data,
+archives, navigation, feeds, redirects, and search itself are excluded. Queries
+are local and index assets load on the search page. Prefix matching can broaden
+technical queries; quotes enforce exact phrases/identifiers. The browser checks
+cover title, `C++`, `C#`, `std::ops::Mul`, and unmatched exact queries.
+
+The preview server gives extensionless feed files `application/rss+xml`, returns
+308s for known `?p=`/`?page_id=` links while retaining other query parameters,
+returns 404 for unknown IDs, and maps `?s=` to search. The generated Nginx maps
+belong at `http` scope; adapt the example server root/TLS/proxy before deployment.
+Nginx syntax/deployment has not been exercised here. HTML attachment redirects
+remain distinct from HTTP permanent redirects.
+
+## Validation
+
+`validate` verifies source/staging hashes, public IDs and metadata, exact rendered
+block/inline code, highlighting eligibility, prose retention, copied/built media,
+links/fragments, generated archive routes, and RSS XML/feed membership. It requires
+an existing full build. Detailed reports are `validation.json` and
+`rendered-validation.json`. External URLs are listed without being requested.
+
+See `docs/parity-fixes.md` for browser checks and the live-audit follow-up.
+Publishing/cutover and final host integration remain separate from these tools.

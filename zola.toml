@@ -1,10 +1,13 @@
 # Replace before publishing. Local preview overrides this URL.
 base_url = "https://example.invalid"
-title = "Technical notes"
-description = "Articles about technology and programming"
+title = "Ivanovo"
+description = "My Digital Bits And Pieces"
 default_language = "en"
 compile_sass = false
 build_search_index = false
+generate_feeds = true
+feed_filenames = ["rss.xml", "feed/index.html"]
+feed_limit = 10
 
 [markdown.highlighting]
 theme = "github-light"

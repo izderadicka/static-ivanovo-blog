@@ -1,0 +1,2 @@
+{% set site = load_data(path="data/site.json") %}<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{% for route in site.sitemap_routes %}<url><loc>{{ get_url(path=route) | escape_html | safe }}</loc></url>{% endfor %}</urlset>

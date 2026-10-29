@@ -11,6 +11,8 @@ import tomllib
 from migration_source import ROOT, attachment_routes, content_slugs, digest, inventory, load_config, local_file, normalize, routes, write_json
 from migration_convert import PILOT_IDS, convert
 from migration_validate import source_evidence, validate_build
+from migration_site import build_site_model, generated_pages, json_bytes
+from migration_routes import nginx_files
 
 
 def generate_site(config, paths, records):
@@ -24,7 +26,7 @@ def generate_site(config, paths, records):
     if len(selected) != len(set(selected)):
         raise ValueError('Duplicate pilot IDs')
     by_id = {r['id']: r for r in records}
-    files, results, issues, originals = {}, [], [], {}
+    files, results, issues, originals, converted = {}, [], [], {}, {}
     for ident in selected:
         record = by_id.get(str(ident))
         if record is None or not record['eligible']:
@@ -33,14 +35,17 @@ def generate_site(config, paths, records):
                                               config.get('attachment_aliases'))
         issues.extend(found)
         ready = not any(x['severity'] == 'error' for x in found)
-        results.append(dict(id=record['id'], url=record['url'], ready=ready,
+        results.append(dict(id=record['id'], kind=record['post_type'], url=record['url'], ready=ready,
+                            source_guid=record.get('guid', ''),
                             code_blocks=len(code), source_code=[x['payload'] for x in code],
+                            source_languages=[x['language'] for x in code],
                             source_evidence=source_evidence(record['html']),
                             path=route_map[record['id']],
                             content_path=f"content/posts/{slugs[record['id']]}/index.md"))
         if not ready:
             continue
         files[f"content/posts/{slugs[record['id']]}/index.md"] = content.encode('utf-8')
+        converted[record['id']] = content
         for relative, source in assets.items():
             files['static/wp-content/uploads/' + relative] = source.read_bytes()
             originals[relative] = digest(source)
@@ -61,10 +66,25 @@ def generate_site(config, paths, records):
             '<meta http-equiv="refresh" content="0;url=' + escaped + '"></head>'
             '<body><a href="' + escaped + '">Open original attachment</a></body></html>\n'
         ).encode('utf-8')
-    for directory in ('templates', 'static/css'):
+    for directory in ('templates', 'static', 'data'):
         for path in sorted((ROOT / directory).rglob('*')):
             if path.is_file():
                 files[path.relative_to(ROOT).as_posix()] = path.read_bytes()
+    selected_records = [r for r in records if r['id'] in converted]
+    model, cards, listings = build_site_model(selected_records, converted)
+    occupied = set(route_map.values()) | set(redirects)
+    if occupied & {'/search/', '/archives/', '/rss.xml', '/feed/'}:
+        raise ValueError('Source route collides with a generated search/archive/feed route')
+    for definition in listings.values():
+        if definition['path'] in occupied:
+            raise ValueError('Generated archive/feed route collides with a source route: ' + definition['path'])
+        occupied.add(definition['path'])
+    for ident, card in cards.items():
+        card['mdpath'] = f"posts/{slugs[ident]}/index.md"
+    files.update(generated_pages(listings))
+    files['data/site.json'] = json_bytes(model)
+    files.update(nginx_files(results))
+    files['content/_generated/_index.md'] = b'+++\ntransparent = true\nrender = false\n+++\n'
     files['content/_index.md'] = b'+++\ntitle = "Ivanovo"\n+++\n'
     files['content/posts/_index.md'] = b'+++\ntitle = "Articles"\nsort_by = "date"\npage_template = "page.html"\n+++\n'
     settings = (ROOT / 'zola.toml').read_text()
@@ -86,7 +106,7 @@ def generate_site(config, paths, records):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(data)
     report = dict(articles=results, issues=issues, comments='omitted', scope=scope,
-                  attachment_redirects=redirects,
+                  attachment_redirects=redirects, generated_routes=sorted(d['path'] for d in listings.values()) + ['/search/', '/archives/', '/rss.xml', '/feed/'],
                   source_assets=originals, internal_links='full-site targets not yet verified',
                   site_url=config['source']['site_url'], wxr_sha256=digest(paths['wxr']),
                   files={name: hashlib.sha256(data).hexdigest() for name, data in sorted(files.items())})
@@ -94,7 +114,10 @@ def generate_site(config, paths, records):
     return report
 
 
-def validate(paths):
+def validate(paths, base_url=None):
+    context_path = paths['reports'] / 'build-context.json'
+    if base_url is None and context_path.is_file():
+        base_url = json.loads(context_path.read_text())['base_url']
     report = json.loads((paths['reports'] / 'conversion.json').read_text())
     failures = []
     if digest(paths['wxr']) != report['wxr_sha256']:
@@ -136,7 +159,7 @@ def validate(paths):
             failures.append('Metadata differs from source ID ' + source['id'])
     build_result = None
     if (paths['site'] / 'public/index.html').is_file():
-        build_result = validate_build(paths, report, report['site_url'])
+        build_result = validate_build(paths, report, report['site_url'], base_url=base_url)
         failures.extend(x['explanation'] for x in build_result['failures'])
         write_json(paths['reports'] / 'rendered-validation.json', build_result)
     elif report['scope'] == 'all':

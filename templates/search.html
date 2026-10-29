@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Search | {{ config.title }}{% endblock title %}
+{% block robots %}<meta name="robots" content="noindex,follow">{% endblock robots %}
+{% block content %}
+<h1 class="entry-title">Search</h1>
+<p>Search articles, project pages, and code examples.</p>
+<p class="search-help">Use quotation marks for an exact phrase or code identifier, for example <code>"std::ops::Mul"</code>.</p>
+<div id="search"><p class="search-status" role="status">Loading search…</p></div>
+<noscript><p>Search needs JavaScript. You can browse the <a href="{{ get_url(path='/archives/') }}">archives</a> instead.</p></noscript>
+{% endblock content %}

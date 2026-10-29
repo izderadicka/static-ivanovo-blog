@@ -1,13 +1,50 @@
+{% set site = load_data(path="data/site.json") %}
 <!doctype html>
 <html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+  <title>{% block title %}{{ config.title }} | My Digital Bits And Pieces{% endblock title %}</title>
+  <meta name="description" content="{{ config.description }}">
+  {% block robots %}{% endblock robots %}
+  <link rel="icon" type="image/png" href="{{ get_url(path='brand/logo.png') }}">
+  <link rel="canonical" href="{{ current_url | default(value=config.base_url) }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ config.title }}" href="{{ get_url(path='rss.xml') }}">
+  <link rel="stylesheet" href="{{ get_url(path='fonts/lato.css') }}">
   <link rel="stylesheet" href="{{ get_url(path='css/site.css') }}">
+  <link rel="stylesheet" href="{{ get_url(path='css/code.css') }}">
+  <script src="{{ get_url(path='js/site.js') }}" defer></script>
 </head>
 <body>
-  <header><a href="{{ get_url(path='/') }}">{{ config.title }}</a></header>
-  <main>{% block content %}{% endblock content %}</main>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="site-shell">
+    <header class="site-header" data-pagefind-ignore>
+      <a class="brand" href="{{ get_url(path='/') }}">{{ config.title }}</a>
+      <nav class="primary-navigation" aria-label="Main navigation">
+        {% if site.projects %}<details class="projects-menu"><summary>Projects</summary><div class="project-dropdown"><a href="{{ get_url(path='/projects/') }}">All projects</a>{{ <project_tree items={site.projects} /> }}</div></details>{% endif %}
+        {% for item in site.primary %}<a href="{{ get_url(path=item.url) }}">{{ item.title }}</a>{% endfor %}
+      </nav>
+      <a class="search-toggle" href="{{ get_url(path='/search/') }}" aria-label="Search">⌕</a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="mobile-menu" hidden>☰<span class="visually-hidden">Menu</span></button>
+    </header>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile navigation" hidden>
+      {% if site.projects %}<a href="{{ get_url(path='/projects/') }}">Projects</a>{{ <project_tree items={site.projects} /> }}{% endif %}
+      {% for item in site.primary %}<a href="{{ get_url(path=item.url) }}">{{ item.title }}</a>{% endfor %}
+      <a href="{{ get_url(path='/archives/') }}">Archives</a><a href="{{ get_url(path='/search/') }}">Search</a>
+    </nav>
+    <noscript><nav class="no-script-menu" aria-label="Navigation">{% if site.projects %}<a href="{{ get_url(path='/projects/') }}">Projects</a>{% endif %} {% for item in site.primary %}<a href="{{ get_url(path=item.url) }}">{{ item.title }}</a> {% endfor %}<a href="{{ get_url(path='/archives/') }}">Archives</a></nav></noscript>
+    <div class="site-body">
+      <aside class="sidebar" data-pagefind-ignore>
+        <p class="site-description">My Digital Bits And Pieces</p>
+        {% if current_path is defined and current_path is starting_with(pat='/projects/') and site.projects %}<section><h2>Projects</h2>{{ <project_tree items={site.projects} /> }}</section>{% endif %}
+        {% if site.tags %}<section><h2>Tags</h2><div class="tag-cloud">{% for term in site.tag_cloud %}<a style="--tag-size: {{ term.size }}px" href="{{ get_url(path=term.url) }}">{{ term.label }}</a> {% endfor %}</div></section>{% endif %}
+        {% if site.categories %}<section><h2>Categories</h2><ul>{% for term in site.categories %}<li><a href="{{ get_url(path=term.url) }}">{{ term.label }}</a> <span>({{ term.count }})</span></li>{% endfor %}</ul></section>{% endif %}
+        <section><h2><a href="{{ get_url(path='/archives/') }}">Archives</a></h2><label class="visually-hidden" for="archive-select">Select a month</label><select id="archive-select"><option value="">Select Month</option>{% for month in site.months %}<option value="{{ get_url(path=month.url) }}">{{ month.label }}</option>{% endfor %}</select><noscript><p><a href="{{ get_url(path='/archives/') }}">Browse all archives</a></p></noscript></section>
+        <p><a href="{{ get_url(path='rss.xml') }}">RSS feed</a></p>
+      </aside>
+      <main id="main" tabindex="-1">{% block content %}{% endblock content %}</main>
+    </div>
+    <footer class="site-footer" data-pagefind-ignore>My Digital Bits And Pieces · <a href="{{ get_url(path='/archives/') }}">Archives</a> · <a href="{{ get_url(path='rss.xml') }}">RSS</a></footer>
+  </div>
 </body>
 </html>

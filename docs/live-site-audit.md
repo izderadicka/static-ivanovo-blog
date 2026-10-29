@@ -1,7 +1,8 @@
 # Live WordPress versus full staging audit
 
 Audit performed 2026-10-28 against `https://zderadicka.eu` and the staging build
-at commit `e076963`. This report proposes changes; it does not implement them.
+at commit `e076963`. This report records the findings before implementation. All seven findings were
+subsequently addressed; see [the fix report](parity-fixes.md).
 
 ## Scope and coverage
 

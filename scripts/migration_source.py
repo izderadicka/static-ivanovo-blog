@@ -91,13 +91,13 @@ def normalize(wxr):
             return item.findtext(key, default='', namespaces=NS)
         record = {key: text('wp:' + key) for key in (
             'post_id', 'post_type', 'status', 'post_name', 'post_date',
-            'post_date_gmt', 'post_modified', 'post_modified_gmt', 'post_parent',
+            'post_date_gmt', 'post_modified', 'post_modified_gmt', 'post_parent', 'menu_order',
         )}
         record['id'] = record.pop('post_id')
         if not record['id'].isdigit() or record['id'] in ids:
             raise ValueError('Missing, invalid, or duplicate WordPress ID')
         ids.add(record['id'])
-        record.update(title=text('title'), url=text('link'), author=text('dc:creator'),
+        record.update(title=text('title'), url=text('link'), guid=text('guid'), author=text('dc:creator'),
                       html=text('content:encoded'), attachment_url=text('wp:attachment_url'),
                       taxonomies=[dict(domain=x.get('domain'), slug=x.get('nicename'), name=x.text or '')
                                   for x in item.findall('category')],

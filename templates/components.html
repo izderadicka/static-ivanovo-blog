@@ -1,0 +1,30 @@
+{% component project_tree(items) %}
+<ul class="project-tree">
+  {% for item in items %}
+  <li><a href="{{ get_url(path=item.url) }}">{{ item.title }}</a>{% if item.children %}{{ <project_tree items={item.children} /> }}{% endif %}</li>
+  {% endfor %}
+</ul>
+{% endcomponent %}
+
+{% component article_listing(collection, labels) %}
+{% for item in collection.items %}
+<article class="post-summary">
+  <header class="entry-header">
+    {% if labels[item.id].categories %}<div class="category-links">{% for term in labels[item.id].categories %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
+    <h2 class="entry-title"><a href="{{ get_url(path=item.url) }}">{{ item.title }}</a></h2>
+    <div class="entry-meta"><time datetime="{{ item.date }}">{{ item.date | date(format="%B %d, %Y") }}</time></div>
+  </header>
+  <div class="entry-summary">
+    <div class="summary-text">{{ item.excerpt_html | safe }}</div>
+    {% if item.image %}<a href="{{ get_url(path=item.image.href) }}"><img src="{{ item.image.src }}" {% if item.image.srcset %}srcset="{{ item.image.srcset }}" sizes="{{ item.image.sizes }}"{% endif %} {% if item.image.width %}width="{{ item.image.width }}" height="{{ item.image.height }}"{% endif %} alt="{{ item.image.alt }}" loading="lazy" decoding="async"></a>{% endif %}
+    <p><a class="more-link" href="{{ get_url(path=item.url) }}">Continue reading <span class="visually-hidden">{{ item.title }}</span> →</a></p>
+    {% if labels[item.id].tags %}<div class="tag-links">{% for term in labels[item.id].tags %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% endfor %}</div>{% endif %}
+  </div>
+</article>
+{% endfor %}
+<nav class="pagination" aria-label="Article pages">
+  {% if collection.previous %}<a rel="prev" href="{{ get_url(path=collection.previous) }}">← Newer articles</a>{% endif %}
+  <span>Page {{ collection.number }} of {{ collection.total }}</span>
+  {% if collection.next %}<a rel="next" href="{{ get_url(path=collection.next) }}">Older articles →</a>{% endif %}
+</nav>
+{% endcomponent %}

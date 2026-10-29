@@ -64,23 +64,23 @@ There are 14 explicit review items: five gallery conversions, the contribution
 form, and eight gist scripts. External references (749 distinct URLs) are listed
 without requesting them; no claim is made about third-party availability.
 
+## Follow-up implementation
+
+The [audit fixes](parity-fixes.md) now implement the theme, navigation, archives,
+feeds, search, remaining highlighting, automatic embeds, and responsive media.
+Use `python3 scripts/preview.py` for the complete indexed preview. The sections
+above describe the original content-staging milestone.
+
 ## Remaining acceptance work
 
-The subsequent [live-site comparison](live-site-audit.md) confirms coverage of
-all 175 published bodies and exact block/inline code text, while identifying
-remaining highlighting, automatic-embed, responsive-image, and visual parity gaps.
+All seven live-audit findings now have implementations and regression/browser
+checks; see [the audit fixes](parity-fixes.md). The site remains staging, with
+curated content and live hosting unchanged. Representative desktop/mobile
+checks and gist/media loading pass; exhaustive visual review, full third-party
+playback, and PayPal behavior have not been tested.
 
-This is full content staging, not a production release. Representative
-desktop/mobile views and gist/media loading have now been reviewed in the live
-audit. Exhaustive visual review, full media playback, and PayPal behavior remain
-unverified.
-Typography/layout remain the scaffold defaults. Required taxonomies are retained
-in metadata, but their archive pages and navigation still need implementation.
-
-Next: review representative full-corpus pages, then complete theme/navigation,
-archives, canonical metadata, feed compatibility, search, and the 404 page. Historic
-archive/feed URLs, pagination, and arbitrary inbound `?p=ID` routing still need
-mapping and host configuration. HTML attachment redirects are not HTTP 301/308
-responses. Fragment checks cover links found in migrated article HTML; arbitrary
-inbound fragment identifiers have not all been inventoried. Server-specific redirects and final browser
-acceptance precede promotion/cutover; no deployment was attempted.
+Next steps are owner review of the updated site, integration/testing of the
+provided server adapters on the chosen host, final publishing/rollback setup,
+and cutover acceptance. The local preview tests query redirects and correct RSS
+headers; production needs the corresponding Nginx/TLS/reverse-proxy integration.
+HTML attachment redirects remain HTML redirects rather than HTTP 301/308s.

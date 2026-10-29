@@ -11,7 +11,9 @@ proposal pending the host, existing reverse proxy, and HTTPS arrangement. If a
 Docker-managed named volume is preferred, a publisher container must mount it
 read-write; do not manipulate Docker's internal volume directories directly.
 
-No deployment configuration or publishing script is implemented yet. This document
+Migration now emits Nginx adapter examples in the generated site’s `redirects/`
+directory, covering legacy queries and extensionless RSS routes. These have not
+been deployed or syntax-tested by Nginx here. No publishing script is implemented yet. This document
 specifies their intended behavior. Keep migration tooling separate from routine
 publishing: an article publish must never rerun the WordPress import.
 

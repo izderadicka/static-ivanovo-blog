@@ -19,7 +19,7 @@ xmlns:content="http://purl.org/rss/1.0/modules/content/"
 xmlns:dc="http://purl.org/dc/elements/1.1/"><channel>
 <item><title>Example &amp; title</title><link>http://example.test/example/</link>
 <wp:post_id>1</wp:post_id><wp:post_type>post</wp:post_type>
-<wp:post_name>example</wp:post_name>
+<wp:post_name>example</wp:post_name><guid isPermaLink="false">http://old.example.test/?p=1</guid>
 <wp:status>publish</wp:status><wp:post_date>2020-01-01 12:00:00</wp:post_date>
 <content:encoded><![CDATA[<p>Hello</p>]]></content:encoded>
 <wp:comment><wp:comment_content>SECRET COMMENT</wp:comment_content>
@@ -145,7 +145,7 @@ class MigrationTests(unittest.TestCase):
 
     def test_zola_delimiters_are_preserved_as_literal_code(self):
         markdown, _, code, issues = self.render('<pre>{{ dangerous() }} {% value %}</pre>')
-        self.assertIn('&#123;{ dangerous() }} &#123;% value %}', markdown)
+        self.assertNotIn('{{', markdown)
         self.assertEqual(code[0]['payload'], '{{ dangerous() }} {% value %}')
         self.assertFalse(issues)
 
@@ -211,6 +211,91 @@ class MigrationTests(unittest.TestCase):
             generate_site(dict(source={'site_url': self.site_url}, pilot={'ids': ['1']}),
                            self.paths, [self.record])
 
+    def test_nested_and_template_code_keep_language_highlighting(self):
+        from bs4 import BeautifulSoup
+        markdown, _, code, issues = self.render(
+            '<ol><li>Run<pre class="lang:python">def f():\n\n\treturn 1</pre></li></ol>'
+            '<pre class="lang:js">const value = "{{ value }}";\n</pre>')
+        blocks = BeautifulSoup(markdown, 'html.parser').find_all('pre')
+        self.assertEqual([b.get_text() for b in blocks], [c['payload'] for c in code])
+        self.assertTrue(all('code-highlight' in b['class'] for b in blocks))
+        self.assertTrue(all(b.select('span.k, span.kd, span.kr, span.nf') for b in blocks))
+        self.assertFalse(issues)
+
+    def test_automatic_youtube_embed_only_for_standalone_urls(self):
+        for standalone in ('https://youtu.be/EGfTJuSiGeE', '<p>https://youtu.be/EGfTJuSiGeE</p>'):
+            markdown, _, code, issues = self.render(
+                standalone + '\n\nSee https://youtu.be/EGfTJuSiGeE for details.\n'
+                '<pre>https://youtu.be/EGfTJuSiGeE</pre>')
+            self.assertEqual(markdown.count('<iframe'), 1)
+            self.assertIn('https://www.youtube.com/embed/EGfTJuSiGeE', markdown)
+            self.assertIn('Watch on YouTube', markdown)
+            from bs4 import BeautifulSoup
+            self.assertIsNotNone(BeautifulSoup(markdown, 'html.parser').select_one('.embed-fallback a'))
+            self.assertIn('See https://youtu.be/EGfTJuSiGeE for details.', markdown)
+            self.assertEqual(code[0]['payload'], 'https://youtu.be/EGfTJuSiGeE')
+            self.assertFalse(issues)
+
+    def test_responsive_variants_are_vetted_copied_and_lazy_loaded(self):
+        (self.paths['uploads'] / 'image.png').write_bytes(b'original')
+        (self.paths['uploads'] / 'image-300x200.png').write_bytes(b'variant')
+        old = self.paths['baseline'] / 'example'
+        old.mkdir()
+        (old / 'index.html').write_text('<img src="../wp-content/uploads/image.png" '
+            'srcset="../wp-content/uploads/image-300x200.png 300w, ../wp-content/uploads/image.png 900w" '
+            'sizes="(max-width: 900px) 100vw, 900px" width="900" height="600" loading="lazy">')
+        markdown, assets, _, issues = self.render('<img src="http://example.test/wp-content/uploads/image.png" alt="β image">')
+        self.assertIn('/wp-content/uploads/image-300x200.png 300w', markdown)
+        self.assertIn('sizes="(max-width: 900px) 100vw, 900px"', markdown)
+        self.assertIn('loading="lazy"', markdown)
+        self.assertIn('width="900"', markdown)
+        self.assertIn('alt="β image"', markdown)
+        self.assertEqual(set(assets), {'image.png', 'image-300x200.png'})
+        self.assertFalse(issues)
+
+    def test_full_navigation_and_search_models_exclude_private_content(self):
+        private = copy.deepcopy(self.record)
+        private.update(id='2', status='private', eligible=False, title='PRIVATE TITLE', html='PRIVATE BODY')
+        config = dict(source={'site_url': self.site_url}, selection={'scope': 'all'})
+        report = generate_site(config, self.paths, [self.record, private])
+        data = (self.paths['site'] / 'data/site.json').read_text()
+        self.assertNotIn('PRIVATE', data)
+        self.assertEqual(len(json.loads(data)['posts']), 1)
+        self.assertTrue((self.paths['site'] / 'content/_generated/search.md').exists())
+        self.assertTrue(any('/2020/01/' == path for path in report['generated_routes']))
+
+    def test_project_order_uses_wordpress_order_and_stable_ids(self):
+        from migration_site import build_site_model
+        records = []
+        for ident, title, path, parent, order in [
+            ('1', 'Projects', '/projects/', '0', '5'),
+            ('2', 'Group B', '/projects/b/', '1', '0'),
+            ('3', 'Group A', '/projects/a/', '1', '0'),
+            ('4', 'Old projects', '/projects/old/', '1', '9999'),
+        ]:
+            records.append(dict(self.record, id=ident, title=title, url='http://example.test' + path,
+                                post_type='page', post_parent=parent, menu_order=order))
+        model, _, _ = build_site_model(records, {})
+        self.assertEqual([r['title'] for r in model['projects']], ['Group B', 'Group A', 'Old projects'])
+
+    def test_unsafe_taxonomy_route_is_refused_before_writing(self):
+        self.record['taxonomies'] = [dict(domain='post_tag', slug='../private', name='Unsafe')]
+        config = dict(source={'site_url': self.site_url}, selection={'scope': 'all'})
+        with self.assertRaises(ValueError):
+            generate_site(config, self.paths, [self.record])
+        self.assertFalse(self.paths['site'].exists())
+
+    def test_excerpt_links_survive_without_executable_markup(self):
+        from bs4 import BeautifulSoup
+        from migration_site import excerpt_markup
+        markup = excerpt_markup(BeautifulSoup('<p onclick="bad()"><a href="http://example.test/example/">Read</a> '
+            '<code>__get__</code><script>bad()</script></p>', 'html.parser'), 'http://example.test/example/')
+        parsed = BeautifulSoup(markup, 'html.parser')
+        self.assertEqual(parsed.a['href'], '/example/')
+        self.assertEqual(parsed.code.get_text(), '__get__')
+        self.assertNotIn('onclick', markup)
+        self.assertNotIn('bad()', markup)
+
     def test_attachment_routes_respect_private_parents_and_reviewed_aliases(self):
         attachment = dict(self.record, id='2', post_type='attachment', status='inherit',
                           eligible=False, post_parent='1', url='http://example.test/example/image/',
@@ -264,6 +349,15 @@ class MigrationTests(unittest.TestCase):
         result = subprocess.run(['zola', '--root', str(self.paths['site']), 'build'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(validate(self.paths), [])
+        from xml.etree import ElementTree
+        feed = ElementTree.parse(self.paths['site'] / 'public/rss.xml')
+        self.assertEqual(len(feed.findall('channel/item')), 1)
+        self.assertEqual(feed.findtext('channel/item/title'), 'Example & title')
+        self.assertEqual(feed.findtext('channel/item/guid'), 'http://old.example.test/?p=1')
+        self.assertEqual(feed.find('channel/item/guid').get('isPermaLink'), 'false')
+        self.assertIn('<pre', feed.find('channel/item').findtext('{http://purl.org/rss/1.0/modules/content/}encoded'))
+        sitemap = ElementTree.parse(self.paths['site'] / 'public/sitemap.xml')
+        self.assertFalse(any('/feed/' in node.text for node in sitemap.iter('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')))
         target = self.paths['site'] / 'public/example/index.html'
         built = target.read_text()
         target.write_text(built.replace('href="/example/#part"', 'href="/example/#missing"'))
