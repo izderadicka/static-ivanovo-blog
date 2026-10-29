@@ -87,9 +87,25 @@ For a local content update:
 
 ```sh
 python3 scripts/prepare_hosting.py
+```
+
+That is all for ordinary article, image, CSS, and search-index updates: the running
+container sees the new release immediately. No Nginx reload or container restart
+is required. The helper reports whether the legacy redirect map changed relative
+to the previous release. New posts do not have WordPress IDs and normally leave
+that map unchanged.
+
+Only when the helper reports changed legacy redirects, gracefully reload Nginx:
+
+```sh
 docker compose -f deploy/compose.yaml exec -T blog nginx -t
 docker compose -f deploy/compose.yaml exec -T blog nginx -s reload
 ```
+
+This reload rereads Nginx configuration without restarting the container. If a
+previous update reported changed maps, its reload remains necessary until done,
+even if a later update reports the maps unchanged. A first deployment needs the
+container startup described above.
 
 The helper always builds production URLs without drafts, copies to a temporary
 release, records checksums, then activates it with an atomic symlink replacement.
@@ -99,7 +115,8 @@ visible when the symlink changes. Run staging operations one at a time.
 
 For manual rollback, read the previous relative target from the active
 `release.json`, create a temporary symlink to that release, and replace `current`
-atomically. Validate/reload Nginx afterwards to restore its matching legacy maps.
+atomically. If the legacy maps differ between the two releases, validate/reload
+Nginx afterwards to restore its matching legacy maps.
 For example, from the release storage directory, with the actual previous ID:
 
 ```sh
@@ -107,8 +124,8 @@ ln -s releases/PREVIOUS_RELEASE .rollback
 mv -Tf .rollback current
 ```
 
-Then run the `nginx -t` and `nginx -s reload` commands above and check the public
-site through the proxy. Container recreation is unnecessary. For image, mount, or server configuration changes, recreate the container with
+Run the `nginx -t` and `nginx -s reload` commands above if the rollback changes
+legacy maps, and check the public site through the proxy. Container recreation is unnecessary. For image, mount, or server configuration changes, recreate the container with
 `docker compose -f deploy/compose.yaml up -d --force-recreate --wait`.
 
 This is a local release-staging helper, not an automated remote publisher. SSH

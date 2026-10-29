@@ -129,8 +129,8 @@ docker compose -f deploy/compose.yaml up -d --wait
 
 The backend listens on **http://127.0.0.1:8080/**; your proxy handles HTTPS. It
 serves an immutable release with read-only mounts, legacy redirects, RSS types,
-compression, and media ranges. Updates use `prepare_hosting.py`, then an Nginx
-configuration check/reload. See [deployment.md](docs/deployment.md) for the exact
+compression, and media ranges. Ordinary updates need only `prepare_hosting.py`, with no restart or reload.
+A graceful Nginx reload is needed only when legacy redirect mappings change. See [deployment.md](docs/deployment.md) for the exact
 commands, Docker proxy-network option, server paths, and manual rollback.
 Automatic remote publishing and cutover are not configured.
 

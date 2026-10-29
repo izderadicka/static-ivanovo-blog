@@ -3,6 +3,7 @@
 import argparse
 from datetime import datetime, timezone
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -39,7 +40,13 @@ def stage(public, maps, site_root):
         hashes = {p.relative_to(temporary).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
                   for p in temporary.rglob('*') if p.is_file()}
         previous = os.readlink(current) if current.is_symlink() else None
-        write_json(temporary / 'release.json', dict(release=release_id, previous=previous, sha256=hashes))
+        previous_maps = current / 'nginx-maps.conf'
+        maps_changed = previous is not None and (
+            not previous_maps.is_file() or
+            previous_maps.read_bytes() != (temporary / 'nginx-maps.conf').read_bytes()
+        )
+        write_json(temporary / 'release.json', dict(release=release_id, previous=previous,
+                   legacy_maps_changed=maps_changed, sha256=hashes))
         # Containers run as nginx: make the completed release readable across UIDs.
         for path in temporary.rglob('*'):
             path.chmod(0o755 if path.is_dir() else 0o644)
@@ -55,6 +62,20 @@ def stage(public, maps, site_root):
     return final
 
 
+def activation_message(release):
+    metadata = json.loads((release / 'release.json').read_text())
+    if metadata['previous'] is None:
+        return ('First release prepared. Start the HTTP container:\n'
+                '  docker compose -f deploy/compose.yaml up -d --wait')
+    if metadata['legacy_maps_changed']:
+        return ('Site files activated. Legacy redirects changed; gracefully reload Nginx:\n'
+                '  docker compose -f deploy/compose.yaml exec -T blog nginx -t\n'
+                '  docker compose -f deploy/compose.yaml exec -T blog nginx -s reload\n'
+                'No container restart is needed.')
+    return ('Site files activated. Legacy redirects are unchanged; this update needs\n'
+            'no Nginx reload or container restart.')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--site-root', type=Path, default=ROOT / '.build/hosting')
@@ -65,7 +86,7 @@ def main():
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, f'Hosting preparation failed: {error}\n')
     print(f'Ready: {release}')
-    print('Start/reload the HTTP container to load this release’s legacy URL maps.')
+    print(activation_message(release))
 
 
 if __name__ == '__main__':
