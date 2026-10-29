@@ -34,7 +34,9 @@ and report checks that could not be performed.
 
 Publish only public/. Keep credentials and private material outside the site tree.
 Production build commands exclude drafts; avoid publishing a local draft preview.
-Hosting and automated publishing remain unconfigured until the deployment stage.
+HTTP Docker hosting is configured under deploy/; see docs/deployment.md for
+release preparation, reverse-proxy networking, reload, and rollback. Automated
+remote publishing remains unconfigured. Opt-in container tests use RUN_DOCKER_TESTS=1.
 
 Use concise imperative commit subjects. Commit completed changes as requested by
 the owner. Explain the resulting behavior, validation, and material limitations.

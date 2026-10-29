@@ -8,6 +8,8 @@ Run from the repository root with Python 3.11+ and the dependencies in
   HTML and search, and validate local routes, fragments, feeds, and search assets.
 - `python3 scripts/preview.py [--drafts] [--port 1111]`: rebuild with local URLs and
   serve the indexed site. Restart after edits; there is no file watcher.
+- `python3 scripts/prepare_hosting.py [--site-root PATH]`: build production and
+  atomically stage a local release for the HTTP container.
 - `python3 -m unittest discover -s tests -v`: run authoring/publication regression tests.
 
 `build_site.py --drafts` is for local review. Its optional `--base-url` overrides
@@ -18,7 +20,9 @@ neither option. `preview.py --no-build` refuses mismatched URL/draft settings.
 prepares the public navigation/archive models. Zola renders complete article bodies.
 `server_routes.py` prepares the historical query redirect adapter from retained
 WordPress IDs. `validate_site.py` performs offline checks of the built artifact.
-Generated reports and Nginx adapter examples are in ignored `.build/`.
+Generated reports and Nginx ID maps are in ignored `.build/`; the maintained
+server configuration is `deploy/nginx.conf`. See docs/deployment.md for container
+startup, update/reload, manual rollback, and opt-in Docker integration tests.
 
 These tools do not read WordPress exports or migration reports. Source Markdown is
 authoritative. Edit only source files; generated archives/data are replaced on every

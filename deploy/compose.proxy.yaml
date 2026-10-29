@@ -1,0 +1,12 @@
+# Optional: attach to a reverse proxy already running on a Docker network.
+services:
+  blog:
+    networks:
+      default: {}
+      proxy:
+        aliases: [ivanovo-blog]
+
+networks:
+  proxy:
+    external: true
+    name: ${BLOG_PROXY_NETWORK:?Set BLOG_PROXY_NETWORK to the existing proxy network}

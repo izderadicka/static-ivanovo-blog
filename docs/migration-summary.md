@@ -35,8 +35,8 @@ production build, 175 indexed pages, 406 valid RSS feeds, 87,791 local reference
 and five authoring/publication regression tests. Twenty-six browser/HTTP checks
 passed, with eight desktop/mobile captures showing no page-wide overflow.
 
-Hosting has not changed. Remaining work is Docker/reverse-proxy/TLS integration,
-production redirect and media response checks, release/rollback setup, and cutover.
-Nginx adapters are examples and have not been tested on the destination server.
-The retained PayPal form and third-party video/gist availability still depend on
-their providers. See deployment.md for the hosting plan.
+Live hosting has not changed. The HTTP Docker backend, local immutable release
+staging, and proxy-safe Nginx configuration are now implemented and tested locally.
+Destination proxy integration, automated remote publishing, and cutover remain.
+The retained PayPal form and third-party video/gist availability depend on their
+providers. See deployment.md for the hosting setup and remaining publishing work.

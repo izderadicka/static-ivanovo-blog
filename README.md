@@ -120,10 +120,19 @@ articles. Future dates are metadata, not a publication scheduler; use drafts unt
 ready. Raw `zola build`/`zola serve` omit our archive preparation and Pagefind step;
 use the Python commands for complete builds.
 
-Automatic publishing is not configured. Docker hosting, HTTPS, server redirects,
-and release/rollback integration remain the next stage; see
-[deployment.md](docs/deployment.md). Generated Nginx adapter examples are under
-`.build/redirects/`, outside the publishing artifact.
+For HTTP Docker hosting behind your reverse proxy:
+
+```sh
+python3 scripts/prepare_hosting.py
+docker compose -f deploy/compose.yaml up -d --wait
+```
+
+The backend listens on **http://127.0.0.1:8080/**; your proxy handles HTTPS. It
+serves an immutable release with read-only mounts, legacy redirects, RSS types,
+compression, and media ranges. Updates use `prepare_hosting.py`, then an Nginx
+configuration check/reload. See [deployment.md](docs/deployment.md) for the exact
+commands, Docker proxy-network option, server paths, and manual rollback.
+Automatic remote publishing and cutover are not configured.
 
 ## Repository layout
 
@@ -131,7 +140,8 @@ and release/rollback integration remain the next stage; see
 - `static/`: shared assets, historical media, and attachment redirect pages.
 - `templates/`: Tera templates; `static/css/` and `static/js/`: presentation.
 - `data/taxonomy-slugs.json`: historical category/tag URL mappings.
-- `scripts/`: authoring, build, preview, and validation tools.
+- `scripts/`: authoring, build, preview, validation, and local release tools.
+- `deploy/`: pinned HTTP container and reverse-proxy network configuration.
 - `tests/`: synthetic authoring/publication regression tests.
 - `public/`, `.build/`, `content/_generated/`, `data/site.json`: ignored build output.
 
