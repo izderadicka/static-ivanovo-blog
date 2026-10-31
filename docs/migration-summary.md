@@ -1,3 +1,6 @@
+> Historical record of the original migration. The current simpler architecture
+> and publishing workflow are documented in README.md and deployment.md.
+
 # Completed WordPress migration
 
 The owner accepted the migrated appearance and confirmed on 2026-10-29 that the

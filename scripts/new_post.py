@@ -21,7 +21,7 @@ def create_post(slug, title, root=ROOT):
                       'path = ' + json.dumps('/' + slug + '/'),
                       'date = ' + json.dumps(stamp), 'draft = true', '[extra]',
                       'kind = "post"', 'author = ' + json.dumps(author),
-                      'categories = []', 'tags = []', '+++', '',
+                      '+++', '',
                       'Write the opening paragraph here.', '', '<!-- more -->', '',
                       'Continue the article here.', ''])
     directory.mkdir()

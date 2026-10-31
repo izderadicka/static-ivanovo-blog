@@ -1,17 +1,14 @@
 # Ivanovo
 
-Zola sources for [zderadicka.eu](https://zderadicka.eu), including all 154 posts
-and 21 pages from the final WordPress snapshot. Edit Markdown directly; the
-WordPress importer is retired. The site is not deployed by these commands.
+A small Zola blog containing 154 posts and 21 standalone pages from the accepted
+WordPress snapshot. Markdown is authoritative. Zola renders the articles, homepage
+pagination, year-grouped archive, navigation, sitemap, and main RSS feed directly.
+Pagefind adds search. There is no generated content model or archive generator.
 
 ## Setup
 
-Use Python 3.11+, **Zola 0.23.6** and **Pagefind 1.5.2**. The binary versions are
-pinned in `.zola-version` and `.pagefind-version`; both are already installed at
-`~/.local/bin/` on this workstation. On another machine, install these versions
-from the [Zola releases](https://github.com/getzola/zola/releases) and
-[Pagefind releases](https://github.com/Pagefind/pagefind/releases), and put the
-binaries on `PATH`.
+Use Python 3.11+, Zola **0.23.6**, and Pagefind **1.5.2**. The binary versions are
+pinned in `.zola-version` and `.pagefind-version`; put those binaries on `PATH`.
 
 ```sh
 python3 -m venv .venv
@@ -19,133 +16,95 @@ python3 -m venv .venv
 python3 -m pip install -r requirements.txt
 ```
 
-## Write a new article
-
-Create a draft with a descriptive slug:
+## Write and preview
 
 ```sh
 python3 scripts/new_post.py my-new-article --title "My new article"
+python3 scripts/preview.py --drafts
 ```
 
-Edit `content/posts/my-new-article/index.md` in VS Code. The generated front matter
-looks like this (use the actual publication date):
+Edit `content/posts/my-new-article/index.md`, then open **http://127.0.0.1:1111/**.
+Restart the preview after edits to rebuild search as well as the pages. Use
+`--port 1112` for a second preview. Preview always builds fresh output before
+serving; there are no saved build settings to manage.
+
+A post needs very little front matter:
 
 ```toml
 +++
 title = "My new article"
 path = "/my-new-article/"
-date = "2026-10-29T12:00:00+00:00"
+date = "2026-10-31T12:00:00+00:00"
 draft = true
-[extra]
-kind = "post"
-author = "ivan"
-categories = ["Programming"]
-tags = ["Rust", "WebSocket"]
 +++
 ```
 
-Write a short introduction, then `<!-- more -->`, then the rest of the article.
-The introduction becomes the homepage/archive excerpt. Text is UTF-8: write normal
-quotes and apostrophes. Label fenced code blocks with their language, for example
-`rust`, `python`, or `bash`. Existing migrated code sometimes uses reviewed HTML;
-preserve its whitespace and escaping when editing those examples.
-
-Put new images beside `index.md` and reference them with Markdown:
+Write a short introduction, then `<!-- more -->`, then the article. Homepage
+excerpts use the introduction as plain text, capped at 420 characters. Label
+fenced code blocks with their language, such as `python` or `rust`; Zola handles
+highlighting. Place new images beside `index.md` and use relative links:
 
 ```markdown
-![Description of the diagram](diagram.png)
+![Diagram](diagram.svg)
 ```
 
-Keep media you place beside drafts suitable for public distribution: Zola may copy
-page assets independently of draft visibility. Sensitive material belongs outside
-the site tree. Existing uploads remain in `static/wp-content/uploads/` so their
-public URLs keep working. GitHub gists remain remote script embeds; their code is
-not copied locally or included in search.
+Drafts stay out of production pages, feeds, and search. Colocated media may still
+be copied by Zola, so keep private material outside the site tree. Future dates
+are metadata, not a publication scheduler: keep `draft = true` until ready.
 
-## Preview and revise
+For faster writing without rebuilding search, `zola serve --drafts` also works
+and reloads on edits. Use the Python preview when reviewing search and legacy
+query redirects; those are outside Zola's development server.
 
-```sh
-python3 scripts/preview.py --drafts
-```
+## Existing content and standalone pages
 
-Open **http://127.0.0.1:1111/**. This builds the site and search index, includes
-local drafts, and serves legacy URL redirects and RSS with the right MIME type.
-Stop an older server before reusing the port. Use `--port 1112` for another port.
+Keep existing public `path` values, WordPress IDs/GUIDs, source dates, code
+whitespace, and media. Historical uploads remain in `static/wp-content/uploads/`.
+Gists stay remote GitHub embeds; their code is not downloaded or searched.
 
-After an edit, stop the preview with Ctrl-C and rerun it to rebuild. There is no
-automatic reload. `--no-build` serves the last build only when its URL/draft
-settings match. A complete rebuild regenerates summaries, categories, tags,
-calendar/author archives, pagination, adjacent-post links, feeds, and search from
-the current Markdown. Do not edit `content/_generated/` or `data/site.json`.
+Standalone pages live in `content/pages/<slug>/index.md`. Set
+`include_in_feeds = false` and `extra.kind = "page"`. An optional `extra.parent`
+public path adds the page to its parent's list of subpages. Moving a source
+between directories does not change its explicit public URL.
 
-Categories and tags are arrays of display labels. Existing labels retain their
-historical URLs through `data/taxonomy-slugs.json`; new labels normally derive a
-slug automatically. If two labels would share a slug (for example `C++` and `C#`),
-add distinct mappings to that file. A build reports the collision instead of
-silently merging them.
+Archives are now a single `/archives/` page grouped by year. The homepage has
+native Zola pagination. Category, tag, author, daily, and monthly archive pages
+and their feeds are retired; old taxonomy metadata can remain in articles but
+is not used for navigation. `/rss.xml` and `/feed/` serve the same main feed,
+retaining migrated subscriber GUIDs.
 
-Edit existing articles in place. Keep their `path` and migrated WordPress ID/GUID
-metadata: those preserve inbound links and RSS subscriber identity. Project and
-other standalone pages use `extra.kind = "page"`, `include_in_feeds = false`,
-and optionally `extra.parent = "/projects/"` and `extra.menu_order = 0`. Parent
-paths determine the project navigation hierarchy.
+## Publish occasionally
 
-## Prepare an article for publication
-
-1. Set the final date, remove `draft = true` (or set it to `false`), and review
-   the title, categories, tags, links, code, and media.
-2. Run the production build and review the site without drafts:
+1. Set the final date and remove `draft = true`.
+2. Review with `python3 scripts/preview.py`.
+3. Build and validate production output:
 
    ```sh
    python3 scripts/build_site.py
-   python3 scripts/preview.py
    ```
 
-3. Run the regression checks and review your Git diff:
+4. Copy **only `public/`** to your static host. See [deployment.md](docs/deployment.md)
+   for the optional Docker server and the simple build-and-copy workflow.
 
-   ```sh
-   python3 -m unittest discover -s tests -v
-   git diff --check
-   git status --short
-   ```
+The production build excludes drafts, builds search, and validates local links,
+fragments, feed membership, and article coverage. It never publishes remotely.
+Always rebuild production after previewing, since previews use local URLs.
 
-4. Commit the Markdown and adjacent media. Include any intentional template,
-   stylesheet, script, or taxonomy-map changes.
-5. For a release, run `python3 scripts/build_site.py` again after previewing, so
-   the artifact uses production URLs and excludes drafts. Deploy **only `public/`**.
-
-The build runs Zola, Pagefind, offline Zola checks, and local route/fragment/feed
-validation. External websites are not requested. Production builds exclude draft
-articles. Future dates are metadata, not a publication scheduler; use drafts until
-ready. Raw `zola build`/`zola serve` omit our archive preparation and Pagefind step;
-use the Python commands for complete builds.
-
-For HTTP Docker hosting behind your reverse proxy:
+For changes to tooling or templates:
 
 ```sh
-python3 scripts/prepare_hosting.py
-docker compose -f deploy/compose.yaml up -d --wait
+python3 -m unittest discover -s tests -v
+git diff --check
 ```
 
-The backend listens on **http://127.0.0.1:8080/**; your proxy handles HTTPS. It
-serves an immutable release with read-only mounts, legacy redirects, RSS types,
-compression, and media ranges. Ordinary updates need only `prepare_hosting.py`, with no restart or reload.
-A graceful Nginx reload is needed only when legacy redirect mappings change. See [deployment.md](docs/deployment.md) for the exact
-commands, Docker proxy-network option, server paths, and manual rollback.
-Automatic remote publishing and cutover are not configured.
+## Layout
 
-## Repository layout
+- `content/posts/`: blog posts; `content/pages/`: standalone pages.
+- `content/archives/`, `content/search/`: ordinary Zola sections for those views.
+- `templates/`, `static/`: rendering, styles, scripts, fonts, and media.
+- `scripts/`: draft creation, build checks, and local preview.
+- `deploy/`: optional static Nginx server, including a fixed map of old WordPress IDs.
+- `public/`, `.build/`: ignored build output and validation reports.
 
-- `content/posts/<slug>/index.md`: editable posts and standalone pages.
-- `static/`: shared assets, historical media, and attachment redirect pages.
-- `templates/`: Tera templates; `static/css/` and `static/js/`: presentation.
-- `data/taxonomy-slugs.json`: historical category/tag URL mappings.
-- `scripts/`: authoring, build, preview, validation, and local release tools.
-- `deploy/`: pinned HTTP container and reverse-proxy network configuration.
-- `tests/`: synthetic authoring/publication regression tests.
-- `public/`, `.build/`, `content/_generated/`, `data/site.json`: ignored build output.
-
-The accepted snapshot is final; no further WordPress export is needed.
-[Migration summary](docs/migration-summary.md) records the completed checks and
-cleanup. Backups, importer tools, and working copies are outside the active site;
-ordinary authoring never needs them.
+The [migration summary](docs/migration-summary.md) records the original migration.
+The accepted snapshot is final; ordinary writing needs no WordPress tools.

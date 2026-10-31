@@ -1,13 +1,11 @@
 """Authoring and publication regression tests; no WordPress inputs are needed."""
-from contextlib import redirect_stderr
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-import io
-import json
 from pathlib import Path
 import shutil
 import sys
 import tempfile
+import subprocess
 import unittest
 from unittest.mock import patch
 from xml.etree import ElementTree
@@ -16,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from build_site import build
 from new_post import create_post
 import preview
-from site_content import ROOT, prepare, read_content
+from site_content import ROOT, read_content
 from validate_site import validate
 
 
@@ -31,16 +29,16 @@ class SiteTests(unittest.TestCase):
             shutil.copytree(ROOT / 'static' / name, self.root / 'static' / name)
         for name in ('zola.toml', '.zola-version', '.pagefind-version'):
             shutil.copy2(ROOT / name, self.root / name)
-        (self.root / 'content/posts').mkdir(parents=True)
-        (self.root / 'data').mkdir()
-        (self.root / 'data/taxonomy-slugs.json').write_text('{"categories": {}, "tags": {}}')
-        for name in ('content/_index.md', 'content/posts/_index.md'):
+        for folder in ('posts', 'pages', 'archives', 'search'):
+            (self.root / 'content' / folder).mkdir(parents=True)
+        for name in ('content/_index.md', 'content/posts/_index.md', 'content/pages/_index.md',
+                     'content/archives/_index.md', 'content/search/_index.md'):
             shutil.copy2(ROOT / name, self.root / name)
 
     def article(self, slug, extra='', body='Opening paragraph.\n\n<!-- more -->\n\nFull article.', draft=False, kind='post'):
-        path = self.root / 'content/posts' / slug / 'index.md'
+        path = self.root / 'content' / ('pages' if kind == 'page' else 'posts') / slug / 'index.md'
         path.parent.mkdir(exist_ok=True)
-        path.write_text(f'+++\ntitle = "{slug}"\npath = "/{slug}/"\ndate = "2026-01-01T12:00:00+00:00"\ndraft = {str(draft).lower()}\n[extra]\nkind = "{kind}"\nauthor = "ivan"\n{extra}\n+++\n{body}\n')
+        path.write_text(f'+++\ntitle = "{slug}"\npath = "/{slug}/"\ndate = "2026-01-01T12:00:00+00:00"\ndraft = {str(draft).lower()}\ninclude_in_feeds = {str(kind == "post").lower()}\n[extra]\nkind = "{kind}"\nauthor = "ivan"\n{extra}\n+++\n{body}\n')
         return path
 
     def test_draft_scaffold_and_no_overwrite(self):
@@ -61,17 +59,12 @@ class SiteTests(unittest.TestCase):
         image.write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
         first.write_text(first.read_text().replace('Opening paragraph.', 'Opening with **emphasis**, [a link](/about/), and ![Diagram](diagram.svg).'))
         build(root=self.root)
-        model = json.loads((self.root / 'data/site.json').read_text())
-        self.assertEqual(len(model['posts']), 1)
-        self.assertIn('<strong>emphasis</strong>', model['posts'][0]['excerpt_html'])
-        self.assertEqual(model['posts'][0]['image']['src'], '/first/diagram.svg')
         self.assertTrue((self.root / 'public/first/diagram.svg').is_file())
         self.assertFalse((self.root / 'public/secret-draft').exists())
         self.assertNotIn('SECRET_DRAFT_SENTINEL', (self.root / 'public/index.html').read_text())
         feed = ElementTree.parse(self.root / 'public/rss.xml')
         self.assertEqual(feed.findtext('./channel/item/guid'), 'http://old.test/?p=12')
         self.assertEqual(len(feed.findall('./channel/item')), 1)
-        self.assertEqual(json.loads((self.root / '.build/legacy-routes.json').read_text()), {'12': '/first/'})
         build(base_url='http://127.0.0.1:12345', drafts=True, root=self.root)
         self.assertTrue((self.root / 'public/secret-draft/index.html').is_file())
         # Publish the draft and remove the old article: all derived models must change.
@@ -80,31 +73,31 @@ class SiteTests(unittest.TestCase):
         image.unlink()
         first.parent.rmdir()
         build(root=self.root)
-        model = json.loads((self.root / 'data/site.json').read_text())
-        self.assertEqual([p['title'] for p in model['posts']], ['secret-draft'])
         self.assertFalse((self.root / 'public/first').exists())
-        self.assertFalse((self.root / 'public/category/programming').exists())
-        self.assertTrue((self.root / 'public/category/draftonly/index.html').is_file())
-        self.assertEqual(json.loads((self.root / '.build/legacy-routes.json').read_text()), {})
+        self.assertFalse((self.root / 'public/category').exists())
+        self.assertFalse((self.root / 'data/site.json').exists())
+        self.assertIn('secret-draft', (self.root / 'public/archives/index.html').read_text())
         # A broken internal link is a blocking publication failure.
         (self.root / 'public/secret-draft/index.html').write_text('<a href="/missing/">broken</a><div data-pagefind-body>text</div>')
-        records, model = prepare(self.root)
-        self.assertTrue(any('missing local target' in item for item in validate(self.root, records, model, 'https://zderadicka.eu')['failures']))
+        records = read_content(self.root)
+        self.assertTrue(any('missing local target' in item for item in validate(self.root, records, 'https://zderadicka.eu')['failures']))
 
-    def test_archive_and_static_route_collisions(self):
-        self.article('example', 'categories = ["Programming"]')
+    def test_reserved_and_static_route_collisions(self):
         path = self.article('collision')
-        path.write_text(path.read_text().replace('/collision/', '/category/programming/'))
-        with self.assertRaisesRegex(ValueError, 'overlaps a generated'):
-            prepare(self.root)
-        path.unlink()
-        target = self.root / 'static/example/index.html'
+        original = path.read_text()
+        for route in ('/archives/', '/search/', '/feed/', '/page/2/', '/../bad/'):
+            with self.subTest(route=route):
+                path.write_text(original.replace('/collision/', route))
+                with self.assertRaises(ValueError):
+                    read_content(self.root)
+        path.write_text(original)
+        target = self.root / 'static/collision/index.html'
         target.parent.mkdir()
         target.write_text('redirect')
         with self.assertRaisesRegex(ValueError, 'static asset'):
-            prepare(self.root)
+            read_content(self.root)
 
-    def test_failed_draft_build_cannot_be_reused(self):
+    def test_production_rebuild_clears_failed_draft_output(self):
         self.article('published')
         base_url = 'http://127.0.0.1:1111'
         build(base_url=base_url, root=self.root)
@@ -112,31 +105,49 @@ class SiteTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'validation failures'):
             build(base_url=base_url, drafts=True, root=self.root)
         self.assertTrue((self.root / 'public/draft/index.html').is_file())
-        errors = io.StringIO()
-        with patch.object(preview, 'ROOT', self.root), patch.object(sys, 'argv', ['preview.py', '--no-build']):
-            with redirect_stderr(errors), self.assertRaises(SystemExit) as stopped:
-                preview.main()
-        self.assertEqual(stopped.exception.code, 2)
-        self.assertIn('No existing build', errors.getvalue())
         build(base_url=base_url, root=self.root)
         self.assertFalse((self.root / 'public/draft').exists())
-        self.assertEqual(json.loads((self.root / '.build/context.json').read_text()),
-                         dict(base_url=base_url, drafts=False))
 
-    def test_numbered_taxonomies_and_authors_keep_paginated_routes(self):
-        for index in range(11):
-            self.article(f'foo-post-{index}', 'categories = ["foo"]\ntags = ["foo"]')
-        other = self.article('other', 'categories = ["foo-2"]\ntags = ["foo-2"]')
-        other.write_text(other.read_text().replace('author = "ivan"', 'author = "ivan-2"'))
-        build(root=self.root)
-        for prefix, slug, numbered in [('category', 'foo', 'foo-2'),
-                                       ('tag', 'foo', 'foo-2'),
-                                       ('author', 'ivan', 'ivan-2')]:
-            with self.subTest(prefix=prefix):
-                page = self.root / 'public' / prefix / slug / 'page/2/index.html'
-                self.assertIn('foo-post-', page.read_text())
-                separate = self.root / 'public' / prefix / numbered / 'index.html'
-                self.assertIn('other', separate.read_text())
+    def test_preview_always_builds_before_serving(self):
+        with patch.object(preview, 'ROOT', self.root), patch.object(sys, 'argv', ['preview.py', '--drafts']):
+            with patch.object(preview, 'build', return_value=self.root / 'public') as rebuild:
+                with patch.object(preview, 'ThreadingHTTPServer') as server:
+                    preview.main()
+                    rebuild.assert_called_once_with('http://127.0.0.1:1111', True)
+                    server.assert_called_once()
+            with patch.object(preview, 'build', side_effect=ValueError('Failed build')):
+                with patch.object(preview, 'ThreadingHTTPServer') as server:
+                    with self.assertRaisesRegex(ValueError, 'Failed build'):
+                        preview.main()
+                    server.assert_not_called()
+
+    def test_native_pagination_year_archive_and_feed(self):
+        for index in range(12):
+            article = self.article(f'post-{index:02}', 'categories = ["C++", "C#"]')
+            article.write_text(article.read_text().replace('2026-01-01', f'{2023 + index if index < 3 else 2025}-01-{index + 1:02}'))
+        self.article('latest')
+        self.article('about', kind='page')
+        self.article('draft', draft=True)
+        # Rendering works without Python preparing models or generated content.
+        subprocess.run(['zola', '--root', str(self.root), 'build'], check=True, capture_output=True)
+        from bs4 import BeautifulSoup
+        first = BeautifulSoup((self.root / 'public/index.html').read_text(), 'html.parser')
+        second = BeautifulSoup((self.root / 'public/page/2/index.html').read_text(), 'html.parser')
+        self.assertEqual(len(first.select('.post-summary')), 10)
+        self.assertEqual(len(second.select('.post-summary')), 3)
+        self.assertEqual(first.select_one('.post-summary h2').get_text(), 'latest')
+        archive = BeautifulSoup((self.root / 'public/archives/index.html').read_text(), 'html.parser')
+        self.assertEqual([h['id'] for h in archive.select('.archive-year h2')], ['2026', '2025', '2024', '2023'])
+        self.assertEqual(len(archive.select('.archive-year li')), 13)
+        self.assertNotIn('/about/', str(archive.select('.archive-year')))
+        self.assertNotIn('/draft/', str(archive))
+        for name in ('category', 'tag', 'author', '2025'):
+            self.assertFalse((self.root / 'public' / name).exists())
+        feed = ElementTree.parse(self.root / 'public/rss.xml')
+        self.assertEqual(len(feed.findall('./channel/item')), 10)
+        self.assertEqual(feed.findtext('./channel/item/title'), 'latest')
+        self.assertFalse((self.root / 'data/site.json').exists())
+        self.assertFalse((self.root / 'content/_generated').exists())
 
     def test_feed_dates_preserve_publication_instants(self):
         dates = {'positive': ('2026-01-01T00:30:00+02:00', '2025-12-31T22:30:00+00:00'),
@@ -150,45 +161,35 @@ class SiteTests(unittest.TestCase):
             article = self.article(slug, extra)
             article.write_text(article.read_text().replace('2026-01-01T12:00:00+00:00', stamp))
         build(root=self.root)
-        for route in ('rss.xml', 'feed/index.html', 'category/example/feed/index.html'):
+        for route in ('rss.xml', 'feed/index.html'):
             feed = ElementTree.parse(self.root / 'public' / route)
             actual = {item.findtext('title'): parsedate_to_datetime(item.findtext('pubDate'))
                       for item in feed.findall('./channel/item')}
             self.assertEqual(actual, {slug: datetime.fromisoformat(expected)
                                      for slug, (_, expected) in dates.items()})
 
-    def test_year_pagination_does_not_replace_october_archive(self):
-        for index in range(91):
-            self.article(f'january-{index}')
-        october = self.article('october')
-        october.write_text(october.read_text().replace('2026-01-01', '2026-10-01'))
+    def test_rendering_preserves_code_media_and_gists(self):
+        body = ('Opening.\n\n<!-- more -->\n\n```python\n'
+                'def example():\n    return "<value>"\n```\n\n'
+                '![Diagram](diagram.svg)\n\n'
+                '<script src="https://gist.github.com/example/123.js"></script>\n')
+        article = self.article('code', body=body)
+        (article.parent / 'diagram.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
         build(root=self.root)
-        yearly = (self.root / 'public/2026/page/10/index.html').read_text()
-        monthly = (self.root / 'public/2026/10/index.html').read_text()
-        self.assertIn('january-', yearly)
-        self.assertIn('october', monthly)
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup((self.root / 'public/code/index.html').read_text(), 'html.parser')
+        code = soup.select_one('pre.giallo code')
+        self.assertIsNotNone(code)
+        self.assertIn('    return "<value>"', code.get_text())
+        self.assertIsNotNone(soup.select_one('script[src="https://gist.github.com/example/123.js"]'))
+        self.assertTrue((self.root / 'public/code/diagram.svg').is_file())
+        self.assertFalse(list((self.root / 'public').rglob('123.js')))
 
-    def test_taxonomy_and_parent_validation(self):
-        self.article('example', 'tags = ["C++", "C#"]')
-        with self.assertRaisesRegex(ValueError, 'share a slug'):
-            prepare(self.root)
-        (self.root / 'data/taxonomy-slugs.json').write_text('{"tags":{"C++":"cpp","C#":"csharp"}}')
-        prepare(self.root)
-        self.article('project', 'parent = "/absent/"', kind='page')
-        with self.assertRaisesRegex(ValueError, 'Missing parent'):
-            prepare(self.root)
-
-    def test_metadata_and_generated_cleanup(self):
-        self.article('example', 'categories = ["Programming"]')
-        prepare(self.root)
-        stale = self.root / 'content/_generated/stale.md'
-        stale.write_text('stale generated route')
-        prepare(self.root)
-        self.assertFalse(stale.exists())
-        path = self.article('bad')
-        path.write_text(path.read_text().replace('/bad/', '/../bad/'))
-        with self.assertRaises(ValueError):
-            prepare(self.root)
+    def test_standalone_pages_stay_out_of_feeds(self):
+        page = self.article('about', kind='page')
+        page.write_text(page.read_text().replace('include_in_feeds = false', 'include_in_feeds = true'))
+        with self.assertRaisesRegex(ValueError, 'include_in_feeds'):
+            read_content(self.root)
 
 
 if __name__ == '__main__':

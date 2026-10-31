@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 {% block title %}{{ page.title }} | {{ config.title }}{% endblock title %}
 {% block content %}
-{% set node_key = page.extra.node_key | default(value=page.path) %}
 {% set kind = page.extra.kind | default(value="post") %}
 <article class="single {{ kind }}">
   <header class="entry-header" data-pagefind-ignore>
-    {% if kind == "post" %}{% set labels = site.labels[node_key] %}<div class="category-links">{% for term in labels.categories %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
     <h1 class="entry-title" data-pagefind-meta="title">{{ page.title }}</h1>
-    {% if kind == "post" and page.date %}<div class="entry-meta"><time datetime="{{ page.date }}">{{ page.date | date(format="%B %d, %Y") }}</time>{% if page.extra.author %} | <a href="{{ get_url(path='author/' ~ page.extra.author ~ '/') }}">{{ page.extra.author }}</a>{% endif %}</div>{% endif %}
+    {% if kind == "post" and page.date %}<div class="entry-meta"><time datetime="{{ page.date }}">{{ page.date | date(format="%B %d, %Y") }}</time>{% if page.extra.author %} | {{ page.extra.author }}{% endif %}</div>{% endif %}
   </header>
   <div class="entry-content" data-pagefind-body data-pagefind-meta="title:{{ page.title }}">
     {{ page.content | safe }}
   </div>
-  {% if kind == "post" %}<footer class="entry-footer" data-pagefind-ignore><div class="tag-links">{% for term in site.labels[node_key].tags %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% endfor %}</div></footer>
-  {% elif site.children[node_key] %}<nav class="child-pages" aria-label="Subpages" data-pagefind-ignore><ul>{% for item in site.children[node_key] %}<li><a href="{{ get_url(path=item.url) }}">{{ item.title }}</a></li>{% endfor %}</ul></nav>{% endif %}
+  {% if kind == "page" %}
+    {% for item in information.pages %}
+      {% if item.extra.parent and item.extra.parent == page.path %}<p class="child-page"><a href="{{ item.permalink }}">{{ item.title }}</a></p>{% endif %}
+    {% endfor %}
+  {% endif %}
 </article>
 {% if kind == "post" %}
-{% set neighbors = site.neighbors[node_key] %}
 <nav class="post-navigation" aria-label="Adjacent articles" data-pagefind-ignore>
-  {% if neighbors.previous %}<a rel="prev" href="{{ get_url(path=neighbors.previous.url) }}"><span>Previous post</span>{{ neighbors.previous.title }}</a>{% endif %}
-  {% if neighbors.next %}<a rel="next" href="{{ get_url(path=neighbors.next.url) }}"><span>Next post</span>{{ neighbors.next.title }}</a>{% endif %}
+  {% if page.higher %}<a rel="prev" href="{{ page.higher.permalink }}"><span>Previous post</span>{{ page.higher.title }}</a>{% endif %}
+  {% if page.lower %}<a rel="next" href="{{ page.lower.permalink }}"><span>Next post</span>{{ page.lower.title }}</a>{% endif %}
 </nav>
 {% endif %}
 {% endblock content %}

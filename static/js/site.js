@@ -8,9 +8,6 @@ if (menu) {
     document.querySelector('#mobile-menu').hidden = !open;
   });
 }
-document.querySelector('#archive-select')?.addEventListener('change', (event) => {
-  if (event.target.value) location.assign(event.target.value);
-});
 for (const table of document.querySelectorAll('.entry-content table')) {
   if (table.closest('.gist, .table-scroll')) continue;
   const wrapper = document.createElement('div');

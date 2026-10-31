@@ -70,7 +70,9 @@ li > ul, li > ol { margin-bottom: 0; }
 .pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin: 32px auto; font-size: 14px; }
 .pagination a { background: #248900; color: #fff; padding: 8px 12px; text-decoration: none; }
 .archive-title { font-weight: 700; font-size: 18px; text-transform: uppercase; padding-bottom: 18px; margin: 0 0 40px; border-bottom: 1px solid #e5e5e5; }
-.archive-months { columns: 2; }
+.archive-year h2 { scroll-margin-top: 64px; }
+.archive-year li { margin-bottom: 10px; }
+.archive-year time { display: inline-block; min-width: 58px; color: #767676; font-size: 13px; }
 .site-footer { padding: 20px 30px; background: #000; color: #aaa; font-size: 12px; }
 .site-footer a { color: #fff; }
 code { font-family: Consolas, 'Liberation Mono', monospace; }

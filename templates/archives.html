@@ -2,7 +2,10 @@
 {% block title %}Archives | {{ config.title }}{% endblock title %}
 {% block content %}
 <h1 class="entry-title">Archives</h1>
-<ul class="archive-months">{% for month in site.months %}<li><a href="{{ get_url(path=month.url) }}">{{ month.label }}</a></li>{% endfor %}</ul>
-<h2>Categories</h2><ul>{% for term in site.categories %}<li><a href="{{ get_url(path=term.url) }}">{{ term.label }}</a> ({{ term.count }})</li>{% endfor %}</ul>
-<h2>Tags</h2><div class="tag-links">{% for term in site.tags %}<a href="{{ get_url(path=term.url) }}">{{ term.label }}</a>{% endfor %}</div>
+{% for year in years | keys | sort | reverse %}
+<section class="archive-year" aria-labelledby="{{ year }}">
+  <h2 id="{{ year }}">{{ year }}</h2>
+  <ul>{% for article in years[year] %}<li><time datetime="{{ article.date }}">{{ article.date | date(format="%b %d") }}</time> <a href="{{ article.permalink }}">{{ article.title }}</a></li>{% endfor %}</ul>
+</section>
+{% endfor %}
 {% endblock content %}

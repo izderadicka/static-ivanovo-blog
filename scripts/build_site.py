@@ -7,7 +7,7 @@ import subprocess
 import sys
 import tomllib
 
-from site_content import ROOT, prepare, write_json
+from site_content import ROOT, read_content, write_json
 from validate_site import validate
 
 
@@ -27,8 +27,7 @@ def build(base_url=None, drafts=False, root=ROOT):
         raise ValueError('Set the production HTTPS base_url in zola.toml')
     zola = require_version('zola', (root / '.zola-version').read_text().strip())
     pagefind = require_version('pagefind', (root / '.pagefind-version').read_text().strip())
-    (root / '.build/context.json').unlink(missing_ok=True)
-    records, model = prepare(root, drafts)
+    records = read_content(root, drafts)
     command = [zola, '--root', str(root), 'build']
     if base_url:
         command += ['--base-url', base_url]
@@ -38,11 +37,10 @@ def build(base_url=None, drafts=False, root=ROOT):
     subprocess.run([pagefind, '--site', str(root / 'public'), '--root-selector',
                     '[data-pagefind-body]', '--include-characters', '+#:_/'], check=True)
     subprocess.run([zola, '--root', str(root), 'check', '--skip-external-links'], check=True)
-    report = validate(root, records, model, base_url or config['base_url'])
+    report = validate(root, records, base_url or config['base_url'])
     write_json(root / '.build/validation.json', report)
     if report['failures']:
         raise ValueError(f"{len(report['failures'])} validation failures; see .build/validation.json")
-    write_json(root / '.build/context.json', dict(base_url=base_url or config['base_url'], drafts=drafts))
     print(f"Validated {len(records)} articles/pages and {report['local_links']} local references.")
     return root / 'public'
 

@@ -8,7 +8,7 @@ from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 
 
-def validate(root, records, model, base_url):
+def validate(root, records, base_url):
     public = (root / 'public').resolve()
     origin = tomllib.loads((root / 'zola.toml').read_text())['base_url']
     hosts = {urlsplit(origin).hostname, urlsplit(base_url).hostname}
@@ -43,10 +43,10 @@ def validate(root, records, model, base_url):
                 failures.append(f'{route}: missing fragment {value}')
 
     expected = {urlsplit(r['url']).path for r in records}
-    for route in expected | set(model['sitemap_routes']) | {'/404.html', '/rss.xml', '/feed/'}:
+    for route in expected | {'/', '/archives/', '/search/', '/404.html', '/rss.xml', '/feed/'}:
         if not destination(route).is_file():
             failures.append(f'Missing public route: {route}')
-    allowed_posts = {urlsplit(r['url']).path for r in records if r['post_type'] == 'post'}
+    allowed_posts = {urlsplit(r['url']).path for r in records if r['post_type'] == 'post' and r['include_in_feeds']}
     actual_articles = set()
     for path in public.rglob('*'):
         if not path.is_file() or path.suffix not in ('.html', '.xml'):

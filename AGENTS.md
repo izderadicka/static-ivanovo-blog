@@ -1,42 +1,43 @@
 # Repository guidelines
 
-This is the migrated Ivanovo Zola site. The accepted WordPress snapshot is final;
-editable Markdown is authoritative. Read README.md for authoring and build behavior.
-Read docs/deployment.md before changing hosting or publishing.
+This is a simple Zola blog preserving the accepted WordPress articles and media.
+Editable Markdown is authoritative. Read README.md for authoring/build behavior
+and docs/deployment.md before changing hosting or publishing.
 
 ## Structure and conventions
 
-- Articles and standalone pages: content/posts/<descriptive-slug>/index.md, with
-  new media adjacent to the article. Preserve existing explicit public paths.
-- Templates: templates/; shared CSS, JavaScript, fonts, and historical uploads: static/.
-- Authoring/build/preview/validation tools: scripts/; synthetic regression tests: tests/.
-- Taxonomy URL overrides: data/taxonomy-slugs.json.
-- Generated, ignored output: public/, .build/, content/_generated/, data/site.json.
+- Posts: content/posts/<slug>/index.md; standalone pages: content/pages/<slug>/index.md.
+  Keep adjacent media with its page and preserve explicit public paths.
+- Zola templates own pagination, the year-grouped archive, navigation, and feeds.
+  Python supports authoring, preview, and validation; there is no generated page model.
+- Templates: templates/; CSS, JavaScript, fonts, historical uploads: static/.
+- Generated, ignored output: public/ and .build/.
 
 Use four spaces in Python, two in HTML/Tera, and match surrounding CSS/TOML style.
-Write prose in UTF-8 and use language-labelled code fences. Preserve migrated code
-whitespace, original media, WordPress IDs/GUIDs, and source dates when editing posts.
-Comments are omitted. Keep gists as remote GitHub embeds without downloading code.
+Write UTF-8 prose and language-labelled code fences. Preserve migrated code
+whitespace, original media, WordPress IDs/GUIDs, and source dates. WordPress
+comments are omitted. Keep gists as remote embeds without downloading their code.
+Standalone pages need include_in_feeds = false and extra.kind = "page".
 
 ## Verification
 
-Use python3 scripts/build_site.py for complete production builds and offline local
-link/feed validation. Use python3 scripts/preview.py --drafts for local draft review;
-restart after edits. Plain Zola commands omit archive preparation and search indexing.
+Run python3 scripts/build_site.py for production rendering, search, and offline
+link/feed validation. Use python3 scripts/preview.py --drafts for complete local
+review; restart after edits. Plain Zola rendering works but omits Pagefind and the
+Python validation checks.
 
-Run python3 -m unittest discover -s tests -v after tooling changes. Add tests for
-publication behavior, privacy, routing, or content integrity risks rather than
-mirroring implementation. Run git diff --check; preserve intentional source code
-whitespace in migrated articles. For visual changes, review desktop/mobile output
-and report checks that could not be performed.
+After tooling changes, run python3 -m unittest discover -s tests -v. Cover
+publication behavior, privacy, routing, and content integrity rather than mirroring
+implementation. Run git diff --check while preserving intentional migrated code
+whitespace. For visual changes, review desktop/mobile output and report unavailable
+checks. Docker integration tests are opt-in with RUN_DOCKER_TESTS=1.
 
 ## Publishing and commits
 
-Publish only public/. Keep credentials and private material outside the site tree.
-Production build commands exclude drafts; avoid publishing a local draft preview.
-HTTP Docker hosting is configured under deploy/; see docs/deployment.md for
-release preparation, reverse-proxy networking, reload, and rollback. Automated
-remote publishing remains unconfigured. Opt-in container tests use RUN_DOCKER_TESTS=1.
+Publish only a fresh production public/ directory. Keep credentials and private
+material outside the site tree. Hosting is a static published directory; see
+docs/deployment.md for copying files and the optional Docker server. Local draft
+previews must never be copied to the published directory.
 
-Use concise imperative commit subjects. Commit completed changes as requested by
-the owner. Explain the resulting behavior, validation, and material limitations.
+Use concise imperative commit subjects. Commit completed changes when requested.
+Explain resulting behavior, validation, and material limitations.

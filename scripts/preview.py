@@ -3,16 +3,18 @@
 import argparse
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-import json
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit
 
 from build_site import build
-from site_content import ROOT
+from site_content import ROOT, read_content
 
 
 class PreviewHandler(SimpleHTTPRequestHandler):
     routes = {}
+
+    def do_HEAD(self):
+        self.do_GET()
 
     def do_GET(self):
         url = urlsplit(self.path)
@@ -38,7 +40,10 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             self.send_header('Content-Length', '0')
             self.end_headers()
             return
-        super().do_GET()
+        if self.command == 'HEAD':
+            super().do_HEAD()
+        else:
+            super().do_GET()
 
     def guess_type(self, path):
         if urlsplit(self.path).path.rstrip('/').endswith('/feed'):
@@ -64,19 +69,10 @@ def main():
     parser.add_argument('--drafts', action='store_true', help='Include drafts for local review')
     parser.add_argument('--port', type=int, default=1111)
     parser.add_argument('--bind', default='127.0.0.1')
-    parser.add_argument('--no-build', action='store_true', help='Serve an existing indexed build')
     args = parser.parse_args()
-    if args.no_build:
-        public = ROOT / 'public'
-        context = ROOT / '.build/context.json'
-        if not (public / 'index.html').is_file() or not context.is_file():
-            parser.error('No existing build; omit --no-build')
-        built = json.loads(context.read_text())
-        if built != dict(base_url=f'http://{args.bind}:{args.port}', drafts=args.drafts):
-            parser.error('Existing build has different URLs/draft settings; omit --no-build')
-    else:
-        public = build(f'http://{args.bind}:{args.port}', args.drafts)
-    PreviewHandler.routes = json.loads((ROOT / '.build/legacy-routes.json').read_text())
+    public = build(f'http://{args.bind}:{args.port}', args.drafts)
+    PreviewHandler.routes = {str(r['wordpress_id']): urlsplit(r['url']).path
+                             for r in read_content(ROOT, args.drafts) if r['wordpress_id'] is not None}
     handler = partial(PreviewHandler, directory=str(public))
     with ThreadingHTTPServer((args.bind, args.port), handler) as server:
         print(f'Preview including search: http://{args.bind}:{args.port}', flush=True)

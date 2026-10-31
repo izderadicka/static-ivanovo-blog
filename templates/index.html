@@ -1,4 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-{{ <article_listing collection={site.collections.home} labels={site.labels} /> }}
+{% for article in paginator.pages %}
+<article class="post-summary">
+  <header class="entry-header">
+    <h2 class="entry-title"><a href="{{ article.permalink }}">{{ article.title }}</a></h2>
+    <div class="entry-meta"><time datetime="{{ article.date }}">{{ article.date | date(format="%B %d, %Y") }}</time></div>
+  </header>
+  <div class="entry-summary">
+    <p>{{ article.summary | default(value=article.content, boolean=true) | striptags | truncate(length=420) }}</p>
+    <p><a class="more-link" href="{{ article.permalink }}">Continue reading <span class="visually-hidden">{{ article.title }}</span> →</a></p>
+  </div>
+</article>
+{% endfor %}
+{% if paginator.number_pagers > 1 %}
+<nav class="pagination" aria-label="Article pages">
+  {% if paginator.previous %}<a rel="prev" href="{{ paginator.previous }}">← Newer articles</a>{% endif %}
+  <span>Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
+  {% if paginator.next %}<a rel="next" href="{{ paginator.next }}">Older articles →</a>{% endif %}
+</nav>
+{% endif %}
 {% endblock content %}

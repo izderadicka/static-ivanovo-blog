@@ -1,8 +1,6 @@
 /public/
 /.zola-cache/
 /.build/
-/content/_generated/
-/data/site.json
 /.venv/
 __pycache__/
 *.py[cod]
