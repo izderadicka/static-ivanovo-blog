@@ -27,6 +27,7 @@ def build(base_url=None, drafts=False, root=ROOT):
         raise ValueError('Set the production HTTPS base_url in zola.toml')
     zola = require_version('zola', (root / '.zola-version').read_text().strip())
     pagefind = require_version('pagefind', (root / '.pagefind-version').read_text().strip())
+    (root / '.build/context.json').unlink(missing_ok=True)
     records, model = prepare(root, drafts)
     command = [zola, '--root', str(root), 'build']
     if base_url:

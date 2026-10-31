@@ -118,15 +118,15 @@ def build_site_model(records):
         for index, chunk in enumerate(chunks):
             suffix = index + 1
             path = url if index == 0 else url + f'page/{suffix}/'
-            entry_key = key if index == 0 else key + f'-{suffix}'
+            entry_key = key if index == 0 else path
             previous = None if not index else (url if index == 1 else url + f'page/{index}/')
             next_url = url + f'page/{suffix + 1}/' if index + 1 < len(chunks) else None
             collections[entry_key] = dict(title=title, items=[cards[r['id']] for r in chunk],
                                           previous=previous, next=next_url, number=suffix, total=len(chunks), url=path)
             if path != '/':
-                generated[entry_key] = dict(title=title, path=path, template='listing.html', collection=entry_key)
+                generated[path] = dict(title=title, path=path, template='listing.html', collection=entry_key)
         if key != 'home':
-            generated['feed-' + key] = dict(title=title, path=url + 'feed/', template='feed_page.xml', collection=key)
+            generated[url + 'feed/'] = dict(title=title, path=url + 'feed/', template='feed_page.xml', collection=key)
         return collections[key]
     listing('home', 'Latest articles', '/', posts)
     for kind in ('categories', 'tags'):
