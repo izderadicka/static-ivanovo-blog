@@ -30,14 +30,14 @@
 {% for article in articles %}
 <article class="post-summary">
   <header class="entry-header">
-    {% if article.taxonomies.category %}<div class="category-links">{% for name in article.taxonomies.category %}{% set term = get_taxonomy_term(kind="category", term=name) %}<a href="{{ term.permalink }}">{{ name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
+    {% if article.taxonomies.category %}<div class="category-links">{% for name in article.taxonomies.category %}{% set term = get_taxonomy_term(kind="category", term=name) %}<a href="{{ term.permalink | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">{{ name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
     <h2 class="entry-title"><a href="{{ article.permalink }}">{{ article.title }}</a></h2>
     <div class="entry-meta"><time datetime="{{ article.date }}">{{ article.date | date(format="%B %d, %Y") }}</time></div>
   </header>
   <div class="entry-summary">
     {% set excerpt = article.summary | default(value=article.content, boolean=true) | split(pat='<span id="more-') | first %}
     {{ excerpt | replace(from='href="#', to='href="' ~ article.permalink ~ '#') | safe }}
-    {% if article.taxonomies.tag %}<div class="tag-links">{% for name in article.taxonomies.tag | sort(case_sensitive=false) %}{% set term = get_taxonomy_term(kind="tag", term=name) %}<a href="{{ term.permalink }}">{{ name }}</a>{% endfor %}</div>{% endif %}
+    {% if article.taxonomies.tag %}<div class="tag-links">{% for name in article.taxonomies.tag | sort(case_sensitive=false) %}{% set term = get_taxonomy_term(kind="tag", term=name) %}<a href="{{ term.permalink | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">{{ name }}</a>{% endfor %}</div>{% endif %}
     <p><a class="more-link" href="{{ article.permalink }}">Continue reading <span class="visually-hidden">{{ article.title }}</span> →</a></p>
   </div>
 </article>
@@ -47,9 +47,9 @@
 {% component pagination(pager) %}
 {% if pager.number_pagers > 1 %}
 <nav class="pagination" aria-label="Article pages">
-  {% if pager.previous %}<a rel="prev" href="{{ pager.previous }}">← Newer articles</a>{% endif %}
+  {% if pager.previous %}<a rel="prev" href="{{ pager.previous | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">← Newer articles</a>{% endif %}
   <span>Page {{ pager.current_index }} of {{ pager.number_pagers }}</span>
-  {% if pager.next %}<a rel="next" href="{{ pager.next }}">Older articles →</a>{% endif %}
+  {% if pager.next %}<a rel="next" href="{{ pager.next | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Older articles →</a>{% endif %}
 </nav>
 {% endif %}
 {% endcomponent %}

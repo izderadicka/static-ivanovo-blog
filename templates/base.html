@@ -32,26 +32,26 @@
       <a href="{{ get_url(path='/projects/') }}">Projects</a>
       {{ <project_tree pages={information.pages} parent={"/projects/"} /> }}
       {{ <navigation pages={information.pages} /> }}
-      {% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) }}">Categories</a>{% endif %}
-      {% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) }}">Tags</a>{% endif %}
+      {% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Categories</a>{% endif %}
+      {% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Tags</a>{% endif %}
       <a href="{{ get_url(path='/search/') }}">Search</a>
     </nav>
-    <noscript><nav class="no-script-menu" aria-label="Navigation">{{ <navigation pages={information.pages} /> }} {% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) }}">Categories</a>{% endif %} {% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) }}">Tags</a>{% endif %}</nav></noscript>
+    <noscript><nav class="no-script-menu" aria-label="Navigation">{{ <navigation pages={information.pages} /> }} {% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Categories</a>{% endif %} {% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Tags</a>{% endif %}</nav></noscript>
     <div class="site-body">
       <aside class="sidebar" data-pagefind-ignore>
         <p class="site-description">My Digital Bits And Pieces</p>
         {% if tags.items %}
         <section>
-          <h2>{% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) }}">Tags</a>{% endif %}</h2>
+          <h2>{% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Tags</a>{% endif %}</h2>
           {% set popular_tags = tags.items | sort(attribute="page_count") | reverse %}
-          <div class="tag-cloud">{% for term in popular_tags[:45] | sort(attribute="slug") %}<a style="--tag-size: {{ 12 + term.page_count / popular_tags[0].page_count * 18 }}px" href="{{ term.permalink }}">{{ term.name }}</a> {% endfor %}</div>
-          <p><a href="{{ get_url(path='/tag/', trailing_slash=true) }}">All tags →</a></p>
+          <div class="tag-cloud">{% for term in popular_tags[:45] | sort(attribute="slug") %}<a style="--tag-size: {{ 12 + term.page_count / popular_tags[0].page_count * 18 }}px" href="{{ term.permalink | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">{{ term.name }}</a> {% endfor %}</div>
+          <p><a href="{{ get_url(path='/tag/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">All tags →</a></p>
         </section>
         {% endif %}
         {% if categories.items %}
         <section>
-          <h2>{% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) }}">Categories</a>{% endif %}</h2>
-          <ul>{% for term in categories.items | sort(attribute="name", case_sensitive=false) %}<li><a href="{{ term.permalink }}">{{ term.name }}</a> <span>({{ term.page_count }})</span></li>{% endfor %}</ul>
+          <h2>{% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">Categories</a>{% endif %}</h2>
+          <ul>{% for term in categories.items | sort(attribute="name", case_sensitive=false) %}<li><a href="{{ term.permalink | replace(from=get_url(path="/", trailing_slash=true), to="/") }}">{{ term.name }}</a> <span>({{ term.page_count }})</span></li>{% endfor %}</ul>
         </section>
         {% endif %}
         <p><a href="{{ get_url(path='/archives/', trailing_slash=true) }}">Archives</a></p>

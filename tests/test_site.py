@@ -28,6 +28,9 @@ class SiteTests(unittest.TestCase):
             shutil.copytree(ROOT / name, self.root / name)
         for name in ('brand', 'css', 'fonts', 'js'):
             shutil.copytree(ROOT / 'static' / name, self.root / 'static' / name)
+        # Navigation always links to the projects landing page.
+        (self.root / 'static/projects').mkdir()
+        (self.root / 'static/projects/index.html').write_text('<h1>Projects</h1>')
         for name in ('zola.toml', '.zola-version', '.pagefind-version'):
             shutil.copy2(ROOT / name, self.root / name)
         for folder in ('posts', 'pages', 'archives', 'search'):
@@ -160,6 +163,15 @@ class SiteTests(unittest.TestCase):
         self.assertFalse(sidebar.select('a[href*="/archives/#"]'))
         self.assertNotIn('DraftOnly', sidebar.get_text())
         self.assertNotIn('DraftTag', sidebar.get_text())
+        for kind, slug in (('category', 'programming'), ('tag', 'rust')):
+            overview = BeautifulSoup((self.root / 'public' / kind / 'index.html').read_text(), 'html.parser')
+            self.assertIsNotNone(overview.select_one(f'#main a[href="/{kind}/{slug}/"]'))
+            topic = BeautifulSoup((self.root / 'public' / kind / slug / 'index.html').read_text(), 'html.parser')
+            self.assertEqual(len(topic.select('.post-summary')), 10)
+            self.assertIsNone(topic.select_one('meta[http-equiv="refresh"]'))
+            self.assertIsNotNone(topic.select_one(f'#main a[href="/{kind}/"]'))
+            self.assertIsNotNone(topic.select_one(f'.pagination a[href="/{kind}/{slug}/page/2/"]'))
+            self.assertIsNotNone(sidebar.select_one(f'a[href="/{kind}/{slug}/"]'))
         for route in ('category/programming', 'tag/rust'):
             listing = BeautifulSoup((self.root / 'public' / route / 'page/2/index.html').read_text(), 'html.parser')
             self.assertEqual(len(listing.select('.post-summary')), 2)
