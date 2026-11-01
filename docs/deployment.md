@@ -6,13 +6,17 @@ symlinks, or deployment service are needed.
 
 ```sh
 python3 scripts/build_site.py
-rsync -a --delete public/ /path/to/blog-document-root/
+scripts/publish.sh user@host:/path/to/blog-document-root/
 ```
 
 Use a directory dedicated to this blog: `--delete` removes files from the
 destination that no longer exist in `public/`. Run these commands in sequence,
-and copy only after the build succeeds. A remote destination can use rsync over
-SSH; credentials belong outside the repository. No remote destination is configured.
+and copy only after the build succeeds. `scripts/publish.sh` syncs the existing
+production build over SSH using rsync; it does not build the site. Pass the
+remote document root as its argument. The repository does not contain the live
+server's SSH host or document root, so configure SSH access in your normal SSH
+configuration and supply the destination when publishing. The script refuses
+to run if `public/index.html` is missing.
 
 Keep the last successful copy if you want a rollback; restoring it is another
 copy operation. Updates are not atomic, so visitors can briefly see mixed files
