@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/lightweight-tasks-switch-in-go-vs-rust/"
 source_guid = "http://zderadicka.eu/?p=2092"
 source_date_gmt = "2019-06-13 16:36:32"
-categories = ["Programming"]
-tags = ["Go", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Go", "Rust"]
 +++
-I've have been following this excellent book "<a href="http://pages.cs.wisc.edu/~remzi/OSTEP/">Operating Systems: Three Easy Pieces</a>" and as I've been doing a homework - measuring time of context switch and as I was looking around and found another interesting <a href="https://eli.thegreenplace.net/2018/measuring-context-switching-and-memory-overheads-for-linux-threads/">article</a> related to this topic. It also compares thread switches to switches in "Go routines" - lightweight threads in Go language. Base on these sources I'm made couple of mine own test (yes I know, all benchmarks sucks, but nevertheless they are somehow attractive (as gossips are) and somehow addictive).
+I've have been following this excellent book "[Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/)" and as I've been doing a homework - measuring time of context switch and as I was looking around and found another interesting [article](https://eli.thegreenplace.net/2018/measuring-context-switching-and-memory-overheads-for-linux-threads/) related to this topic. It also compares thread switches to switches in "Go routines" - lightweight threads in Go language. Base on these sources I'm made couple of mine own test (yes I know, all benchmarks sucks, but nevertheless they are somehow attractive (as gossips are) and somehow addictive).
 
 
 
@@ -45,7 +46,7 @@ But latter article also compared thread context switch to switch between Go rout
 
 
 
-Being a Rust fan I wondered how it would compare - in Rust we have some similar concepts (of cooperative tasks)  in <a href="https://github.com/tokio-rs/tokio">tokio</a>. So original Go benchark code was (funny highlight for Go is missing, somebody does not like Google):
+Being a Rust fan I wondered how it would compare - in Rust we have some similar concepts (of cooperative tasks)  in [tokio](https://github.com/tokio-rs/tokio). So original Go benchark code was (funny highlight for Go is missing, somebody does not like Google):
 
 
 
@@ -216,7 +217,11 @@ What we learned:
 
 
 
-<ul><li>for many small tasks,  tokio thread pool executor added some overhead so current_thread executor preformed better</li><li>Looking purely at overhead with task/routine switch (enforced by blocking channels) Go looks better </li><li>But when looking for performance, one must look for appropriate solution - channels with buffering preform much better in Rust.</li></ul>
+
+- for many small tasks,  tokio thread pool executor added some overhead so current_thread executor preformed better
+- Looking purely at overhead with task/routine switch (enforced by blocking channels) Go looks better
+- But when looking for performance, one must look for appropriate solution - channels with buffering preform much better in Rust.
+
 
 
 

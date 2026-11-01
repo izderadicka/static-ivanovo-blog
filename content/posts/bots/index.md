@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/bots/"
 source_guid = "http://zderadicka.eu/?p=2344"
 source_date_gmt = "2025-09-06 11:25:48"
-categories = ["Uncategorized"]
-tags = ["bots", "network"]
+[taxonomies]
+category = ["Uncategorized"]
+tag = ["bots", "network"]
 +++
 Looking into access logs of this blog,  that bots are quite active:<br/>
 

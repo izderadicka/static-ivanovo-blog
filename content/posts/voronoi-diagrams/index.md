@@ -11,16 +11,17 @@ author = "admin"
 source_url = "http://zderadicka.eu/voronoi-diagrams/"
 source_guid = "http://zderadicka.eu/?p=656"
 source_date_gmt = "2013-11-14 14:18:46"
-categories = ["Mathematic", "Programming"]
-tags = ["geometry", "python"]
+[taxonomies]
+category = ["Mathematic", "Programming"]
+tag = ["geometry", "python"]
 +++
-Some time ago I was looking for an algorithms that can generate a 'map like' like pictures -  e.g. tessellation of a plane into set of more or less random polygons.    I found <a href="http://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi diagrams</a> \-   which give very nice pictures and have many useful properties.
+Some time ago I was looking for an algorithms that can generate a 'map like' like pictures -  e.g. tessellation of a plane into set of more or less random polygons.    I found [Voronoi diagrams](http://en.wikipedia.org/wiki/Voronoi_diagram) \-   which give very nice pictures and have many useful properties.
 Most common case of Voronoi diagram is known in  an Euclidean plane,   where we have a set of points (call seeds) then Voronoi  diagram splits the plane into areas - called Voronoi cells - around each seed,   where inside each area any point is closer to that seed then to any other.   Areas are then convex polygons (for Euclidean metric). This definition is best illustrated on the picture below - the Voronoi diagram for 100 random points in range 0-100 - Voronoi cells are marked by red lines, blue points are seeds:
 
 <a href="/wp-content/uploads/voro-100.png"><img alt="voro-100" class="alignnone size-full wp-image-660" decoding="async" height="612" loading="eager" sizes="(max-width: 812px) 100vw, 812px" src="/wp-content/uploads/voro-100.png" srcset="/wp-content/uploads/voro-100.png 812w, /wp-content/uploads/voro-100-300x226.png 300w" width="812"/></a>
-<span id="more-656"></span>To play with Voronoi diagrams  we can use python - recent version of <a href="http://www.scipy.org/">scipy</a>  already contains function for calculating Voronoi diagram (see later).   But we can use duality of Voronoi diagram to <a href="http://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay triangulation</a>. Both scipy and <a href="http://matplotlib.org/">matplotlib</a>   contain   functions for Delaunay triangulation. From a given triangulation we can get Voronoi diagram, if we connect centers  of  circumcircles  of each triangle through edges of adjacent triangles.  Also there is a pure python implementation of <a href="http://en.wikipedia.org/wiki/Fortune%27s_algorithm">Fortune algorithm</a> available on web <a href="http://svn.osgeo.org/qgis/trunk/qgis/python/plugins/fTools/tools/voronoi.py">here</a>.
+<span id="more-656"></span>To play with Voronoi diagrams  we can use python - recent version of [scipy](http://www.scipy.org/)  already contains function for calculating Voronoi diagram (see later).   But we can use duality of Voronoi diagram to [Delaunay triangulation](http://en.wikipedia.org/wiki/Delaunay_triangulation). Both scipy and [matplotlib](http://matplotlib.org/)   contain   functions for Delaunay triangulation. From a given triangulation we can get Voronoi diagram, if we connect centers  of  circumcircles  of each triangle through edges of adjacent triangles.  Also there is a pure python implementation of [Fortune algorithm](http://en.wikipedia.org/wiki/Fortune%27s_algorithm) available on web [here](http://svn.osgeo.org/qgis/trunk/qgis/python/plugins/fTools/tools/voronoi.py).
 
-Below is the code for calculation Voronoi diagram using Delaunay triangulation function in matplotlib and using <a href="http://www.numpy.org/">numpy</a> for numerical calculations:
+Below is the code for calculation Voronoi diagram using Delaunay triangulation function in matplotlib and using [numpy](http://www.numpy.org/) for numerical calculations:
 
 
 ```python
@@ -132,7 +133,7 @@ Pictures below illustrateshow Voronoi diagram is created from triangulation - �
 
 
 
-As already said  there is also function <a href="http://docs.scipy.org/doc/scipy-0.16.1/reference/generated/scipy.spatial.Voronoi.html">scipy.spatial.Voronoi</a>, which returns directly vertices and edges of Voronoi diagram. Generally this function is faster then our example above (app. 2 - 3 times) - below is code that also calculates missing edges (leading to infinity)  and  limits picture to a bounding box ( similar to previous example):
+As already said  there is also function [scipy.spatial.Voronoi](http://docs.scipy.org/doc/scipy-0.16.1/reference/generated/scipy.spatial.Voronoi.html), which returns directly vertices and edges of Voronoi diagram. Generally this function is faster then our example above (app. 2 - 3 times) - below is code that also calculates missing edges (leading to infinity)  and  limits picture to a bounding box ( similar to previous example):
 
 
 ```python

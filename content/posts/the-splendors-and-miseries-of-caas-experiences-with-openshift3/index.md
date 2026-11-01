@@ -11,26 +11,27 @@ author = "admin"
 source_url = "http://zderadicka.eu/the-splendors-and-miseries-of-caas-experiences-with-openshift3/"
 source_guid = "http://zderadicka.eu/?p=1702"
 source_date_gmt = "2017-09-26 15:35:01"
-categories = ["Admin", "Tools"]
-tags = ["docker", "kubernetes", "openshift3"]
+[taxonomies]
+category = ["Admin", "Tools"]
+tag = ["docker", "kubernetes", "openshift3"]
 +++
-Container as a Service (CaaS) is increasingly popular cloud service (usually categorized under Platform as a Service family of cloud services). It can provide easy ways how to deploy web applications leveraging Linux container technologies usually most popular <a href="https://www.docker.com/">Docker</a> containers.  Recent addition to this family is Openshift v3 from <a href="https://www.redhat.com">RedHat</a>.   Openshift is available as an open source  software (<a href="https://www.openshift.org/">Openshift Origin</a>) or as a hosted service (<a href="https://www.openshift.com/">OpenShift Online</a>).  I already used previous version of Openshift service (v2), as described in <a href="/openshift-second-thoughts/">my previous article</a>. In this article I'll share my recent experiences with Openshift v3 service (also called NextGen).<span id="more-1702"></span>
+Container as a Service (CaaS) is increasingly popular cloud service (usually categorized under Platform as a Service family of cloud services). It can provide easy ways how to deploy web applications leveraging Linux container technologies usually most popular [Docker](https://www.docker.com/) containers.  Recent addition to this family is Openshift v3 from [RedHat](https://www.redhat.com).   Openshift is available as an open source  software ([Openshift Origin](https://www.openshift.org/)) or as a hosted service ([OpenShift Online](https://www.openshift.com/)).  I already used previous version of Openshift service (v2), as described in [my previous article](/openshift-second-thoughts/). In this article I'll share my recent experiences with Openshift v3 service (also called NextGen).<span id="more-1702"></span>
 
 
 ## Openshift NextGen Generally
 
 
-Epithet NextGen was probably given to stress that new version of Openshift is radically different form the previous version. That's absolutely true, while previous version was basically proprietary solution, NextGen is based on more common technologies - Docker and <a href="https://kubernetes.io/">Kubernetes</a> particularly,  so one can expect to enjoy all goodies of Docker ecosystem. Apart of basic support to run Docker containers, Openshift provides a set of PaaS services, based on pre-configured templates for most common web application technologies (Node.js, Python WSGI, Java  Servlets, PHP, ...) and Continuous Integration & Deployment (<a href="https://jenkins.io/">Jenkins </a>pipelines , or more simple Openshift "Source to Image(S2I)" build, which is described later).
+Epithet NextGen was probably given to stress that new version of Openshift is radically different form the previous version. That's absolutely true, while previous version was basically proprietary solution, NextGen is based on more common technologies - Docker and [Kubernetes](https://kubernetes.io/) particularly,  so one can expect to enjoy all goodies of Docker ecosystem. Apart of basic support to run Docker containers, Openshift provides a set of PaaS services, based on pre-configured templates for most common web application technologies (Node.js, Python WSGI, Java  Servlets, PHP, ...) and Continuous Integration & Deployment ([Jenkins ](https://jenkins.io/)pipelines , or more simple Openshift "Source to Image(S2I)" build, which is described later).
 
-Currently Openshift Online is offered in two variants Starter(free, but limited to 1GB memory and 2 virtual CPUs and forced hibernation of containers) and Pro. But you can easily test Openshift also locally on you computer with <a href="https://github.com/minishift/minishift">Minishift </a>or run Openshift locally in Docker container.  I found Minishift  particularly useful, when I played with it.
+Currently Openshift Online is offered in two variants Starter(free, but limited to 1GB memory and 2 virtual CPUs and forced hibernation of containers) and Pro. But you can easily test Openshift also locally on you computer with [Minishift ](https://github.com/minishift/minishift)or run Openshift locally in Docker container.  I found Minishift  particularly useful, when I played with it.
 
-Basic unit of deployment in Openshift is a <strong>pod</strong>, which contains one or more Docker containers, which run together. Pod is then abstracted as a <strong>sevice.</strong> Service can run several pod instances load balanced (through <a href="http://www.haproxy.org/">HAProxy</a>) - e.g. service enables horizontal scaling of pods.
+Basic unit of deployment in Openshift is a **pod**, which contains one or more Docker containers, which run together. Pod is then abstracted as a **sevice.** Service can run several pod instances load balanced (through [HAProxy](http://www.haproxy.org/)) - e.g. service enables horizontal scaling of pods.
 
 There are many possibilities how to get Docker images to be run in pods:
 
 
 <ul>
-<li>Easiest way is to use existing image available in some registry ( e.g. Docker Hub).  Such image can be imported into Openshift as an <strong>image-stream</strong>, which is then deployed in a pod using defined <strong>deployment</strong> configuration (memory, cpus, volumes, environment variables, ...). But not every docker image will run in Openshift out of hand, there are some limitations of which I'll speak later.</li>
+<li>Easiest way is to use existing image available in some registry ( e.g. Docker Hub).  Such image can be imported into Openshift as an **image-stream**, which is then deployed in a pod using defined **deployment** configuration (memory, cpus, volumes, environment variables, ...). But not every docker image will run in Openshift out of hand, there are some limitations of which I'll speak later.</li>
 <li>Build an image and then deploy it. Openshift is quite flexible in ways how to create new image:
 <ul>
 <li>Dockerfile build -  use 'classic' docker build from Dockerfile</li>
@@ -44,7 +45,7 @@ There are many possibilities how to get Docker images to be run in pods:
 
 Openshift can be managed either from web UI or console application `oc`. Both require a bit of understanding of Openshift architecture to get started with them.
 
-Openshift has a <a href="https://docs.openshift.org/latest/welcome/index.html">good documentation</a>, so I refer reader to it for details.
+Openshift has a [good documentation](https://docs.openshift.org/latest/welcome/index.html), so I refer reader to it for details.
 
 
 ## Deploying Apps from Docker Image
@@ -56,20 +57,20 @@ b) have it running there reliably and securely
 c) scale easily as traffic grows (ideally automatically within some given limits)
 d) have possibility to update it easily and instantly (possibly automatically)
 
-I did have a couple of applications, that did run locally in Docker container, so I was quite exited that I can easily just push the existing Docker images to Openshift and they will happily run there forever.  Unfortunately ( or maybe fortunately because I did learn  quite few things) it was naive expectation and it was not so straightforward. Locally in my containers I did not care very much about security, so all apps run as root in local containers. But Openshift is much more careful, not only that you cannot run containers as root, but basically they are run <a href="https://docs.openshift.org/latest/creating_images/guidelines.html#openshift-origin-specific-guidelines">with arbitrary uid</a>.  So basically it meant for me to rewrite completely Docker files. And I needed quite a few iterations to finds where access rights can cause problem for arbitrary user. For these experiments Minishift was quite valuable as I can quickly push images to it (enable access to Minishift Docker registry as <a href="https://github.com/minishift/minishift/blob/master/docs/source/openshift/openshift-docker-registry.adoc">described here</a>).
+I did have a couple of applications, that did run locally in Docker container, so I was quite exited that I can easily just push the existing Docker images to Openshift and they will happily run there forever.  Unfortunately ( or maybe fortunately because I did learn  quite few things) it was naive expectation and it was not so straightforward. Locally in my containers I did not care very much about security, so all apps run as root in local containers. But Openshift is much more careful, not only that you cannot run containers as root, but basically they are run [with arbitrary uid](https://docs.openshift.org/latest/creating_images/guidelines.html#openshift-origin-specific-guidelines).  So basically it meant for me to rewrite completely Docker files. And I needed quite a few iterations to finds where access rights can cause problem for arbitrary user. For these experiments Minishift was quite valuable as I can quickly push images to it (enable access to Minishift Docker registry as [described here](https://github.com/minishift/minishift/blob/master/docs/source/openshift/openshift-docker-registry.adoc)).
 
 So my recommended flow for preparing images for Openshift is:
 
 
-<ol>
-<li>Create and image that runs as non-root user and test it in local Docker</li>
-<li>Now run it  as arbitrary user (random uid and 0 as guid) - fix any access issues</li>
-<li>Optionally test locally in Minishift</li>
-<li>Deploy to Openshift</li>
-</ol>
+
+1. Create and image that runs as non-root user and test it in local Docker
+1. Now run it  as arbitrary user (random uid and 0 as guid) - fix any access issues
+1. Optionally test locally in Minishift
+1. Deploy to Openshift
 
 
-Most resistant to run as arbitrary user was <a href="https://www.postgresql.org/">Postgresql</a> ( Openshift has it's own great image for Postgresql, but unfortunately it's missing <a href="http://postgis.net/">Postgis</a>, which one of my applications required, so no shortcut here either).
+
+Most resistant to run as arbitrary user was [Postgresql](https://www.postgresql.org/) ( Openshift has it's own great image for Postgresql, but unfortunately it's missing [Postgis](http://postgis.net/), which one of my applications required, so no shortcut here either).
 
 Concerning application updates Openshift deployment is updated automatically when new images is available (in image-stream, for remote repository it means triggering update of the image-stream) . Default is rolling deployment -   olds pods continue running until new pods are ready to take over, then old pods are deleted. If deployment fails it can be rolled out to previous working deployment.
 
@@ -81,7 +82,7 @@ Openshift also provides manual and automatic scaling - by adding pods to service
 
 Building and deploying apps from source works great for "standard" applications (like Python Flask)  with already available "Source to Image" builders or templates.  In this case new deployment means just linking git repository to appropriate builder (with Add to project in web UI or `oc new-app builder_image~repo_url`). In my case none of  my applications was "standard" so pre-built Docker images were easiest approach (although I thing I could make my python app to build and run with default S2I builder image with some more tweaking).
 
-If default S2I builders are not enough (for instance we do not have one for Rust), we can relatively easily create our own, which I have done here as an exercise for my <a href="/in-rust-we-trust/">toy Rust application</a> .
+If default S2I builders are not enough (for instance we do not have one for Rust), we can relatively easily create our own, which I have done here as an exercise for my [toy Rust application](/in-rust-we-trust/) .
 
 S2I build is running these steps (bit simplified):
 

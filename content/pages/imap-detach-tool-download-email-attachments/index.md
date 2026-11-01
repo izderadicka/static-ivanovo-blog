@@ -14,15 +14,15 @@ source_date_gmt = "2015-11-21 07:47:09"
 menu_order = 0
 parent = "/projects/python/"
 +++
-<strong>imap_detach </strong>is a command line tool, which enables you to automatically download email attachments (or particular email parts) from your mailbox  via IMAP protocol.  The tool is fairly universal and can be used with various IMAP servers for various tasks. The tool is written in <a href="https://www.python.org/">Python</a>.
+<strong>imap_detach </strong>is a command line tool, which enables you to automatically download email attachments (or particular email parts) from your mailbox  via IMAP protocol.  The tool is fairly universal and can be used with various IMAP servers for various tasks. The tool is written in [Python](https://www.python.org/).
 
 
 ## How it works
 
 
-To work efficiently with this tool you need at least basic understanding of two email technologies <a href="https://en.wikipedia.org/wiki/MIME">MIME</a>  and <a href="https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol">IMAP</a>.
+To work efficiently with this tool you need at least basic understanding of two email technologies [MIME](https://en.wikipedia.org/wiki/MIME)  and [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol).
 
-MIME defines structure of an email message and it enables the message to have multiple parts. The message and each of its parts have a header, which defines it's type (`Content-type` field in the header) and how it's attached to the message (`Content-disposition` field in the header, which also defines file name of the attachment).  Content type defines media type within particular message part - for message text it can be `text/plain` or `text/html`, for PDF document it's `application/pdf`,  for PNG image it's `image/png` etc.  Content type consists from two parts: type and subtype, separated by slash. Content types are registered by <a href="http://www.iana.org/">IANA</a> for every possible media type. List of all content types is <a href="http://www.iana.org/assignments/media-types/media-types.xhtml">here</a>.
+MIME defines structure of an email message and it enables the message to have multiple parts. The message and each of its parts have a header, which defines it's type (`Content-type` field in the header) and how it's attached to the message (`Content-disposition` field in the header, which also defines file name of the attachment).  Content type defines media type within particular message part - for message text it can be `text/plain` or `text/html`, for PDF document it's `application/pdf`,  for PNG image it's `image/png` etc.  Content type consists from two parts: type and subtype, separated by slash. Content types are registered by [IANA](http://www.iana.org/) for every possible media type. List of all content types is [here](http://www.iana.org/assignments/media-types/media-types.xhtml).
 
 Email message following MIME standard can have multiple parts, which can be nested, so message parts form a tree structure. For the purpose of parts nesting MIME defines special content types - `multipart`.  Below is a sample MIME message structure:
 
@@ -39,22 +39,22 @@ This expression basically says - get me all attached PDF files, which were sent 
 And this is our formula how to get relevant attachments / message parts using the filter expression:
 
 
-<ol>
-<li>Convert filter expression into IMAP search keywords. However IMAP search is less powerful then our expressions, especially many servers cannot search on part attributes like content type, file name etc.   So IMAP search can only provide a superset of messages we are interested in.  For our sample filter expression above IMAP search will look like (NOT SEEN FROM "john.doe") - so it provides message IDs for all unseen messages from john.doe.</li>
-<li>For all messages identified by IMAP search we download message structure (BODYSTRUCTURE), which provides necessary details about message parts</li>
-<li>Use filter expression again for all parts - now we have all details to identify relevant parts - for our sample expression we select just PDF attachments.</li>
-<li>Download all matching parts.</li>
-<li>Optionally for processed messages we can do some IMAP actions on the message - like delete it, move to other folder or mark is as seen.</li>
-</ol>
+
+1. Convert filter expression into IMAP search keywords. However IMAP search is less powerful then our expressions, especially many servers cannot search on part attributes like content type, file name etc.   So IMAP search can only provide a superset of messages we are interested in.  For our sample filter expression above IMAP search will look like (NOT SEEN FROM "john.doe") - so it provides message IDs for all unseen messages from john.doe.
+1. For all messages identified by IMAP search we download message structure (BODYSTRUCTURE), which provides necessary details about message parts
+1. Use filter expression again for all parts - now we have all details to identify relevant parts - for our sample expression we select just PDF attachments.
+1. Download all matching parts.
+1. Optionally for processed messages we can do some IMAP actions on the message - like delete it, move to other folder or mark is as seen.
 
 
-It has to be understood that compliance level of various IMAP server implementations differs -  our tool has been tested mostly against <a href="http://www.dovecot.org/">dovecot</a> \- which provides <a href="http://imapwiki.org/ImapTest/ServerStatus">best IMAPv4 compliance level</a>.  From tests with other servers we saw some differentness  ( for instance Gmail subject search works only for full words). It's left to users to explore peculiarities of particular IMAP server.  And you are always welcomed to <a href="https://github.com/izderadicka/imap_detach/issues">log issue on github</a>.
+
+It has to be understood that compliance level of various IMAP server implementations differs -  our tool has been tested mostly against [dovecot](http://www.dovecot.org/) \- which provides [best IMAPv4 compliance level](http://imapwiki.org/ImapTest/ServerStatus).  From tests with other servers we saw some differentness  ( for instance Gmail subject search works only for full words). It's left to users to explore peculiarities of particular IMAP server.  And you are always welcomed to [log issue on github](https://github.com/izderadicka/imap_detach/issues).
 
 
 ## Usage
 
 
-<strong>Warning: If used with some arguments (--delete, --move) it can significantly modify your mailbox - so be careful!</strong>
+**Warning: If used with some arguments (--delete, --move) it can significantly modify your mailbox - so be careful!**
 
 Commad to run is called detach.py,   `detach.py -h` will show help message - for convenience help is shown in next section.
 
@@ -66,7 +66,7 @@ If you specify `--threads x`,  download of emails parts  runs in x separate th
 
 `filter` argument specifies a logical expression, which identifies message parts that are to be downloaded. Expression consist of literals, comparisons, variables and logical operators.
 
-<strong>Literals</strong>:
+**Literals**:
 
 
 <div class="table-scroll" tabindex="0" role="region" aria-label="Reference table"><table style="height: 35px;" width="877">
@@ -95,7 +95,7 @@ If you specify `--threads x`,  download of emails parts  runs in x separate th
 </table></div>
 
 
-<strong> Comparisons (variable operator literal):</strong>
+** Comparisons (variable operator literal):**
 
 
 <div class="table-scroll" tabindex="0" role="region" aria-label="Reference table"><table>
@@ -294,7 +294,7 @@ If you specify `--threads x`,  download of emails parts  runs in x separate th
 </table></div>
 
 
-<strong>Logical operators:</strong>
+**Logical operators:**
 
 Simple expressions (comparisons or standalone boolean variables)  can be combined by logical operators:
 ! - not
@@ -358,7 +358,7 @@ To follow the progress of the tool and debug potential issues several other argu
 ## Help
 
 
-<strong>detach.py -h</strong>
+**detach.py -h**
 
 
 ```sh
@@ -414,13 +414,13 @@ Additional variables for command: file_name file_base_name file_dir
 ## License
 
 
-<a href="http://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3 (GPLv3)</a>
+[GNU General Public License v3 (GPLv3)](http://www.gnu.org/licenses/gpl-3.0.en.html)
 
 
 ## Download
 
 
-Download <a href="https://github.com/izderadicka/imap_detach">source from github</a>.
+Download [source from github](https://github.com/izderadicka/imap_detach).
 
 Install with pip:
 
@@ -435,6 +435,6 @@ pip install imap_detach
 ## Support
 
 
-Have a problem with tool? The best solution is go tothe  code and fix it yourself. Then send pull request to <a href="https://github.com/izderadicka/imap_detach/">github</a>.  By this you'll assure that it's fixed and you can also help others.
+Have a problem with tool? The best solution is go tothe  code and fix it yourself. Then send pull request to [github](https://github.com/izderadicka/imap_detach/).  By this you'll assure that it's fixed and you can also help others.
 
-If you cannot fix it you are welcomed to <a href="https://github.com/izderadicka/imap_detach/issues">post issue on github project pages</a>.
+If you cannot fix it you are welcomed to [post issue on github project pages](https://github.com/izderadicka/imap_detach/issues).

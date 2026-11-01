@@ -11,7 +11,8 @@ author = "admin"
 source_url = "http://zderadicka.eu/networkmanager-script-to-set-http-proxy/"
 source_guid = "http://zderadicka.eu/?p=1475"
 source_date_gmt = "2016-10-27 12:35:08"
-categories = ["Admin"]
+[taxonomies]
+category = ["Admin"]
 +++
 While Gnome and it's derivatives support automatic proxy detection,  it do not work well for all programs, particularly for command line programs.   I've found  that using simple script in /etc/NetworkManager/dispatcher.d works better for me, which sets and unsets fixed proxy works better.   NM dispatcher scripts are run each time network connections change (network up, down, VPN connect etc.) and received two parameters ( interface name and status) and bunch of environment variables.<span id="more-1475"></span>
 

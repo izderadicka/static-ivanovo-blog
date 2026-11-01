@@ -14,9 +14,9 @@ source_date_gmt = "2014-01-02 14:55:58"
 menu_order = 0
 parent = "/projects/python/"
 +++
-MyPlaces is a project that enables to present collections of places (POIs - Points of Interest) on a map.   Project utilizes open map services and data from <a href="http://www.openstreetmap.org">OpenStreetMap</a> project  and builds upon them.   MyPlaces themselves are written in Python leveraging many available open source  packages and libraries.  Postgresql and Postgis are used to store and access data..  This project is a result on my explorations into world of GIS and online maps technologies.
+MyPlaces is a project that enables to present collections of places (POIs - Points of Interest) on a map.   Project utilizes open map services and data from [OpenStreetMap](http://www.openstreetmap.org) project  and builds upon them.   MyPlaces themselves are written in Python leveraging many available open source  packages and libraries.  Postgresql and Postgis are used to store and access data..  This project is a result on my explorations into world of GIS and online maps technologies.
 
-<strong>Current MyPlaces version is running as a free service at <a href="http://myplaces.zderadicka.eu">http://myplaces.zderadicka.eu</a>. </strong>(retry couple times if you get 503 error because container might be down)<strong>
+**Current MyPlaces version is running as a free service at [http://myplaces.zderadicka.eu](http://myplaces.zderadicka.eu). **(retry couple times if you get 503 error because container might be down)<strong>
 </strong>
 
 
@@ -76,5 +76,5 @@ MyPlaces can now:
 ## Download and Source
 
 
-All source code is <a href="https://github.com/izderadicka/myplaces">available at github</a>.  Check details there for download and installation.
+All source code is [available at github](https://github.com/izderadicka/myplaces).  Check details there for download and installation.
 (under BSD license)

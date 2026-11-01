@@ -11,12 +11,13 @@ author = "admin"
 source_url = "http://zderadicka.eu/accesing-oracle-from-python-with-proper-unicode-support/"
 source_guid = "http://zderadicka.eu/?p=970"
 source_date_gmt = "2015-01-02 19:18:02"
-categories = ["Admin"]
-tags = ["oracle", "python"]
+[taxonomies]
+category = ["Admin"]
+tag = ["oracle", "python"]
 +++
 It's not obvious to set it right, so I'm putting some notes here:
 
-Installation is described <a href="http://csgeek-random.blogspot.co.uk/2013/04/installing-python-cxoracle-on-ubuntu.html">here</a>.
+Installation is described [here](http://csgeek-random.blogspot.co.uk/2013/04/installing-python-cxoracle-on-ubuntu.html).
 Few comments:
 
 
@@ -27,7 +28,7 @@ Few comments:
 </ul>
 
 
-The <strong>crucial step</strong> not mentioned in the installation guide is  to set <a href="http://docs.oracle.com/cd/E11882_01/server.112/e10729/ch3globenv.htm#i1006280"><strong>NLS_LANG</strong></a> environment variable - this should be in the environment of your python program using cx\_oracle.  So for instance for Flask+SQLAlchemy you can have:
+The **crucial step** not mentioned in the installation guide is  to set <a href="http://docs.oracle.com/cd/E11882_01/server.112/e10729/ch3globenv.htm#i1006280"><strong>NLS_LANG</strong></a> environment variable - this should be in the environment of your python program using cx\_oracle.  So for instance for Flask+SQLAlchemy you can have:
 
 
 ```python

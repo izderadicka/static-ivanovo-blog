@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/running-uwsgi-for-gevent-enabled-application/"
 source_guid = "http://zderadicka.eu/?p=836"
 source_date_gmt = "2014-08-21 09:05:31"
-categories = ["Admin", "Programming"]
-tags = ["gevent", "python"]
+[taxonomies]
+category = ["Admin", "Programming"]
+tag = ["gevent", "python"]
 +++
-<a href="http://www.gevent.org/">Gevent</a> is a great library that uses <a href="http://greenlet.readthedocs.org/en/latest/">greenlets</a> (a Python co-routine library) to enable asynchronous I/O, while providing  API that looks like normal synchronous API, so it's  easier to use and understand.  The async magic is done automatically by Gevent, which is running an event loop on background and switching between coroutines as necessary.
+[Gevent](http://www.gevent.org/) is a great library that uses [greenlets](http://greenlet.readthedocs.org/en/latest/) (a Python co-routine library) to enable asynchronous I/O, while providing  API that looks like normal synchronous API, so it's  easier to use and understand.  The async magic is done automatically by Gevent, which is running an event loop on background and switching between coroutines as necessary.
 
 This approach can be very useful for concurrent applications, which spend a lot of time in waiting for I/O.  Like web applications - so Gevent is popular there.  For certain type of workloads it can be quite useful - it can enable higher concurrency,  while using less resources (greenlet is much lighter then thread or  process).<span id="more-836"></span>
 
@@ -22,7 +23,7 @@ Another cool thing in Gevent is so called 'monkey patching'  -  basically you 
 
 Recently I've created a small web application that serves as a front-end to command line program. Basically it uploads a file, then runs the program with appropriate parameters, reads its output and presents it on web page.  Clearly this web application will spend most of its time waiting for program output.  So it seems as overhead to have additional threads and processes just to enable concurrency of web access.
 
-In python <a href="http://wsgi.readthedocs.org/en/latest/">WSGI</a> specification defines how web application should interact  with HTTP gateway - there are several good implementations of WSGI servers,  I've read particularly good references for <a href="https://uwsgi-docs.readthedocs.org/en/latest/">uWSGI</a>, so I decided to try in this project,  together with its Gevent support (which is available in recent versions).
+In python [WSGI](http://wsgi.readthedocs.org/en/latest/) specification defines how web application should interact  with HTTP gateway - there are several good implementations of WSGI servers,  I've read particularly good references for [uWSGI](https://uwsgi-docs.readthedocs.org/en/latest/), so I decided to try in this project,  together with its Gevent support (which is available in recent versions).
 
 Gevent and uWSGI can be easily installed via:
 

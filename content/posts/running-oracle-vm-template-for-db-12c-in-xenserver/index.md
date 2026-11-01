@@ -11,14 +11,15 @@ author = "admin"
 source_url = "http://zderadicka.eu/running-oracle-vm-template-for-db-12c-in-xenserver/"
 source_guid = "http://zderadicka.eu/?p=946"
 source_date_gmt = "2015-01-08 09:39:56"
-categories = ["Admin"]
-tags = ["Oracle 12c", "XenServer"]
+[taxonomies]
+category = ["Admin"]
+tag = ["Oracle 12c", "XenServer"]
 +++
 As many may know Oracle VM Server is based on Xen hypervisor so it's possible to run VMs prepared for Oracle VM on other Xen based solutions like XenServer or OCP.  Main difference is management of VMs - Oracle VM is using xm, while recent XenServer is using newer xapi stack.  But paravirtualized Linux kernels can run easily on both.
 
-Oracle is providing <a href="http://www.oracle.com/technetwork/server-storage/vm/database-templates-12c-11gr2-1972804.html">VM templates</a> with many of it's key products - like for instance new Oracle 12c database.   In this article we will show how to run Oracle 12c Database VM template on XenServer 6.2.<span id="more-946"></span>
+Oracle is providing [VM templates](http://www.oracle.com/technetwork/server-storage/vm/database-templates-12c-11gr2-1972804.html) with many of it's key products - like for instance new Oracle 12c database.   In this article we will show how to run Oracle 12c Database VM template on XenServer 6.2.<span id="more-946"></span>
 
-First <strong>a warning</strong> \-  this is not officially supported configuration, so if you are looking for safety and support follow official guidelines.
+First **a warning** \-  this is not officially supported configuration, so if you are looking for safety and support follow official guidelines.
 
 Connect to DOM0 on your XenServer and run following commands (assuming that you unzipped OVM template to NFS location some\_server:/)
 
@@ -43,9 +44,9 @@ xe vdi-import uuid=c99e5328-729a-44fa-b0e3-5a04fa46c8b7 filename=/mnt/oracle12/O
 
 
 This should give you a VM ready to be started.
-Start VM in XenServer management (XenCenter, <a href="https://github.com/OpenXenManager/openxenmanager">OXM</a>, <a href="https://xen-orchestra.com/">Xen Orchestra</a> or whatever management solution you are using) and go to console.
+Start VM in XenServer management (XenCenter, [OXM](https://github.com/OpenXenManager/openxenmanager), [Xen Orchestra](https://xen-orchestra.com/) or whatever management solution you are using) and go to console.
 
-VM  starts with some configuration questionnaire,   first just type enter on any initial inputs, then you need to answer <strong>yes</strong> to question:  <em>"Do you want to access the 2-node RAC interview on console ?"</em> and  then on first next question (prepare to wait a bit before it occurs) type <strong>OUT</strong>. This  ends configuration script and gets you to console login.
+VM  starts with some configuration questionnaire,   first just type enter on any initial inputs, then you need to answer **yes** to question:  *"Do you want to access the 2-node RAC interview on console ?"* and  then on first next question (prepare to wait a bit before it occurs) type **OUT**. This  ends configuration script and gets you to console login.
 
 Login as root:ovsroot  and then do following command:
 
@@ -73,7 +74,7 @@ vi params.ini
 
 And now you should have running single instance Oracle 12c database.
 
-It's good to apply latest patches - easiest way is to get latest patch set update (PSU).  <a href="http://www.oradba.ch/2013/08/how-to-find-latest-oracle-database-patchset/">This article</a> describes how to find latest PSUs.
+It's good to apply latest patches - easiest way is to get latest patch set update (PSU).  [This article](http://www.oradba.ch/2013/08/how-to-find-latest-oracle-database-patchset/) describes how to find latest PSUs.
 
 Before application of patches upgrade OPatch to latest version (download latest OPatch from Oracle support):
 

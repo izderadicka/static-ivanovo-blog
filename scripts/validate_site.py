@@ -8,8 +8,8 @@ from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 
 
-def validate(root, records, base_url):
-    public = (root / 'public').resolve()
+def validate(root, records, base_url, public=None):
+    public = (public or root / 'public').resolve()
     origin = tomllib.loads((root / 'zola.toml').read_text())['base_url']
     hosts = {urlsplit(origin).hostname, urlsplit(base_url).hostname}
     failures, checked, feeds = [], 0, 0

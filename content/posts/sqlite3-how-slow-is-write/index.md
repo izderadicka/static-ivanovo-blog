@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/sqlite3-how-slow-is-write/"
 source_guid = "http://zderadicka.eu/?p=1954"
 source_date_gmt = "2018-10-23 12:58:13"
-categories = ["Programming"]
-tags = ["Rust", "sqlite3"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Rust", "sqlite3"]
 +++
-<a href="https://www.sqlite.org">Sqlite3</a> is lightweight relational database, mainly focused on smaller local systems. Being used in Android it's now probably most spread relational database in world with billions of instances running. Lite in the name means that it is not client-server architecture and it's intended for lower data volumes - ideal usage profile is <a href="https://www.sqlite.org/whentouse.html">read mostly, with occasional writes</a>. Sqlite3 is often used as an embedded data store in various applications (Firefox and Chrome are most prominent ones). Recently I've been playing a bit with sqlite3 interface in Rust and had run couple of simple tests especially focused on writes. So how does sqlite3 performs and how it compares with other more typical client-server RDBMS like PostgreSQL?  It's not any serious benchmark, just couple of toy tests to highlight few things.<span id="more-1954"></span>
+[Sqlite3](https://www.sqlite.org) is lightweight relational database, mainly focused on smaller local systems. Being used in Android it's now probably most spread relational database in world with billions of instances running. Lite in the name means that it is not client-server architecture and it's intended for lower data volumes - ideal usage profile is [read mostly, with occasional writes](https://www.sqlite.org/whentouse.html). Sqlite3 is often used as an embedded data store in various applications (Firefox and Chrome are most prominent ones). Recently I've been playing a bit with sqlite3 interface in Rust and had run couple of simple tests especially focused on writes. So how does sqlite3 performs and how it compares with other more typical client-server RDBMS like PostgreSQL?  It's not any serious benchmark, just couple of toy tests to highlight few things.<span id="more-1954"></span>
 
 So I started with testing highly concurrent load of independent writes into one table - 10 thousand inserts from independent tasks (running in thread pool and using connection pool) - see code below:
 
@@ -101,7 +102,7 @@ fn main() {
 ```
 
 
-As expected performance was very bad. Actually initially many tasks/threads panicked with "busy/database locked" error.  As all writes to sqlite3 database has to be serialized (using lock on db), concurrent threads have been competing for the lock and some were less lucky and timeouted before  acquiring the lock.  Extending `conn.busy_timeout` helped, but performance was still very poor.  But there was one possibility to improve performance - to use different journal mechanism for slqlite3 database. It's not so well known than sqlite3 has two mechanism for database journal (journals are used for data consistency and atomic commits) - default is <a href="https://www.sqlite.org/atomiccommit.html">rollback journal</a>, but it also enables <a href="https://www.sqlite.org/wal.html">write ahead log</a> (WAL) journal. WAL journal can be enabled explicitly by pragma  ` "pragma journal_mode=WAL"  `(commented in previous code - see line 31). If we change journal mode to WAL (uncomment line 31), we can see significant improvement in performance, but it's still pretty slow.
+As expected performance was very bad. Actually initially many tasks/threads panicked with "busy/database locked" error.  As all writes to sqlite3 database has to be serialized (using lock on db), concurrent threads have been competing for the lock and some were less lucky and timeouted before  acquiring the lock.  Extending `conn.busy_timeout` helped, but performance was still very poor.  But there was one possibility to improve performance - to use different journal mechanism for slqlite3 database. It's not so well known than sqlite3 has two mechanism for database journal (journals are used for data consistency and atomic commits) - default is [rollback journal](https://www.sqlite.org/atomiccommit.html), but it also enables [write ahead log](https://www.sqlite.org/wal.html) (WAL) journal. WAL journal can be enabled explicitly by pragma  ` "pragma journal_mode=WAL"  `(commented in previous code - see line 31). If we change journal mode to WAL (uncomment line 31), we can see significant improvement in performance, but it's still pretty slow.
 
 Problem here is sqlite3 is not designed for intensive concurrent write operations, more real live scenario would be that just one thread is filling the data and it inserts/updates many records in single transaction:
 
@@ -186,7 +187,7 @@ fn main() {
 
 As you can verify above code is at least by order of magnitude faster then previous attempt (see also table below -first vs last column). But what if we forgot to use transaction in this case? By default connection is in auto commit mode, so each insert is committed individually.  Quick check shows that then we are back at lousy performance (see table below - middle column) - basically comparable with writing in concurrent tasks. So it is not so much about concurrency, but commits in sqlite3 are expensive.
 
-And how does sqlite3 compares with fully bodied database like <a href="https://www.postgresql.org/">PostgresSQL</a> ( I used basically same code as above, just changed for rust-postgres crate):
+And how does sqlite3 compares with fully bodied database like [PostgresSQL](https://www.postgresql.org/) ( I used basically same code as above, just changed for rust-postgres crate):
 
 
 ```sh
@@ -207,8 +208,8 @@ As you can see postgres (first line - pg) is significantly faster for many inser
 Some conclusions:
 
 
-<ul>
-<li>If you writing a lot of records in sqlite3, try to write them in one transaction - it really helps.</li>
-<li>Many independent writes performs badly in sqlite3. For write intensive database consider something else.</li>
-<li>But for many types of applications sqlite3 is very good solution - it's proven, robust and performs well, when used appropriately.</li>
-</ul>
+
+- If you writing a lot of records in sqlite3, try to write them in one transaction - it really helps.
+- Many independent writes performs badly in sqlite3. For write intensive database consider something else.
+- But for many types of applications sqlite3 is very good solution - it's proven, robust and performs well, when used appropriately.
+

@@ -16,4 +16,4 @@ parent = "/projects/"
 +++
 <a href="http://python.org"><img alt="" class="alignleft size-thumbnail wp-image-103" decoding="async" height="150" loading="eager" sizes="(max-width: 150px) 100vw, 150px" src="/wp-content/uploads/python-150x150.jpeg" srcset="/wp-content/uploads/python-150x150.jpeg 150w, /wp-content/uploads/python.jpeg 224w" title="python" width="150"/></a>Python is my most favourite programming language and the one I'm using recently.  The clarity of the syntax and universality of available libraries are the key factors that binds me to this language. In python one can write admin script,   web-site, communication utilitu or scientific calculations or visualization with same easiness.
 
-I've done many small and bigger project in Python, many of them are still available on my <a href="http://old.zderadicka.eu">old site</a> only. Here I'll present my latest stuff and some older project, that consider still interesting.
+I've done many small and bigger project in Python, many of them are still available on my [old site](http://old.zderadicka.eu) only. Here I'll present my latest stuff and some older project, that consider still interesting.

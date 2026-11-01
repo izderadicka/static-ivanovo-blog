@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/opa-mixed-impressions/"
 source_guid = "http://zderadicka.eu/?p=983"
 source_date_gmt = "2015-02-23 11:03:12"
-categories = ["Programming"]
-tags = ["Opa", "web framework"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Opa", "web framework"]
 +++
-Coming little bit late to <a href="http://opalang.org/">Opa</a> (looks like real hype was  couple years ago), I  was still caught by this interesting new language.  Opa is a new language - cross-over between JavaScript ( providing JS like syntax) and <a href="http://ocaml.org/">OCaml</a> (using  many functional programming idioms from that language , plus Opa complier is written in OCaml). Opa is used  solely to program web applications -  so Opa is both language and web framework. Opa compiles to JavaScript,  which on client side runs in a browser and on server side in <a href="http://nodejs.org/">node.js</a>. You write just one Opa code and compiler decided, where the code should run.
+Coming little bit late to [Opa](http://opalang.org/) (looks like real hype was  couple years ago), I  was still caught by this interesting new language.  Opa is a new language - cross-over between JavaScript ( providing JS like syntax) and [OCaml](http://ocaml.org/) (using  many functional programming idioms from that language , plus Opa complier is written in OCaml). Opa is used  solely to program web applications -  so Opa is both language and web framework. Opa compiles to JavaScript,  which on client side runs in a browser and on server side in [node.js](http://nodejs.org/). You write just one Opa code and compiler decided, where the code should run.
 
 I have spent some time looking into Opa recently - mainly trying some of Opa tutorial plus and doing some small experiments myself and I'd like to share my experiences and impressions.<span id="more-983"></span>
 
@@ -22,9 +23,9 @@ I have spent some time looking into Opa recently - mainly trying some of Opa tut
 ## Documentation, Tutorials
 
 
-I think documentation is one of biggest pains of Opa.  Online documentation is scarce and focused mostly on basics,  reference documentation for standard library is missing! (There used to be one,  but it disappeared half year ago -  now the recommendation is to use source code of standard library - see <a href="https://github.com/MLstate/opalang/issues/158">this</a>).
+I think documentation is one of biggest pains of Opa.  Online documentation is scarce and focused mostly on basics,  reference documentation for standard library is missing! (There used to be one,  but it disappeared half year ago -  now the recommendation is to use source code of standard library - see [this](https://github.com/MLstate/opalang/issues/158)).
 
-There are also two books <a href="http://shop.oreilly.com/product/0636920025436.do">Opa: Up And Running from O'Reilly </a>(which is kind of 'official guide' to Opa) and <a href="https://www.packtpub.com/application-development/opa-application-development">Opa Application Development from Packt</a>. But both books suffer same issues as online documentation -   they provide only shallow overview of the language and former also contains a lot of  errors in code samples.
+There are also two books [Opa: Up And Running from O'Reilly ](http://shop.oreilly.com/product/0636920025436.do)(which is kind of 'official guide' to Opa) and [Opa Application Development from Packt](https://www.packtpub.com/application-development/opa-application-development). But both books suffer same issues as online documentation -   they provide only shallow overview of the language and former also contains a lot of  errors in code samples.
 
 I think that Opa will not attract inexperienced web developers, who would rather try some well established language and framework first,   so effort put to explain some basic web development concepts in both books is rather waisted.  What is really missing is solid, easily navigable  reference documentation, which could one use when working with Opa.
 
@@ -32,7 +33,7 @@ I think that Opa will not attract inexperienced web developers, who would rather
 ## Installation
 
 
-Installation for Linux platform is done by <a href="https://github.com/MLstate/opalang/wiki/Building-Opa">compilation from source</a>.  It went relatively OK (I have problem with latest OCaml 4.02,  but this was fixed  meanwhile).  As Opa  is written in Ocaml,  Ocaml compiler and related tools are needed.  If dependent ocaml libraries are installed via OPAM, you should use `configure` script with `-ocamlfind <path>` option.
+Installation for Linux platform is done by [compilation from source](https://github.com/MLstate/opalang/wiki/Building-Opa).  It went relatively OK (I have problem with latest OCaml 4.02,  but this was fixed  meanwhile).  As Opa  is written in Ocaml,  Ocaml compiler and related tools are needed.  If dependent ocaml libraries are installed via OPAM, you should use `configure` script with `-ocamlfind <path>` option.
 
 
 ### Tools, Editors
@@ -65,7 +66,7 @@ There was some quite annoying bug in indentation of code, appearing in case norm
 
 First interesting thing to note about Opa is that language has two possible syntax variations - classic and JS-like. Former is older and there is no documentation for it now,  all available documentation is for newer JS-like syntax.  However vast majority of Opa standard library is written older classic syntax,   so if you are looking into code ( which you must because of missing referential documentation),  you should somehow get to understand older classic syntax too.
 
-The main difference between both is that classic syntax is closer to Ocaml,  while new syntax is closer to JavaScript. Compiler supports both, with JS-like syntax being default, so I assume they both compile to same <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a>.
+The main difference between both is that classic syntax is closer to Ocaml,  while new syntax is closer to JavaScript. Compiler supports both, with JS-like syntax being default, so I assume they both compile to same [AST](http://en.wikipedia.org/wiki/Abstract_syntax_tree).
 
 Generally Opa is functional  programming language with a lot of syntactic sugar to support web programming.  This makes resulting code very concise and nice looking. This is definitely one of key attractions of Opa.  Just one sample to illustrate this:
 
@@ -105,7 +106,7 @@ Server.start(
 
 Above code is a very simple number guessing game.
 
-Another shining feature is type inference - Opa is statically typed, but in majority of cases types do not have to be explicitly declared and still compiler assures type safety of your program.  The record and sum (variant) types are very powerful, as described <a href="http://hbbio.tumblr.com/post/31526019499/power-rows-the-datatype">here</a>, giving more powerful type manipulations then for instance in OCaml.
+Another shining feature is type inference - Opa is statically typed, but in majority of cases types do not have to be explicitly declared and still compiler assures type safety of your program.  The record and sum (variant) types are very powerful, as described [here](http://hbbio.tumblr.com/post/31526019499/power-rows-the-datatype), giving more powerful type manipulations then for instance in OCaml.
 
 However on the other hands type inference can give sometime very cryptic error message during compilation- like this one:
 
@@ -127,11 +128,11 @@ Standard library looks to be rich and complete enough to write complex applicati
 
 External JavaScript libraries can be easily used from Opa ( just need to create and interface file(s) with type annotations).
 
-As a web framework Opa offers standard <a href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">MVC</a> pattern. Model data can persist in <a href="http://www.mongodb.org/">mongodb</a> NOSQL database.  Opa extends its syntax to provide easy access to database as a part of the core language.  This is very convenient, however this extension seems to be crafted to match mongodb capabilities. So I'm not sure if it can work well with other database backends (Opa supports also PostgreSQL sever, but I did not test it- it's not documented,  probably it's rather basic - I doubt it can support more advanced SQL features like joins). For controller part Opa offers flexible ways to route web requests to appropriate functions -  you can use either pattern matching or regular expression on relative path.  On view side Opa provides integration with  <a href="http://getbootstrap.com/">Boostrap</a> framework, I18N support,  forms support, convenient DOM manipulation and more,  but again problem is to understand what is available due to missing reference documentation (for instance it took me some time to understand how to create a select input in a form - for this I have to visit and read two source files in standard library).
+As a web framework Opa offers standard [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) pattern. Model data can persist in [mongodb](http://www.mongodb.org/) NOSQL database.  Opa extends its syntax to provide easy access to database as a part of the core language.  This is very convenient, however this extension seems to be crafted to match mongodb capabilities. So I'm not sure if it can work well with other database backends (Opa supports also PostgreSQL sever, but I did not test it- it's not documented,  probably it's rather basic - I doubt it can support more advanced SQL features like joins). For controller part Opa offers flexible ways to route web requests to appropriate functions -  you can use either pattern matching or regular expression on relative path.  On view side Opa provides integration with  [Boostrap](http://getbootstrap.com/) framework, I18N support,  forms support, convenient DOM manipulation and more,  but again problem is to understand what is available due to missing reference documentation (for instance it took me some time to understand how to create a select input in a form - for this I have to visit and read two source files in standard library).
 
 Another great feature of Opa for views building is its syntactic extension, which enables to directly include XHTML into code and vice versa include Opa expressions in this XHTML.  This provides equivalent functionality to templating, which is common in many other web frameworks, but with higher safety/correctness assurance.
 
-Opa also provides functions for advanced messaging between client and server - one or two way channels between client and server, including support for broadcasting messages to all clients.  This enables to build interactive web applications very easily. See the <a href="https://github.com/MLstate/opalang/wiki/Hello%2C-chatb">chat application tutorial</a> for practical example.
+Opa also provides functions for advanced messaging between client and server - one or two way channels between client and server, including support for broadcasting messages to all clients.  This enables to build interactive web applications very easily. See the [chat application tutorial](https://github.com/MLstate/opalang/wiki/Hello%2C-chatb) for practical example.
 
 
 ## Deployment, Running, Performance
@@ -141,15 +142,15 @@ During development and testing it's very easy to compile and run application via
 
 I haven't seen any documentation for larger scale deployment, but I assume that node.js best practices can be leveraged here too.
 
-When browser client connects to server it starts to communicate on background using XMLHttpRequest POST requests to exchange necessary data.  Looks like current version of Opa has some problems here, because even for very simple application (a form with couple of fields, which are saved to database after submission), this communication is massive ( see <a href="https://github.com/MLstate/opalang/issues/175">this</a> \- 29 requests just to switch focus from one input to another). As per explanation from developers this is a regression issue in current version and should be hopefully fix in future. They said it  can be mitigated by carefully assigning code explicitly to either server or client,  however I did not find an easy way how to do it in that simple form example. As per now it's looks to me as a serious issue, because it completely undermines application performance and scalability.
+When browser client connects to server it starts to communicate on background using XMLHttpRequest POST requests to exchange necessary data.  Looks like current version of Opa has some problems here, because even for very simple application (a form with couple of fields, which are saved to database after submission), this communication is massive ( see [this](https://github.com/MLstate/opalang/issues/175) \- 29 requests just to switch focus from one input to another). As per explanation from developers this is a regression issue in current version and should be hopefully fix in future. They said it  can be mitigated by carefully assigning code explicitly to either server or client,  however I did not find an easy way how to do it in that simple form example. As per now it's looks to me as a serious issue, because it completely undermines application performance and scalability.
 
 
 ## Community, History
 
 
-Opa is not a new project, it appeared  in 2010 (according to <a href="http://en.wikipedia.org/wiki/Opa_%28programming_language%29">this article</a>) and couple years later received some attention as promising 'next-gen'  web framework.   However it never really captured broader audience after that initial hype.
+Opa is not a new project, it appeared  in 2010 (according to [this article](http://en.wikipedia.org/wiki/Opa_%28programming_language%29)) and couple years later received some attention as promising 'next-gen'  web framework.   However it never really captured broader audience after that initial hype.
 
-Now Opa community is small and it is mainly based in <a href="http://www.mlstate.com">MLState, </a>a company founded by Opa principal author. MLState is also a key user of Opa,  which is utilized in their commercial projects. But Opa project is still alive, maintained and developed and developers reply to issues posted on Github.
+Now Opa community is small and it is mainly based in [MLState, ](http://www.mlstate.com)a company founded by Opa principal author. MLState is also a key user of Opa,  which is utilized in their commercial projects. But Opa project is still alive, maintained and developed and developers reply to issues posted on Github.
 
 
 ## Conclusion
@@ -158,13 +159,13 @@ Now Opa community is small and it is mainly based in <a href="http://www.mlstate
 There is a lot of nice things in Opa, which can improve and speed up web application development. I particularly liked:
 
 
-<ul>
-<li>one code for client and server, ideally compiler decides where to put it.</li>
-<li>very concise code - a lot of nice syntactic extensions for web programming (xhtml, css, IDs, DOM manipulation)</li>
-<li>static typing with type inference (catches many problems during compile time)</li>
-<li>very flexible record and sum types</li>
-<li>all the functional goodies ( immutable values, first class functions, functions partial application, higher order functions, operators as functions ...)</li>
-</ul>
+
+- one code for client and server, ideally compiler decides where to put it.
+- very concise code - a lot of nice syntactic extensions for web programming (xhtml, css, IDs, DOM manipulation)
+- static typing with type inference (catches many problems during compile time)
+- very flexible record and sum types
+- all the functional goodies ( immutable values, first class functions, functions partial application, higher order functions, operators as functions ...)
+
 
 
 On the other hand do these benefits justify an effort to learn completely new language and framework?  As per language itself, with some exposure to Ocaml, I did not find it difficult and it was relatively easy to start to write in Opa. However I really struggled with standard library due to lack of documentation.

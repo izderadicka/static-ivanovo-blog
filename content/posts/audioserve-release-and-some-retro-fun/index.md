@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/audioserve-release-and-some-retro-fun/"
 source_guid = "http://zderadicka.eu/?p=2307"
 source_date_gmt = "2021-12-03 19:22:14"
-categories = ["Uncategorized"]
-tags = ["audioserve", "retro"]
+[taxonomies]
+category = ["Uncategorized"]
+tag = ["audioserve", "retro"]
 +++
-Recently I released new version of <a href="https://github.com/izderadicka/audioserve">audioserve</a> v0.16.5, which brings some interesting changes.  I think I've described them in previous article and for sure they are also described in <a href="https://github.com/izderadicka/audioserve#readme">README</a>. This release was focused on two major themes - <strong>performance</strong> and <strong>API</strong>. Concerning API -  I've created small funny page (see image below - not online anymore) using <a href="https://github.com/captbaritone/webamp">WebAmp</a> audio player (Web recreation of famous <a href="https://en.wikipedia.org/wiki/Winamp">WinAmp</a>).  It's just for demo how audioserve API can be easily used, not everything works reasonably as WinAmp was focused on music. I have been using WinAmp some 20+ years back, at dawn of the past century, so I could not resist to play with it when I saw it.
+Recently I released new version of [audioserve](https://github.com/izderadicka/audioserve) v0.16.5, which brings some interesting changes.  I think I've described them in previous article and for sure they are also described in [README](https://github.com/izderadicka/audioserve#readme). This release was focused on two major themes - **performance** and **API**. Concerning API -  I've created small funny page (see image below - not online anymore) using [WebAmp](https://github.com/captbaritone/webamp) audio player (Web recreation of famous [WinAmp](https://en.wikipedia.org/wiki/Winamp)).  It's just for demo how audioserve API can be easily used, not everything works reasonably as WinAmp was focused on music. I have been using WinAmp some 20+ years back, at dawn of the past century, so I could not resist to play with it when I saw it.
 
 
 
@@ -31,4 +32,4 @@ Recently I released new version of <a href="https://github.com/izderadicka/audio
 
 
 
-Above is the screenshot of this page.  If you want you can <a href="https://as-retro.zderadicka.eu/">play with it</a>. But do not expect much.  If you want real demo of audioserve, <a href="https://audioserve.zderadicka.eu/">try this</a> (shared secret is mypass).
+Above is the screenshot of this page.  If you want you can [play with it](https://as-retro.zderadicka.eu/). But do not expect much.  If you want real demo of audioserve, [try this](https://audioserve.zderadicka.eu/) (shared secret is mypass).

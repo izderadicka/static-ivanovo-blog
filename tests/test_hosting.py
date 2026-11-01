@@ -35,6 +35,8 @@ class DockerHostingTests(unittest.TestCase):
         files = {
             'index.html': '<html>release-one</html>',
             'article/index.html': '<html>Article</html>',
+            'category/programming/index.html': '<html>Programming articles</html>',
+            'tag/rust/index.html': '<html>Rust articles</html>',
             'projects/index.html': '<html>Projects</html>',
             '404.html': '<html>Styled missing page</html>',
             'feed/index.html': '<?xml version="1.0"?><rss version="2.0"><channel/></rss>',
@@ -58,7 +60,8 @@ class DockerHostingTests(unittest.TestCase):
             listener.bind(('127.0.0.1', 0))
             cls.port = listener.getsockname()[1]
         cls.project = 'ivanovo-http-test-' + uuid.uuid4().hex[:8]
-        cls.environment = dict(os.environ, BLOG_SITE_ROOT=str(cls.public), BLOG_PORT=str(cls.port), BLOG_BIND='127.0.0.1')
+        cls.environment = dict(os.environ, BLOG_PORT=str(cls.port), BLOG_BIND='127.0.0.1')
+        cls.environment.pop('BLOG_SITE_ROOT', None)
         cls.addClassCleanup(lambda: cls.compose('down', '--volumes', '--remove-orphans'))
         cls.compose('run', '--rm', '--no-deps', 'blog', '-t')
         cls.compose('up', '-d', '--wait', '--wait-timeout', '30')
@@ -73,7 +76,8 @@ class DockerHostingTests(unittest.TestCase):
         return status, output_headers, body
 
     def test_static_feeds_and_errors(self):
-        self.assertEqual(self.request('/article/')[0], 200)
+        for route in ('/article/', '/category/programming/', '/tag/rust/'):
+            self.assertEqual(self.request(route)[0], 200)
         self.assertIn('javascript', self.request('/pagefind/pagefind.js')[1]['Content-Type'])
         for path in ('/feed/', '/feed', '/rss.xml'):
             status, headers, body = self.request(path)
@@ -103,9 +107,9 @@ class DockerHostingTests(unittest.TestCase):
             f'/?p={ident}&page_id={other_id}&x=1': route + '?x=1',
             '/article': '/article/',
             '/feed/rss2/': '/feed/',
-            '/category/programming/': '/archives/',
-            '/tag/rust/': '/archives/',
             '/author/ivan/': '/archives/',
+            '/category/security-2/': '/category/security/',
+            '/tag/plsql/': '/tag/pl-sql/',
             '/2019/03/20/': '/archives/#2019',
         }
         for path, location in cases.items():
@@ -138,6 +142,14 @@ class DockerHostingTests(unittest.TestCase):
     def test_content_updates_need_no_reload(self):
         (self.public / 'index.html').write_text('<html>updated-content</html>')
         self.assertIn(b'updated-content', self.request('/')[2])
+
+    def test_z_recreate_serves_replaced_build_directory(self):
+        previous = self.root / 'old-public'
+        self.public.rename(previous)
+        shutil.copytree(previous, self.public)
+        (self.public / 'index.html').write_text('<html>fresh-build</html>')
+        self.compose('up', '-d', '--force-recreate', '--wait', '--wait-timeout', '30')
+        self.assertIn(b'fresh-build', self.request('/')[2])
 
 
 if __name__ == '__main__':

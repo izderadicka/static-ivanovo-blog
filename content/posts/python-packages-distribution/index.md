@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/python-packages-distribution/"
 source_guid = "http://zderadicka.eu/?p=718"
 source_date_gmt = "2014-01-15 09:39:08"
-categories = ["Programming"]
-tags = ["python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["python"]
 +++
-Currently python options for code distribution  are bit messy as <a href="http://python-notes.boredomandlaziness.org/en/latest/pep_ideas/core_packaging_api.html">described here</a>.   I spent some time to find right way how to create setup script, which will install external dependencies,   so here is the recipe for python3:<span id="more-718"></span>
+Currently python options for code distribution  are bit messy as [described here](http://python-notes.boredomandlaziness.org/en/latest/pep_ideas/core_packaging_api.html).   I spent some time to find right way how to create setup script, which will install external dependencies,   so here is the recipe for python3:<span id="more-718"></span>
 
 Create virtual virtual environment for your project:
 

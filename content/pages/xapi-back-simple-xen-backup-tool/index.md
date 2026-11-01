@@ -14,7 +14,7 @@ source_date_gmt = "2014-10-31 09:46:56"
 menu_order = 0
 parent = "/projects/python/"
 +++
-<strong>xapi-back </strong>is a simple backup tool for XenServer or XCP - xen hypervisors using xapi toolstack.   xapi-back is a command line tool with simple and clear interface (command + options). Tool is written in python.
+**xapi-back **is a simple backup tool for XenServer or XCP - xen hypervisors using xapi toolstack.   xapi-back is a command line tool with simple and clear interface (command + options). Tool is written in python.
 
 
 ### Features
@@ -22,16 +22,16 @@ parent = "/projects/python/"
 
 
 
-<ul>
-<li>simple command line interface</li>
-<li>can backup VMs from multiple hosts</li>
-<li>backup of live VMs (creates temporary snapshot of VM)</li>
-<li>can combine several backups into one batch (which then can be scheduled in cron)</li>
-<li>keeps x previous backups (can be set in config file)</li>
-<li>backups are gziped to save space</li>
-<li>ideal for small scale backups to USB disk</li>
-<li>and of course free and open source</li>
-</ul>
+
+- simple command line interface
+- can backup VMs from multiple hosts
+- backup of live VMs (creates temporary snapshot of VM)
+- can combine several backups into one batch (which then can be scheduled in cron)
+- keeps x previous backups (can be set in config file)
+- backups are gziped to save space
+- ideal for small scale backups to USB disk
+- and of course free and open source
+
 
 
 
@@ -39,7 +39,7 @@ parent = "/projects/python/"
 ### Install
 
 
-Source is on <a href="https://github.com/izderadicka/xapi-back">github</a>.
+Source is on [github](https://github.com/izderadicka/xapi-back).
 
 To install on new system run as root (assuming pip is already installed):
 
@@ -66,7 +66,7 @@ Edit configuration file `~/.xapi-back.cfg` or ` /etc/xapi-back.cfg  `(if you hav
 </li>
 <li>compression - backed-up VM image can be either uncompress ("none"), or compressed in xb ("client"), or compressed on XenServer ("server") ( in dom0 as part of export process).
 <pre class="code-highlight" data-language="sh"><code><span class="code-line"><span class="s2">&quot;compress&quot;</span>:<span class="s2">&quot;client&quot;</span>,</span></code></pre>
-<strong>WARNING:</strong> This is pretty important decision and must not be changed afterwards, when storage_root already contains some backups, because modes are mutually incompatible!
+**WARNING:** This is pretty important decision and must not be changed afterwards, when storage_root already contains some backups, because modes are mutually incompatible!
 "client" - is a default mode and usually good unless you require some special scenario covered by other two. Backup speed is limited by gzip speed or slow network. Compression is offloaded from Dom0, which is usually good thing,
 "none" -  it's  good, if you have fast disks and network and you do not care about disk space, backup is not limited by gzip, but only by I/O speed.
 "server" - compression in done in XenServer Dom0. It's good if you have slow network (making backups over Internet for instance).</li>
@@ -135,7 +135,7 @@ Backup speed is basically limited by speed of gzip compression, which can be 30-
 
 If there are VMs with same name you'll receive error about non-unique name, you need to then specify VM with `--uuid` argument -  usually first few character of UUID is enough.
 
-<strong>manual -  batch</strong>
+**manual -  batch**
 
 Add VMs to batch:
 

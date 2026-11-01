@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/mbs4-mybookshelf-4/"
 source_guid = "http://zderadicka.eu/?p=2349"
 source_date_gmt = "2026-07-18 06:16:55"
-categories = ["Announcement", "Programming"]
-tags = ["Rust", "Svelte"]
+[taxonomies]
+category = ["Announcement", "Programming"]
+tag = ["Rust", "Svelte"]
 +++
-<a href="https://github.com/izderadicka/mbs4">mbs4 </a> is basically ready and has same functionality as old <a href="https://github.com/izderadicka/mybookshelf2">mbs2</a>, which I'm finally abandoning - run this 10 years old solution in Docker with ancient dependencies, but enough is enough, mbs4 takes over.
+[mbs4 ](https://github.com/izderadicka/mbs4) is basically ready and has same functionality as old [mbs2](https://github.com/izderadicka/mybookshelf2), which I'm finally abandoning - run this 10 years old solution in Docker with ancient dependencies, but enough is enough, mbs4 takes over.
 
 
 

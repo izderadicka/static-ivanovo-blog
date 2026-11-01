@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/decoding-audio-captchas-in-python/"
 source_guid = "http://zderadicka.eu/?p=834"
 source_date_gmt = "2014-08-24 11:11:14"
-categories = ["Programming", "Security"]
-tags = ["captcha", "python", "speech recognition"]
+[taxonomies]
+category = ["Programming", "Security"]
+tag = ["captcha", "python", "speech recognition"]
 +++
-For good or bad many sites are now using CAPTCHAs to determine if visitor is human or computer program. Captcha presents a task - usually reading some distorted letters  and writing them back to a form.  This is considered to be hard for computer to do, so user must be human.  To improve accessibility visual captchas are accompanied by audio captchas, where letters are spelled (usually with some background noise to make letters recognition more difficult) .  However audio captchas are know to be easier to break.  Inspired by <a href="http://www.captcha.net/Breaking_Audio_CAPTCHAs.pdf">this article</a> \[1\]  I created a python implementation of audio captchas decoding using commonly available libraries and with just a general knowledge of speech recognition  technologies. Software is called <a href="https://github.com/izderadicka/adecaptcha">adecaptcha</a> and I tested it on couple of sites, where I got 99.5% accuracy of decoded letters for one site and 90% accuracy for other site (which has much distorted audio).<span id="more-834"></span>
+For good or bad many sites are now using CAPTCHAs to determine if visitor is human or computer program. Captcha presents a task - usually reading some distorted letters  and writing them back to a form.  This is considered to be hard for computer to do, so user must be human.  To improve accessibility visual captchas are accompanied by audio captchas, where letters are spelled (usually with some background noise to make letters recognition more difficult) .  However audio captchas are know to be easier to break.  Inspired by [this article](http://www.captcha.net/Breaking_Audio_CAPTCHAs.pdf) \[1\]  I created a python implementation of audio captchas decoding using commonly available libraries and with just a general knowledge of speech recognition  technologies. Software is called [adecaptcha](https://github.com/izderadicka/adecaptcha) and I tested it on couple of sites, where I got 99.5% accuracy of decoded letters for one site and 90% accuracy for other site (which has much distorted audio).<span id="more-834"></span>
 
 
 ### General approach
@@ -23,17 +24,17 @@ For good or bad many sites are now using CAPTCHAs to determine if visitor is hum
 We can divide task of recognizing spelled letters into 3 separate sub-tasks, each one is using  a bit different technologies and approach:
 
 
-<ol>
-<li><strong>Signal segmentation</strong>
-We start with continuous sound signal, where we have several spoken letters and between them there is a silence or background noise.  We have to cut signal into parts that contain just one spoken letter.</li>
-<li><strong>Features extractions</strong>
-We have to represent each sound with set of features, which characterize well each letter sound and which is not too big.  We get so call features vector - a set of numbers, that we can use later for classification.</li>
-<li><strong>Classification</strong>
+
+1. **Signal segmentation**
+We start with continuous sound signal, where we have several spoken letters and between them there is a silence or background noise.  We have to cut signal into parts that contain just one spoken letter.
+1. **Features extractions**
+We have to represent each sound with set of features, which characterize well each letter sound and which is not too big.  We get so call features vector - a set of numbers, that we can use later for classification.
+1. **Classification**
 To feature vectors calculated from a letter sounds we have to assign correct letter - all sounds for same letter form  same class - thus we use term classification.
 Classification usually has two steps:
 Learning: Based on manually classified training set (feature vector + correct letter), our classification  algorithm learns how to classify  arbitrary feature vector. Result of learning is the model.
-Classification:  Using previously created model we can now classify unknown feature vectors into classes - e.g. recognize spoken letters.</li>
-</ol>
+Classification:  Using previously created model we can now classify unknown feature vectors into classes - e.g. recognize spoken letters.
+
 
 
 
@@ -52,7 +53,7 @@ and here is corresponding sound:
 
 
 
-We usually get data as PCM signal (or if it is .mp3 we can easily decode with <a href="http://spacepants.org/src/pymad/">pymad</a>)
+We usually get data as PCM signal (or if it is .mp3 we can easily decode with [pymad](http://spacepants.org/src/pymad/))
 
 So our signal looks like this (sample rate 16kHz):
 <a href="/wp-content/uploads/pcm_data_with_time_axes.png"><img alt="pcm_data_with_time_axes" class="alignnone size-full wp-image-848" decoding="async" height="1052" loading="lazy" sizes="(max-width: 1938px) 100vw, 1938px" src="/wp-content/uploads/pcm_data_with_time_axes.png" srcset="/wp-content/uploads/pcm_data_with_time_axes.png 1938w, /wp-content/uploads/pcm_data_with_time_axes-300x162.png 300w, /wp-content/uploads/pcm_data_with_time_axes-1024x555.png 1024w" width="1938"/></a>
@@ -63,7 +64,7 @@ As you can see there are 4 areas with high volume of sound - these are spoken le
 ### Segmentation
 
 
-Segmentation is a critical task - all future success depends on fact that we are able to identify areas, where spoken letter is in the signal.  There are many sophisticated techniques used in speech recognition, with advanced options how to mitigate disruptive effects of the noise.  However not being and expert I used something simple - just calculated mean energy (square of amplitude) over a small rectangular window (<a href="http://www.numpy.org/">numpy</a> function `convolve` is very useful for this). On picture below you can see this 'energy envelope' of the signal and planned segmentation of the signal:
+Segmentation is a critical task - all future success depends on fact that we are able to identify areas, where spoken letter is in the signal.  There are many sophisticated techniques used in speech recognition, with advanced options how to mitigate disruptive effects of the noise.  However not being and expert I used something simple - just calculated mean energy (square of amplitude) over a small rectangular window ([numpy](http://www.numpy.org/) function `convolve` is very useful for this). On picture below you can see this 'energy envelope' of the signal and planned segmentation of the signal:
 
 <a href="/wp-content/uploads/segmented.png"><img alt="segmented" class="alignnone size-full wp-image-849" decoding="async" height="1052" loading="lazy" sizes="(max-width: 1938px) 100vw, 1938px" src="/wp-content/uploads/segmented.png" srcset="/wp-content/uploads/segmented.png 1938w, /wp-content/uploads/segmented-300x162.png 300w, /wp-content/uploads/segmented-1024x555.png 1024w" width="1938"/></a>
 
@@ -73,9 +74,9 @@ We use a threshold value (green horizontal line) to find segments of sound.  An
 ### Features extraction
 
 
-In speech recognition technologies <a href="http://en.wikipedia.org/wiki/Mel-frequency_cepstrum">MFCCs (Mel-frequency cepstral coefficients)</a> are used to get features for letter or syllable sound. MFCC is basically a spectrum of frequency spectrum (applying twice time domain to frequency domain transformation) and it is believed to be good characterization of  some sound, invariant to certain extent to background noise or to speaker pronunciation.
+In speech recognition technologies [MFCCs (Mel-frequency cepstral coefficients)](http://en.wikipedia.org/wiki/Mel-frequency_cepstrum) are used to get features for letter or syllable sound. MFCC is basically a spectrum of frequency spectrum (applying twice time domain to frequency domain transformation) and it is believed to be good characterization of  some sound, invariant to certain extent to background noise or to speaker pronunciation.
 
-We use very straightforward implementation, based  <a href="http://en.wikipedia.org/wiki/Mel-frequency_cepstrum">Wikipedia article</a>:
+We use very straightforward implementation, based  [Wikipedia article](http://en.wikipedia.org/wiki/Mel-frequency_cepstrum):
 
 
 <ol>
@@ -93,7 +94,7 @@ Below is picture of filtered power spectrum from previous step - in log vertical
 <a href="/wp-content/uploads/power_spectrum_letter_b_and_x.png"><img alt="power_spectrum_letter_b_and_x" class="alignnone size-full wp-image-855" decoding="async" height="1052" loading="lazy" sizes="(max-width: 1938px) 100vw, 1938px" src="/wp-content/uploads/power_spectrum_letter_b_and_x.png" srcset="/wp-content/uploads/power_spectrum_letter_b_and_x.png 1938w, /wp-content/uploads/power_spectrum_letter_b_and_x-300x162.png 300w, /wp-content/uploads/power_spectrum_letter_b_and_x-1024x555.png 1024w" width="1938"/></a>
 You can again see spectrum characteristics of X and B letters we've spoken before.</li>
 <li>Take the <a href="http://en.wikipedia.org/wiki/Discrete_cosine_transform" title="Discrete cosine transform">discrete cosine transform</a> of the list of mel log powers, as if they were a signal.
-DCT transformation is available in <a href="http://www.scipy.org/">scipy</a> package in scipy.fftpack.dct</li>
+DCT transformation is available in [scipy](http://www.scipy.org/) package in scipy.fftpack.dct</li>
 <li>The MFCCs are the amplitudes of the resulting spectrum.
 And finally here we have MFCCs for our two letters:
 <a href="/wp-content/uploads/mfccs_letter_b_and_x.png"><img alt="mfccs_letter_b_and_x" class="alignnone size-full wp-image-856" decoding="async" height="1052" loading="lazy" sizes="(max-width: 1938px) 100vw, 1938px" src="/wp-content/uploads/mfccs_letter_b_and_x.png" srcset="/wp-content/uploads/mfccs_letter_b_and_x.png 1938w, /wp-content/uploads/mfccs_letter_b_and_x-300x162.png 300w, /wp-content/uploads/mfccs_letter_b_and_x-1024x555.png 1024w" width="1938"/></a></li>
@@ -106,20 +107,20 @@ Now we have feature vector with 40 numbers and can use it for classification.
 ### Classification
 
 
-For classification we use <a href="http://en.wikipedia.org/wiki/Support_vector_machine">SVM</a> algorithm.  There are several reasons for choosing it:
+For classification we use [SVM](http://en.wikipedia.org/wiki/Support_vector_machine) algorithm.  There are several reasons for choosing it:
 
 
 <ul>
 <li>According to literature [1], SVM provides good results in this area</li>
-<li>Nice open source implementation exists - <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">libsvm</a></li>
+<li>Nice open source implementation exists - [libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm/)</li>
 <li>libsvm has binding for python</li>
 <li>It's very easy to create model for libsvm, package contains script <code>tools/easy.py</code>, which  basically does all work for you.</li>
 </ul>
 
 
-For targeted site we got 500 captchas, which represent 2000 letters -  1800 were used for training. 200 were control set, to test accuracy of classification for created model (which was 99.5%). For preparation of training set we used `samplestool.py` from <a href="https://github.com/izderadicka/adecaptcha">adecaptcha</a> package, which helps to manually classify samples (shows captcha picture, plays sound, does segmentation, saves transcribed letters, generates training set). All task of preparing training data took bit more then one hour (most time consuming is manually transcribing training captchas).
+For targeted site we got 500 captchas, which represent 2000 letters -  1800 were used for training. 200 were control set, to test accuracy of classification for created model (which was 99.5%). For preparation of training set we used `samplestool.py` from [adecaptcha](https://github.com/izderadicka/adecaptcha) package, which helps to manually classify samples (shows captcha picture, plays sound, does segmentation, saves transcribed letters, generates training set). All task of preparing training data took bit more then one hour (most time consuming is manually transcribing training captchas).
 
-Detailed procedure for generating model is in adecaptcha <a href="http://bazaar.launchpad.net/~ivan-zderadicka/adecaptcha/trunk/view/head:/README">README file</a>.
+Detailed procedure for generating model is in adecaptcha [README file](http://bazaar.launchpad.net/~ivan-zderadicka/adecaptcha/trunk/view/head:/README).
 
 
 ### Other captchas
@@ -146,15 +147,15 @@ It turned out that we can still get  90% accuracy of individual letters (here l
 
 Usually it's easier to decode audio captcha then visual one.  Technology for this is available and can be used by relative laymen in area of speech recognition like myself.
 
-Implementation in python is provided in package <a href="https://github.com/izderadicka/adecaptcha">adecaptcha</a>, which works quite well for test site (uloz.to) with almost 100% accuracy and it takes app. 0.3 sec to decode audio captcha -   so it can be easily used in practice. Even for more noisy captchas we can achieve 65% accuracy in recognized captchas, which is still fairly practical ( only 4% of attempts need more then 3 tries).
+Implementation in python is provided in package [adecaptcha](https://github.com/izderadicka/adecaptcha), which works quite well for test site (uloz.to) with almost 100% accuracy and it takes app. 0.3 sec to decode audio captcha -   so it can be easily used in practice. Even for more noisy captchas we can achieve 65% accuracy in recognized captchas, which is still fairly practical ( only 4% of attempts need more then 3 tries).
 
 Possible improvements:
 
 
-<ul>
-<li>Better segmentation -  reliable segmentation is the key, it could be improved to be more noise tolerant and more generic (parameters must be fine tuned for each set of samples to work reliably)</li>
-<li>MFCC implementation is the basic one -   there are many improvement, which can make it better for this particular domain - recognition of spelled letters/digits</li>
-</ul>
+
+- Better segmentation -  reliable segmentation is the key, it could be improved to be more noise tolerant and more generic (parameters must be fine tuned for each set of samples to work reliably)
+- MFCC implementation is the basic one -   there are many improvement, which can make it better for this particular domain - recognition of spelled letters/digits
+
 
 
 
@@ -162,4 +163,4 @@ Possible improvements:
 ### References
 
 
-\[1\] Jennifer Tam,Jiri Sima,Sean Hyde, Louis von Ahn: <a href="http://www.captcha.net/Breaking_Audio_CAPTCHAs.pdf">Breaking Audio CHAPTCHAs</a>
+\[1\] Jennifer Tam,Jiri Sima,Sean Hyde, Louis von Ahn: [Breaking Audio CHAPTCHAs](http://www.captcha.net/Breaking_Audio_CAPTCHAs.pdf)

@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/first-impressions-about-new-rust-async/"
 source_guid = "http://zderadicka.eu/?p=2136"
 source_date_gmt = "2019-11-24 12:13:15"
-categories = ["Programming"]
-tags = ["asynchronous I/O", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asynchronous I/O", "Rust"]
 +++
 Just recently `async` and `await` made it to stable version of Rust. `futures` library 0.3 is also out and rest of other important libraries is following - for me `tokio` and `hyper` are particularly interesting. `tokio` is now in alpha stage supporting new futures, so I decided it's about a time to give it a try. Some time ago I've <a aria-label=" (opens in a new tab)" href="/asynchronous-again-rewriting-ptunnel-in-rust/" rel="noreferrer noopener" target="_blank">rewritten ptunnel in Rus</a>t using 0.1 version of `tokio` and `futures`.  So here are my first experiences with new libraries and upgrade.
 
@@ -31,7 +32,7 @@ Just recently `async` and `await` made it to stable version of Rust. `futures` l
 
 
 
-Before coding I looked a bit around Internet and found <a href="https://tikv.org/blog/client-futures/">this article</a> useful (many finding there where confirmed by my efforts). Also there is a <a href="https://rust-lang.github.io/futures-rs/blog/2019/04/18/compatibility-layer.html">compatibility layer</a> to use old and new futures together, but fortunately I did not need backward compatibility.
+Before coding I looked a bit around Internet and found [this article](https://tikv.org/blog/client-futures/) useful (many finding there where confirmed by my efforts). Also there is a [compatibility layer](https://rust-lang.github.io/futures-rs/blog/2019/04/18/compatibility-layer.html) to use old and new futures together, but fortunately I did not need backward compatibility.
 
 
 
@@ -66,7 +67,7 @@ Also runtime API changed a lot - as I've been using explicit runtime initializat
 
 
 
-One of biggest issues I have was that some things I used are recently hidden behind features so it took me some time to realize that and use correct dependency version (latest git) with full features.  Also current thread executor seems to have <a href="https://github.com/tokio-rs/tokio/issues/1818">some issues</a> now. But overall I was able to migrate to new code after half day or so.
+One of biggest issues I have was that some things I used are recently hidden behind features so it took me some time to realize that and use correct dependency version (latest git) with full features.  Also current thread executor seems to have [some issues](https://github.com/tokio-rs/tokio/issues/1818) now. But overall I was able to migrate to new code after half day or so.
 
 
 
@@ -87,4 +88,4 @@ And how new code performs? In past article I was measuring throughput with `ab` 
 
 
 
-So overall quite positive experience, now I'll wait a bit until new tokio and hyper will get stable and will look into my other project <a href="/audioserve-audiobooks-server-stupidly-simple-or-simply-stupid/">audioserve</a>, which is much bigger, so much more work expected. I wish stable versions were available two years back when I started it, but as it's being said "repetitio est mater studiorum".
+So overall quite positive experience, now I'll wait a bit until new tokio and hyper will get stable and will look into my other project [audioserve](/audioserve-audiobooks-server-stupidly-simple-or-simply-stupid/), which is much bigger, so much more work expected. I wish stable versions were available two years back when I started it, but as it's being said "repetitio est mater studiorum".

@@ -11,12 +11,13 @@ author = "admin"
 source_url = "http://zderadicka.eu/do-we-trust-cloud-storage-for-privacy/"
 source_guid = "http://zderadicka.eu/?p=1164"
 source_date_gmt = "2015-11-29 10:35:03"
-categories = ["Admin", "Security", "Tools"]
-tags = ["bash", "cloud", "encryption", "privacy"]
+[taxonomies]
+category = ["Admin", "Security", "Tools"]
+tag = ["bash", "cloud", "encryption", "privacy"]
 +++
 With more generic offerings from  cloud storage providers -  up to 50GB free,   cloud storage is tempting alternative to store some of our data. I have some data, which I really do not want to loose. I already have them stored on several devices, however additional copy in cloud could help.  But how much I can trust cloud providers to keep my data private, even from their own employees.  Not that I have something super secret, but somehow I do not like idea, that some bored sysadmin, will be browsing my family photos.  Or provider  use my photos for some machine learning algorithms.
 
-Main providers like Dropbox, Google do use some encryption, however they control  encryption keys, so they can theoretically access your data any time and in worst case provide them to third parties - like government agencies.   From what I have been looking around only few providers like <a href="https://mega.nz">Mega</a> or <a href="https://spideroak.com/">SpiderOak</a>  offer privacy  by design - which means  all encryption is done on client and they should not have any access to your keys (zero knowledge).   However how much we can trust that their implementation is flawless or that there are not intentional back-doors left? There has been some concerns about Mega security couple years ago,  but no major issues appeared since then.
+Main providers like Dropbox, Google do use some encryption, however they control  encryption keys, so they can theoretically access your data any time and in worst case provide them to third parties - like government agencies.   From what I have been looking around only few providers like [Mega](https://mega.nz) or [SpiderOak](https://spideroak.com/)  offer privacy  by design - which means  all encryption is done on client and they should not have any access to your keys (zero knowledge).   However how much we can trust that their implementation is flawless or that there are not intentional back-doors left? There has been some concerns about Mega security couple years ago,  but no major issues appeared since then.
 
 So rather then trusting those guys fully, why not to take additional step and also encrypt our data, before sending them to cloud?  Additional encryption will not cost us much CPU time on current hardware (from tests - 11% of one core of old AMD CPU) and will not slow down transfers, because they are rather limited by Internet connection bandwidth.  And on Linux we have quite few quality encryption  tools like gpg or openssl, which can be relatively easily integrated into our backup/restore chains. In the rest of this article I'll describe my PoC shell script, that backs up/ restores  whole directory to MEGA, while providing additional encryption / decryption on client side.  <span id="more-1164"></span>
 
@@ -38,7 +39,7 @@ There is also possibility to share this backup with somebody who does not have a
 
 Script is designed for efficiency - processing data through piped streams, so it can handle large backups.
 
-The script requires <a href="http://megatools.megous.com/">megatools</a> \- open source client for MEGA. And here is the script:
+The script requires [megatools](http://megatools.megous.com/) \- open source client for MEGA. And here is the script:
 
 
 ```sh

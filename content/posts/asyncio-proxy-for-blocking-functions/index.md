@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/asyncio-proxy-for-blocking-functions/"
 source_guid = "http://zderadicka.eu/?p=1454"
 source_date_gmt = "2016-09-01 09:49:13"
-categories = ["Programming"]
-tags = ["asyncio", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asyncio", "python"]
 +++
-File operations and other IO operations can block asyncio loop and  unfortunately  python does not support true asynchronous disk operations (mainly due to <a href="http://blog.libtorrent.org/2012/10/asynchronous-disk-io/">problematic state of async disk IO in underlying os - aka linux</a> \- special library is need for true asynchronous disk operations  so normally select (or other IO event library) always reports file as ready to read and write and thus file IO operations block). Current solution is to run such operations in thread pool executor. There is asyncio wrapper library for file object - <a href="https://github.com/Tinche/aiofiles">aiofiles</a>, but there are also many blocking functions in other python modules - like os, shutil etc.  We can easily write wrappers for such methods, but it can be annoying and time consuming if we use many of such methods.   What about to write a generic proxy, which will assure that methods are executed in thread pool and use this proxy for all potentially blocking methods within the module.<span id="more-1454"></span>
+File operations and other IO operations can block asyncio loop and  unfortunately  python does not support true asynchronous disk operations (mainly due to [problematic state of async disk IO in underlying os - aka linux](http://blog.libtorrent.org/2012/10/asynchronous-disk-io/) \- special library is need for true asynchronous disk operations  so normally select (or other IO event library) always reports file as ready to read and write and thus file IO operations block). Current solution is to run such operations in thread pool executor. There is asyncio wrapper library for file object - [aiofiles](https://github.com/Tinche/aiofiles), but there are also many blocking functions in other python modules - like os, shutil etc.  We can easily write wrappers for such methods, but it can be annoying and time consuming if we use many of such methods.   What about to write a generic proxy, which will assure that methods are executed in thread pool and use this proxy for all potentially blocking methods within the module.<span id="more-1454"></span>
 
 The proxy itself can be fairly simple:
 

@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}{% if taxonomy.name == "tag" %}Tags{% else %}Categories{% endif %} | {{ config.title }}{% endblock title %}
+{% block content %}
+<h1 class="entry-title">{% if taxonomy.name == "tag" %}Tags{% else %}Categories{% endif %}</h1>
+<ul>{% for term in terms | sort(attribute="name", case_sensitive=false) %}<li><a href="{{ term.permalink }}">{{ term.name }}</a> ({{ term.page_count }})</li>{% endfor %}</ul>
+{% endblock content %}

@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/writing-to-file-in-firefox-extension/"
 source_guid = "http://zderadicka.eu/?p=395"
 source_date_gmt = "2012-12-20 13:17:24"
-categories = ["Programming"]
-tags = ["Firefox Add-on", "Firefox Extension", "Javascript"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Firefox Add-on", "Firefox Extension", "Javascript"]
 +++
-Mozilla has provided nice high level API in its<a href="https://addons.mozilla.org/en-us/developers/builder"> Add-On SDK</a>, where one can relatively easily write an extension, without need for any special knowledge about internals of Firefox - the general knowledge of Javascript, HTML and CSS plus very nice and detailed documentation of the SDK are basically enough.
+Mozilla has provided nice high level API in its[ Add-On SDK](https://addons.mozilla.org/en-us/developers/builder), where one can relatively easily write an extension, without need for any special knowledge about internals of Firefox - the general knowledge of Javascript, HTML and CSS plus very nice and detailed documentation of the SDK are basically enough.
 
 However there are some functionalities, that are not available in SDK and then more effort is needed and  XPCOM components have to be used via their JS interfaces.  This requires bit more  research, so I'd like to share one useful snippet of code  - how to save string to file, which user has chosen via standard file picker dialogue:<span id="more-395"></span>
 

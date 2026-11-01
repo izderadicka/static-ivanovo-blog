@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/xen-4-combined-bridged-and-nat-networking/"
 source_guid = "http://zderadicka.eu/?p=433"
 source_date_gmt = "2012-12-31 10:14:08"
-categories = ["Admin"]
-tags = ["virtualization", "xen"]
+[taxonomies]
+category = ["Admin"]
+tag = ["virtualization", "xen"]
 +++
 <a href="/wp-content/uploads/XenFuPandaWiki.png" rel="attachment wp-att-436"><img alt="" class="alignleft size-full wp-image-436" decoding="async" height="134" loading="eager" src="/wp-content/uploads/XenFuPandaWiki.png" title="XenFuPandaWiki" width="134"/></a>Normally Xen is deployed with plenty of of public IPs,  so it can use bridged networking and each virtual machine can have it's own public IP.  However in my case I was limited by only 1 public IP, but I wanted to run several VMs with services accessible from outside.  Solution was to modify XEN networking scripts.
 
@@ -139,8 +140,8 @@ os.system(cmds)
 ```
 
 
-<strong>netdev</strong> is public interface attached to DOM0
-<strong>portmap</strong> is dictionary defining VMs port mapping, VMs should have static IPs - see comment in the code how to use it.  It should be defined for all your VMs, that should be accessible from outside.
+**netdev** is public interface attached to DOM0
+**portmap** is dictionary defining VMs port mapping, VMs should have static IPs - see comment in the code how to use it.  It should be defined for all your VMs, that should be accessible from outside.
 
 Assure all scripts have execute rights.
 

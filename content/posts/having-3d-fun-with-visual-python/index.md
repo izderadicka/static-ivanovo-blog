@@ -11,12 +11,13 @@ author = "admin"
 source_url = "http://zderadicka.eu/having-3d-fun-with-visual-python/"
 source_guid = "http://zderadicka.eu/?p=139"
 source_date_gmt = "2012-09-24 18:30:28"
-categories = ["Programming"]
-tags = ["3D", "linux", "physics", "python", "simmulation"]
+[taxonomies]
+category = ["Programming"]
+tag = ["3D", "linux", "physics", "python", "simmulation"]
 +++
-<a href="http://www.vpython.org">Visual Python or vpython</a> is python library for simple 3D animation, especially useful for animation of  simple physical scenes - like pendulum, ball on a spring, movement in gravitational field etc.  It is fairly simple to use and gives quite nice animations, which can demonstrate some  laws of physics.  I actually spot this package, when I saw an article about physics in popular mobile game "Angry Birds - Space". In that article they had been arguing about physics laws in the game and also referred to  vpython, where they made some experiments. I told myself I have to try it myself, so I've created small program using vpython.<span id="more-139"></span>
+[Visual Python or vpython](http://www.vpython.org) is python library for simple 3D animation, especially useful for animation of  simple physical scenes - like pendulum, ball on a spring, movement in gravitational field etc.  It is fairly simple to use and gives quite nice animations, which can demonstrate some  laws of physics.  I actually spot this package, when I saw an article about physics in popular mobile game "Angry Birds - Space". In that article they had been arguing about physics laws in the game and also referred to  vpython, where they made some experiments. I told myself I have to try it myself, so I've created small program using vpython.<span id="more-139"></span>
 
-The <a href="https://github.com/izderadicka/vpython-scripts/blob/master/angry.py">program is here</a> and simulates movement of a ball within gravitational field of a planet, where also atmosphere friction is present . Below is a video from program run:
+The [program is here](https://github.com/izderadicka/vpython-scripts/blob/master/angry.py) and simulates movement of a ball within gravitational field of a planet, where also atmosphere friction is present . Below is a video from program run:
 
 <a href="/wp-content/uploads/o_vpython.mp4">video_vpython</a>
 
@@ -29,7 +30,7 @@ The <a href="https://github.com/izderadicka/vpython-scripts/blob/master/angry.py
 ### Install Visual Python
 
 
-Although there is package <em>python-visual</em> in Ubuntu repositories, this package is  fairly ancient and is missing latest features - like tracking of movement etc. So if you want to have most of vpython you should install latest version from sources, however process is not completely straight forward (as authors themselves admit), so I'm recording here for reference my steps(On linux Mint 13/ Ubuntu 12.04):
+Although there is package *python-visual* in Ubuntu repositories, this package is  fairly ancient and is missing latest features - like tracking of movement etc. So if you want to have most of vpython you should install latest version from sources, however process is not completely straight forward (as authors themselves admit), so I'm recording here for reference my steps(On linux Mint 13/ Ubuntu 12.04):
 
 
 <ol>
@@ -44,7 +45,7 @@ download from<a href=" http://sourceforge.net/projects/fonttools/files/latest/do
 unpack and install - <code>sudo python setup.py install</code></li>
 <li>ttfquery - <code>sudo easy&#95;install ttfquery</code></li>
 <li>Polygon -  again manually, because easy_install get version for python 3.
-download from <a href="https://github.com/jraedler/Polygon2/zipball/master">https://github.com/jraedler/Polygon2/zipball/master</a>
+download from [https://github.com/jraedler/Polygon2/zipball/master](https://github.com/jraedler/Polygon2/zipball/master)
 unpack and install - <code>sudo python setup.py install</code></li>
 </ol>
 </li>

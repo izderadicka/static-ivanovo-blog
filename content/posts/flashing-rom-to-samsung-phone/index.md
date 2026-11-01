@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/flashing-rom-to-samsung-phone/"
 source_guid = "http://zderadicka.eu/?p=1343"
 source_date_gmt = "2016-05-01 05:16:23"
-categories = ["Admin", "Tools"]
-tags = ["Android", "flashing", "phone"]
+[taxonomies]
+category = ["Admin", "Tools"]
+tag = ["Android", "flashing", "phone"]
 +++
-On Linux there is a great <a href="https://github.com/Benjamin-Dobell/Heimdall">Heimdall</a> tool.  I used it recently to flash stock ROM and custom recovery (<a href="https://twrp.me/">TWRP</a>) to my old Samsung S3 mini. Best to be used from command line.<span id="more-1343"></span>
+On Linux there is a great [Heimdall](https://github.com/Benjamin-Dobell/Heimdall) tool.  I used it recently to flash stock ROM and custom recovery ([TWRP](https://twrp.me/)) to my old Samsung S3 mini. Best to be used from command line.<span id="more-1343"></span>
 
 Heimdall is in Ubuntu repos (or build from source):
 

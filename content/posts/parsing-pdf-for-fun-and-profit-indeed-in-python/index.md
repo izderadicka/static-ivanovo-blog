@@ -11,12 +11,13 @@ author = "admin"
 source_url = "http://zderadicka.eu/parsing-pdf-for-fun-and-profit-indeed-in-python/"
 source_guid = "http://zderadicka.eu/?p=1251"
 source_date_gmt = "2016-02-27 07:52:49"
-categories = ["Programming"]
-tags = ["PDF", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["PDF", "python"]
 +++
 PDF documents are ubiquitous in today's world. Apart of common use cases of printing, viewing etc. we need sometimes do something specific with them- like convert tehm to other formats or extract textual content.  Extracting text from PDF document can be (surprisingly) hard task due to the purpose and design of PDF documents.  PDF is intended to represent exact visual representation of document 's pages down to the smallest details. And internal representation of document text is following this goal.  Rather the storing text in some logical units (lines, paragraphs, columns, tables ...), text is represented as series of commands, which print characters (can be a single character, word, part of line, ...) at exact position on the page with given font, font size, color, etc.   In order to reconstruct original text logical structure program  has to scan  all these commands and join together texts, which were probably forming same line or same paragraph.  This task can be pretty demanding and ambiguous -  mutual position of text boxes can be interpreted in various ways ( is this space between words too large because they are in different columns or line is justified to both ends?).
 
-So the task of text extraction looks quite discouraging to try, luckily some smart guys have tried it already and left us with libraries that are doing pretty good job and we can leverage them. Some time ago I've created tool called<a href="/projects/python/pdf-checker/"> PDF Checker</a>, which does some analysis of PDF document content (presence, absence of some phrases,  paragraphs numbering, footers format etc.). I used there excellent Python <a href="http://www.unixuser.org/~euske/python/pdfminer/">PDFMiner</a> library.   PDFMiner is a grea tool and it is quite flexible, but being all written in Python it's rather slow.   Recently I've been looking for some alternatives,  which have Python bindings and provide functionality similar to PDFMiner.  In this article I describe some results of this search, particularly my experiences with <a href="https://poppler.freedesktop.org/">libpoppler</a>. <span id="more-1251"></span>
+So the task of text extraction looks quite discouraging to try, luckily some smart guys have tried it already and left us with libraries that are doing pretty good job and we can leverage them. Some time ago I've created tool called[ PDF Checker](/projects/python/pdf-checker/), which does some analysis of PDF document content (presence, absence of some phrases,  paragraphs numbering, footers format etc.). I used there excellent Python [PDFMiner](http://www.unixuser.org/~euske/python/pdfminer/) library.   PDFMiner is a grea tool and it is quite flexible, but being all written in Python it's rather slow.   Recently I've been looking for some alternatives,  which have Python bindings and provide functionality similar to PDFMiner.  In this article I describe some results of this search, particularly my experiences with [libpoppler](https://poppler.freedesktop.org/). <span id="more-1251"></span>
 
 
 ## Requirements
@@ -25,12 +26,12 @@ So the task of text extraction looks quite discouraging to try, luckily some sma
 In order to analyze  in detail text of PDF document I require to:
 
 
-<ul>
-<li>get number of pages in PDF document and for each page its size</li>
-<li>extract text from the page, ideally grouped to lines and paragraphs (boxes)</li>
-<li>get bounding boxes of text items (down to individual characters) to analyze text based on it's position on the page - header/footer, indentation, columns etc.</li>
-<li>get font name, size and color, background color  - to identify headers, highlights etc.</li>
-</ul>
+
+- get number of pages in PDF document and for each page its size
+- extract text from the page, ideally grouped to lines and paragraphs (boxes)
+- get bounding boxes of text items (down to individual characters) to analyze text based on it's position on the page - header/footer, indentation, columns etc.
+- get font name, size and color, background color  - to identify headers, highlights etc.
+
 
 
 
@@ -38,7 +39,7 @@ In order to analyze  in detail text of PDF document I require to:
 ## PDFMiner library
 
 
-<a href="http://www.unixuser.org/~euske/python/pdfminer/">PDFMiner</a> library was my first attempt, so generally most of requirements are derived from its interface.  The only things which are really missing there are font and background colours.  Here is an example how to dump text content of PDF file together with its position on the page and format:
+[PDFMiner](http://www.unixuser.org/~euske/python/pdfminer/) library was my first attempt, so generally most of requirements are derived from its interface.  The only things which are really missing there are font and background colours.  Here is an example how to dump text content of PDF file together with its position on the page and format:
 
 
 ```python
@@ -122,9 +123,9 @@ PDFMiner is very flexible, you can set few parameters to control layout analysis
 ##  libpoppler with GObject Introspection interface
 
 
-<a href="https://poppler.freedesktop.org/">Poppler</a> is a PDF rendering and parsing library based on the <a href="http://www.foolabs.com/xpdf/">xpdf-3.0</a> code base. It's now hosted as part of freedesktop.org and is actively maintained. libpoppler is used in many opensource PDF tools (Evince, Okular, GIMP, ...) and provides rich functionality for both parsing and rendering.
+[Poppler](https://poppler.freedesktop.org/) is a PDF rendering and parsing library based on the [xpdf-3.0](http://www.foolabs.com/xpdf/) code base. It's now hosted as part of freedesktop.org and is actively maintained. libpoppler is used in many opensource PDF tools (Evince, Okular, GIMP, ...) and provides rich functionality for both parsing and rendering.
 
-Poppler package  contains <a href="https://wiki.gnome.org/action/show/Projects/GObjectIntrospection?action=show&amp;redirect=GObjectIntrospection">GObject Introspection</a> binding, which means it can be used from scripting languages like Python or Javascript.  However there is <a href="https://bugs.freedesktop.org/show_bug.cgi?id=77790">significant issue with introspection</a> for one function, which is used for getting positions of text on the page - so workaround has to be used in this area.
+Poppler package  contains [GObject Introspection](https://wiki.gnome.org/action/show/Projects/GObjectIntrospection?action=show&redirect=GObjectIntrospection) binding, which means it can be used from scripting languages like Python or Javascript.  However there is [significant issue with introspection](https://bugs.freedesktop.org/show_bug.cgi?id=77790) for one function, which is used for getting positions of text on the page - so workaround has to be used in this area.
 
 Below is code that dumps PDF text in a similar way to script with PDFMiner:
 
@@ -219,7 +220,7 @@ Comparing to PDFMiner solution it doesn't provide aggregation on text box or tex
 ## libpoppler with custom Python binding
 
 
-Recently I've learned more about <a href="http://cython.org/">Cython </a>so I decided to give it a try and create <a href="https://github.com/izderadicka/pdfparser">my own interface</a> to libpoppler. Actually it was not so difficult and quite quickly I was able to create  Python binding, which I can use easily as the replacement for PDFminer in my project.   The most notable difference is reversed orientation of y-axis ( PDFminer has 0 at page bottom, here it is at page top).  Below is the sample code for dumping PDF text (with position and font information):
+Recently I've learned more about [Cython ](http://cython.org/)so I decided to give it a try and create [my own interface](https://github.com/izderadicka/pdfparser) to libpoppler. Actually it was not so difficult and quite quickly I was able to create  Python binding, which I can use easily as the replacement for PDFminer in my project.   The most notable difference is reversed orientation of y-axis ( PDFminer has 0 at page bottom, here it is at page top).  Below is the sample code for dumping PDF text (with position and font information):
 
 
 ```python
@@ -258,9 +259,9 @@ I've done simple benchmarks of these three scripts, time is measured by time lin
 <tbody>
 <tr valign="top">
 <td width="25%"></td>
-<td width="25%"><strong>libppopler with cython</strong></td>
-<td width="25%"><strong>libpoppler with GI binding</strong></td>
-<td width="25%"><strong>pdfminer</strong></td>
+<td width="25%">**libppopler with cython**</td>
+<td width="25%">**libpoppler with GI binding**</td>
+<td width="25%">**pdfminer**</td>
 </tr>
 <tr valign="top">
 <td width="25%">tiny document (half page)</td>
@@ -298,4 +299,4 @@ As you can see custom libpoppler binding with Cython is about 3x faster then GOb
 
 Custom interface to libpoppler is the clear winner in all aspects - performance, code simplicity / pythonic interface and reliability.  I'll be using it in my further projects.
 
-My Python libpoppler binding is <a href="https://github.com/izderadicka/pdfparser">freely available on github</a> under GPL v3 license ( as libpoppler is GPL licensed too) and you are invited to try it.  I'd like to hear your feedback.
+My Python libpoppler binding is [freely available on github](https://github.com/izderadicka/pdfparser) under GPL v3 license ( as libpoppler is GPL licensed too) and you are invited to try it.  I'd like to hear your feedback.

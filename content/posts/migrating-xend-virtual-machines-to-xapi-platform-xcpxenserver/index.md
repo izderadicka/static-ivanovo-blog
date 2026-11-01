@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/migrating-xend-virtual-machines-to-xapi-platform-xcpxenserver/"
 source_guid = "http://zderadicka.eu/?p=878"
 source_date_gmt = "2014-09-19 12:04:32"
-categories = ["Admin"]
-tags = ["xapi", "xen", "XenServer"]
+[taxonomies]
+category = ["Admin"]
+tag = ["xapi", "xen", "XenServer"]
 +++
-Xen hypervisor has currently 3 tool stacks : <a href="http://wiki.xen.org/wiki/XEND">xend</a> \+ xm (which is now deprecated),   xl (new low level tool) and xapi+xe.   xapi is most advanced and it is used in <a href="http://xenserver.org/">XenServer</a> (and <a href="https://wiki.xenserver.org/index.php?title=XCP_Beginners_Guide">XCP</a> , but it is now also deprecated because XenServer is now open source).  Recently I have been migrating some virtual machines from Xen 4 with xend to XenServer  6.2. Below are details of migrating linux machines to new environment. <span id="more-878"></span>
+Xen hypervisor has currently 3 tool stacks : [xend](http://wiki.xen.org/wiki/XEND) \+ xm (which is now deprecated),   xl (new low level tool) and xapi+xe.   xapi is most advanced and it is used in [XenServer](http://xenserver.org/) (and [XCP](https://wiki.xenserver.org/index.php?title=XCP_Beginners_Guide) , but it is now also deprecated because XenServer is now open source).  Recently I have been migrating some virtual machines from Xen 4 with xend to XenServer  6.2. Below are details of migrating linux machines to new environment. <span id="more-878"></span>
 
 
 ### Differences between platforms
@@ -23,14 +24,14 @@ Xen hypervisor has currently 3 tool stacks : <a href="http://wiki.xen.org/wiki/X
 XenServer(XCP) is proving much more functionality, but for the price of much closed control on your dom0. Key differences are:
 
 
-<ul>
-<li>Different tools: xm vs xe</li>
-<li>xend is using configuration files,  XenServer has an internal database, that can be manipulated by xe tool (or programmatically  via XenAPI bindings)</li>
-<li>In xend I used <a href="http://xen-tools.org/software/xen-tools/">xen-tools </a> in Debian to create virtual machines,  XenServer has built in templates for most common OSes (plus you can create your own templates as clones of existing VMs)</li>
-<li>For xend I used raw disk images as loopback devices (as provided by xen-tools). Xenserver is managing disk images itself (locally uses LVM2, but can also use shared storage).</li>
-<li>Official XenServer distribution has CentOS in dom0,  I used Debian previously (but XCP can be installed to new Debian)</li>
-<li>XenServer has generally more advanced, enterprise like features.</li>
-</ul>
+
+- Different tools: xm vs xe
+- xend is using configuration files,  XenServer has an internal database, that can be manipulated by xe tool (or programmatically  via XenAPI bindings)
+- In xend I used [xen-tools ](http://xen-tools.org/software/xen-tools/) in Debian to create virtual machines,  XenServer has built in templates for most common OSes (plus you can create your own templates as clones of existing VMs)
+- For xend I used raw disk images as loopback devices (as provided by xen-tools). Xenserver is managing disk images itself (locally uses LVM2, but can also use shared storage).
+- Official XenServer distribution has CentOS in dom0,  I used Debian previously (but XCP can be installed to new Debian)
+- XenServer has generally more advanced, enterprise like features.
+
 
 
 
@@ -106,9 +107,9 @@ xe vdi-import uuid=$vdi_id filename=/mnt/my_vm/disk.img # assure file is readabl
 Now you should be able to boot up new machine, few final touches are needed:
 
 
-<ul>
-<li>login via console</li>
-<li>modify other setups as necessary (net configuration ...)</li>
-<li>install XenServer tools</li>
-<li>reboot</li>
-</ul>
+
+- login via console
+- modify other setups as necessary (net configuration ...)
+- install XenServer tools
+- reboot
+

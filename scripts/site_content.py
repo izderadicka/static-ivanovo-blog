@@ -41,7 +41,7 @@ def read_content(root=ROOT, drafts=False):
                     or any(part in ('.', '..') for part in route.split('/'))
                     or urlsplit(route).query or urlsplit(route).fragment):
                 raise ValueError(f'{path}: set an unescaped public path such as /article-slug/')
-            if route in occupied or route in ('/', '/search/', '/archives/', '/feed/', '/rss.xml/', '/pages/', '/posts/') or route.startswith('/page/'):
+            if route in occupied or route in ('/', '/search/', '/archives/', '/feed/', '/rss.xml/', '/pages/', '/posts/') or route.startswith(('/page/', '/category/', '/tag/')):
                 raise ValueError(f'Duplicate or reserved route: {route}')
             if route + 'index.html' in static_routes or route.rstrip('/') in static_routes:
                 raise ValueError(f'Article route overlaps a static asset: {route}')

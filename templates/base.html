@@ -1,5 +1,7 @@
 {% set posts = get_section(path="posts/_index.md") %}
 {% set years = posts.pages | group_by(attribute="year") %}
+{% set categories = get_taxonomy(kind="category") %}
+{% set tags = get_taxonomy(kind="tag") %}
 {% set information = get_section(path="pages/_index.md") %}
 <!doctype html>
 <html lang="{{ lang }}">
@@ -22,27 +24,42 @@
   <div class="site-shell">
     <header class="site-header" data-pagefind-ignore>
       <a class="brand" href="{{ get_url(path='/') }}">{{ config.title }}</a>
-      <nav class="primary-navigation" aria-label="Main navigation">{{ <navigation pages={information.pages} /> }}</nav>
+      <nav class="primary-navigation" aria-label="Main navigation">{{ <project_menu pages={information.pages} /> }}{{ <navigation pages={information.pages} /> }}</nav>
       <a class="search-toggle" href="{{ get_url(path='/search/') }}" aria-label="Search">⌕</a>
       <button class="menu-toggle" aria-expanded="false" aria-controls="mobile-menu" hidden>☰<span class="visually-hidden">Menu</span></button>
     </header>
     <nav id="mobile-menu" class="mobile-menu" aria-label="Mobile navigation" hidden>
+      <a href="{{ get_url(path='/projects/') }}">Projects</a>
+      {{ <project_tree pages={information.pages} parent={"/projects/"} /> }}
       {{ <navigation pages={information.pages} /> }}
+      {% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) }}">Categories</a>{% endif %}
+      {% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) }}">Tags</a>{% endif %}
       <a href="{{ get_url(path='/search/') }}">Search</a>
     </nav>
-    <noscript><nav class="no-script-menu" aria-label="Navigation">{{ <navigation pages={information.pages} /> }}</nav></noscript>
+    <noscript><nav class="no-script-menu" aria-label="Navigation">{{ <navigation pages={information.pages} /> }} {% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) }}">Categories</a>{% endif %} {% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) }}">Tags</a>{% endif %}</nav></noscript>
     <div class="site-body">
       <aside class="sidebar" data-pagefind-ignore>
         <p class="site-description">My Digital Bits And Pieces</p>
+        {% if tags.items %}
         <section>
-          <h2><a href="{{ get_url(path='/archives/') }}">Archives</a></h2>
-          <ul>{% for year in years | keys | sort | reverse %}<li><a href="{{ get_url(path='/archives/') }}#{{ year }}">{{ year }}</a> <span>({{ years[year] | length }})</span></li>{% endfor %}</ul>
+          <h2>{% if tags.items %}<a href="{{ get_url(path='/tag/', trailing_slash=true) }}">Tags</a>{% endif %}</h2>
+          {% set popular_tags = tags.items | sort(attribute="page_count") | reverse %}
+          <div class="tag-cloud">{% for term in popular_tags[:45] | sort(attribute="slug") %}<a style="--tag-size: {{ 12 + term.page_count / popular_tags[0].page_count * 18 }}px" href="{{ term.permalink }}">{{ term.name }}</a> {% endfor %}</div>
+          <p><a href="{{ get_url(path='/tag/', trailing_slash=true) }}">All tags →</a></p>
         </section>
+        {% endif %}
+        {% if categories.items %}
+        <section>
+          <h2>{% if categories.items %}<a href="{{ get_url(path='/category/', trailing_slash=true) }}">Categories</a>{% endif %}</h2>
+          <ul>{% for term in categories.items | sort(attribute="name", case_sensitive=false) %}<li><a href="{{ term.permalink }}">{{ term.name }}</a> <span>({{ term.page_count }})</span></li>{% endfor %}</ul>
+        </section>
+        {% endif %}
+        <p><a href="{{ get_url(path='/archives/', trailing_slash=true) }}">Archives</a></p>
         <p><a href="{{ get_url(path='rss.xml') }}">RSS feed</a></p>
       </aside>
       <main id="main" tabindex="-1">{% block content %}{% endblock content %}</main>
     </div>
-    <footer class="site-footer" data-pagefind-ignore>My Digital Bits And Pieces · <a href="{{ get_url(path='/archives/') }}">Archives</a> · <a href="{{ get_url(path='rss.xml') }}">RSS</a></footer>
+    <footer class="site-footer" data-pagefind-ignore>My Digital Bits And Pieces · <a href="{{ get_url(path='/archives/', trailing_slash=true) }}">Archives</a> · <a href="{{ get_url(path='rss.xml') }}">RSS</a></footer>
   </div>
 </body>
 </html>

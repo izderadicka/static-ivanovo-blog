@@ -14,7 +14,7 @@ source_date_gmt = "2012-09-23 10:43:23"
 menu_order = 0
 parent = "/projects/python/"
 +++
-<strong>Downloader</strong> is a small utility and framework intended for help download many files from a certain site in an unobtrusive manner. Written in Python 3 for Linux platform - requires some python programming skills to use.
+**Downloader** is a small utility and framework intended for help download many files from a certain site in an unobtrusive manner. Written in Python 3 for Linux platform - requires some python programming skills to use.
 
 
 
@@ -31,7 +31,7 @@ parent = "/projects/python/"
 
 
 The program is build for this use case:
-<em>One needs to download many files form a site. Files are referenced on site in a list or table, that is paginated ( hundreds of pages). Actual download links might be indirectly referred from that pages or even require some algorithm to be constructed.  The  downloading program should behave in an unobtrusive manner - do not overload the site and basically be undistinguishable from a regular user who is browsing site.</em>
+*One needs to download many files form a site. Files are referenced on site in a list or table, that is paginated ( hundreds of pages). Actual download links might be indirectly referred from that pages or even require some algorithm to be constructed.  The  downloading program should behave in an unobtrusive manner - do not overload the site and basically be undistinguishable from a regular user who is browsing site.*
 
 The tool is basically a framework, which consist of a basic program, which provides key actions and plugins, which are specific for given site and which do parse site pages and provide links for files to be downloaded. Also tool is designed to be able to run a long time (weeks, months) and resume if it has been interrupted in meanwhile ( not actually resuming individual files now, but rather resume from the page when it was parsing links last time).
 
@@ -40,16 +40,16 @@ Interface of program is command line.
 Basic flow of program:
 
 
-<ol>
-<li>Log into site</li>
-<li>Download first page</li>
-<li>Parse all relevant links on the page, plus their metadata ( e.g. relevant information related to link - name, author, date etc.)</li>
-<li>Process the link - is any further browsing and parsing is needed to get final link and its metadata</li>
-<li>Enqueue links and meta for download - downloads will then run in separate threads</li>
-<li>Parse page for link to next page</li>
-<li>Load next page and continue on 2.</li>
-<li>End if there are no further pages</li>
-</ol>
+
+1. Log into site
+1. Download first page
+1. Parse all relevant links on the page, plus their metadata ( e.g. relevant information related to link - name, author, date etc.)
+1. Process the link - is any further browsing and parsing is needed to get final link and its metadata
+1. Enqueue links and meta for download - downloads will then run in separate threads
+1. Parse page for link to next page
+1. Load next page and continue on 2.
+1. End if there are no further pages
+
 
 
 
@@ -113,10 +113,10 @@ python3 downloader.py manybooks -d -r ~/tmp/manybooks
 To use downloader you need to write your own plugin for site you're interested in.  Skill needed:
 
 
-<ul>
-<li>Python 3</li>
-<li>Knowledge of <a href="http://www.crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup HTML parsing library</a></li>
-</ul>
+
+- Python 3
+- Knowledge of [BeautifulSoup HTML parsing library](http://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+
 
 
 There is a sample plugin for site manybooks so you can look at it.
@@ -127,7 +127,7 @@ General approach would be :
 ### 1\) Looks at the site of your interest
 
 
-Look at the HTML code how it is structured - look where are links and what information around there you can use as metadata. The invaluable help when looking into HTML can be provided by <a href="https://getfirebug.com/">Firebug</a> Firefox plugin. Look how pagination is done and how to get a link to next page.
+Look at the HTML code how it is structured - look where are links and what information around there you can use as metadata. The invaluable help when looking into HTML can be provided by [Firebug](https://getfirebug.com/) Firefox plugin. Look how pagination is done and how to get a link to next page.
 
 Download a page for offline testing with plugin ( HTML Only file - no need for related media).
 
@@ -139,15 +139,15 @@ In plugins directory create new file - use manybooks.py as a prototype.
 
 Set correct urls to <strong>BASE_URL</strong> and <strong>START_URL</strong> and start with methods <strong>next_link</strong> and <strong>next_page_ur</strong>l - these are core of site parsing.  Use test cases - see below - to test your code.
 
-If site requires login then implement <strong>require_login</strong> and <strong>login</strong> methods.
+If site requires login then implement <strong>require_login</strong> and **login** methods.
 
-If you cannot get clear download link from initial pages implement method <strong>postprocess_link</strong>, where you can download and parse any intermediate page(s) and do any further processing to get final link and metadata. If for any reasons link should not be downloaded , this method can raise  <strong>raise SkipLink</strong> exception.
+If you cannot get clear download link from initial pages implement method <strong>postprocess_link</strong>, where you can download and parse any intermediate page(s) and do any further processing to get final link and metadata. If for any reasons link should not be downloaded , this method can raise  **raise SkipLink** exception.
 
 Then implement function <strong>save_file</strong>, which will save final link to disk - use client.save\_file method to load and save data. save\_file function has access to special parametrs context, which is worker object running this function.  If for any reasons function needs to wait for a while (download limits etc.) it should use context.sleeper.sleep(x) to sleep for x seconds.
 
-Finally you can fine tune downloader parameters on<strong> lines 15-30</strong>, which will govern the HTTP requests behaviour - delay between requests and concurrency.
+Finally you can fine tune downloader parameters on** lines 15-30**, which will govern the HTTP requests behaviour - delay between requests and concurrency.
 
-If you want control plugin behaviour from command line you can define its <strong>OPTIONS</strong> on line 42 and use then options global variable in code.
+If you want control plugin behaviour from command line you can define its **OPTIONS** on line 42 and use then options global variable in code.
 
 Here is complete sample plugin with comments:
 
@@ -304,7 +304,7 @@ def save_file(client,link, metadata, base_dir, context=None):
 
 Surely you will need some iterations to get working correctly.  There is some support within code for building test cases.
 
-You can import <strong>httputils.TestSpider </strong>and use it as mixed-in class - thus you should be able to test MySpider class on files stored locally.
+You can import **httputils.TestSpider **and use it as mixed-in class - thus you should be able to test MySpider class on files stored locally.
 
 See below test code for sample plugin:
 
@@ -344,7 +344,7 @@ class Test(unittest.TestCase):
 ```
 
 
-After offline test you can test your plugin from within downloader.  <strong>-d</strong> option will pring logging messages so be sure to use <strong>logging</strong> module to log all important things going on in your plugin.
+After offline test you can test your plugin from within downloader.  **-d** option will pring logging messages so be sure to use **logging** module to log all important things going on in your plugin.
 
 
 
@@ -364,10 +364,10 @@ After offline test you can test your plugin from within downloader.  <strong>-d
 All code can be downloaded and forked from GitHub:
 
 
-### <a href="https://github.com/izderadicka/downloader-py3">https://github.com/izderadicka/downloader-py3</a>
+### [https://github.com/izderadicka/downloader-py3](https://github.com/izderadicka/downloader-py3)
 
 
-All code is provided under <a href="http://www.gnu.org/copyleft/gpl.html">GPL v3 license</a>.
+All code is provided under [GPL v3 license](http://www.gnu.org/copyleft/gpl.html).
 
 
 

@@ -14,7 +14,7 @@ source_date_gmt = "2012-10-07 16:32:50"
 menu_order = 0
 parent = "/projects/python/"
 +++
-<span style="color: #ff0000;">MYBOOKSHELF WAS SUPERSEDED WITH NEW APPLICATION</span> <a href="/projects/python/mybookshelf2-ebooks-management-and-sharing/">MYBOOKSHELF2</a>
+<span style="color: #ff0000;">MYBOOKSHELF WAS SUPERSEDED WITH NEW APPLICATION</span> [MYBOOKSHELF2](/projects/python/mybookshelf2-ebooks-management-and-sharing/)
 
 MyBookshelf  is web based program to manage your library of ebooks. It is fully web based, with simple, yet powerful interface. It's written in python language and django web framework offers great flexibility and extensibility. Ideal for sharing ebooks within a group of people.
 
@@ -87,7 +87,7 @@ Key features:
 
 
 
-Mybookshelf can be installed from source only. Code is hosted on <a href="https://launchpad.net/mybookshelf">launchpad</a>, easiest way to get it is :
+Mybookshelf can be installed from source only. Code is hosted on [launchpad](https://launchpad.net/mybookshelf), easiest way to get it is :
 
 `bzr checkout --lightweight lp:mybookshelf`
 
@@ -97,7 +97,7 @@ this will get just trunk version without history, if you plan to develop, should
 
 All code is available as open source under GPL v3 license.
 
-Bugs should be reported on <a href="https://bugs.launchpad.net/mybookshelf">launchpad</a>.
+Bugs should be reported on [launchpad](https://bugs.launchpad.net/mybookshelf).
 
 
 
@@ -118,17 +118,17 @@ Mybookshelf will run only on Linux. Installation is manual, here are installatio
 
 
 <ol>
-<li><strong>Install dependencies:</strong>
+<li>**Install dependencies:**
 <code>sudo apt-get install apache2 mysql-server python-django python-mysqldb libapache2-mod-wsgi libreoffice libxt6 bzr</code>
 <code># calibre installed from latest version rather then from distro packages</code>
 <pre class="code-highlight" data-language=""><code><span class="code-line">sudo python -c "import sys; py3 = sys.version_info[0] &gt; 2; u = __import__('urllib.request' if py3 else 'urllib', fromlist=1); exec(u.urlopen('http://status.calibre-ebook.com/linux_installer').read()); main()"</span></code></pre>
 </li>
-<li><strong>Install Mybookshelp source:</strong>
+<li>**Install Mybookshelp source:**
 <pre class="code-highlight" data-language=""><code><span class="code-line">bzr checkout --lightweight http://bazaar.launchpad.net/~ivan-zderadicka/mybookshelf/trunk/</span></code></pre>
 (if you consider development of code use<code> bzr brach</code> instead)
 Move file to final destination - like /opt/mybookshelf
 <code>sudo mv mybookshelf/ /opt</code></li>
-<li><strong>Create database:</strong>
+<li>**Create database:**
 <code>mysql -u root </code>
 <code>mysql&gt; create database ebooks;</code>
 <code>Query OK, 1 row affected (0.00 sec)</code>
@@ -137,14 +137,14 @@ Move file to final destination - like /opt/mybookshelf
 <code>mysql&gt; flush privileges;</code>
 <code>Query OK, 0 rows affected (0.00 sec)</code>
 <code>exit</code></li>
-<li><strong>Create directories for ebooks:</strong>
+<li>**Create directories for ebooks:**
 <code>mkdir ebooks</code>
 <code>mkdir ebooks/library</code>
 <code>mkdir ebooks/converted</code>
 <code>mkdir ebooks/recon</code>
 <code>chmod -R 0777 ebooks</code>
 last command is to assure that web server user will have write access - if you are concerned about security, you can consider different setup - special security group or something like this</li>
-<li><strong>Edit /opt/mybookshelf/settings.py</strong>
+<li>**Edit /opt/mybookshelf/settings.py**
 Set database parameters:
 <code>DATABASE&#95;NAME = 'ebooks'            </code>
 <code>DATABASE&#95;USER = 'ebooks'            </code>
@@ -156,16 +156,16 @@ Set ebook directories:
 And disable debug toolbar (in MIDDLEWARE_CLASSES and INSTALLED APPS )
 <code>#'debug&#95;toolbar.middleware.DebugToolbarMiddleware', </code>
 <code>#'debug&#95;toolbar',</code></li>
-<li><strong>Now sync database - e.g. create tables and initial data</strong>
+<li>**Now sync database - e.g. create tables and initial data**
 <code>cd /opt/mybookshelf/</code>
 <code>./manage.py syncdb # also create an admin user!</code>
 <code>./manage.py loaddata data.xml</code></li>
-<li><strong>Test it</strong>
+<li>**Test it**
 <code>./manage.py runserver your&#95;ip:5555</code>
 this runs emended server and try to connect with browser to it. Login as your admin user. Try to upload ebook and convert it.  Then stop this command.</li>
-<li><strong>Edit django.wsgi</strong>
+<li>**Edit django.wsgi**
 set <code>path = '/opt/mybookshelf'</code></li>
-<li><strong>Create new virtual server configuration </strong>in /etc/apache2/sites-available:
+<li>**Create new virtual server configuration **in /etc/apache2/sites-available:
 <pre class="code-highlight" data-language="apache"><code><span class="code-line"><span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="s">*:5555</span><span class="nt">&gt;</span></span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">ServerName</span><span class="w"> </span>localhost</span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">ServerAlias</span><span class="w"> </span>localhost</span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">ServerAdmin</span><span class="w"> </span>ivan</span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">DocumentRoot</span><span class="w"> </span><span class="sx">/opt/mybookshelf</span></span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Alias</span><span class="w"> </span><span class="sx">/robots.txt</span><span class="w"> </span><span class="sx">/opt/mybookshelf/robots.txt</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Alias</span><span class="w"> </span><span class="sx">/favicon.ico</span><span class="w"> </span><span class="sx">/opt/mybookshelf/favicon.ico</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Alias</span><span class="w"> </span><span class="sx">/media/</span><span class="w"> </span><span class="sx">/usr/share/pyshared/django/contrib/admin/media/</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Alias</span><span class="w"> </span><span class="sx">/site_media/</span><span class="w"> </span><span class="sx">/opt/mybookshelf/site_media/</span></span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="w">    </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">/opt/mybookshelf</span><span class="nt">&gt;</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Order</span><span class="w"> </span>allow,deny</span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Allow</span><span class="w"> </span>from<span class="w"> </span><span class="k">all</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nt">&lt;/Directory&gt;</span></span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="w">   </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="s">/usr/share/pyshared/django/contrib/admin/media</span><span class="nt">&gt;</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Order</span><span class="w"> </span>allow,deny</span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">Allow</span><span class="w"> </span>from<span class="w"> </span><span class="k">all</span></span>&#10;<span class="code-line"><span class="w">    </span><span class="nt">&lt;/Directory&gt;</span></span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="w">    </span><span class="nb">WSGIScriptAlias</span><span class="w"> </span>/<span class="w"> </span><span class="sx">/opt/mybookshelf/django.wsgi</span></span>&#10;<span class="code-line"></span>&#10;<span class="code-line"><span class="nt">&lt;/VirtualHost&gt;</span></span></code></pre>
 And configure also <code>/etc/apache2/ports.conf</code> and put there <code>Listen 5555</code>.
 Also:

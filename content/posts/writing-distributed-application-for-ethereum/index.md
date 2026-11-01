@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/writing-distributed-application-for-ethereum/"
 source_guid = "http://zderadicka.eu/?p=1685"
 source_date_gmt = "2017-09-04 07:05:49"
-categories = ["Programming"]
-tags = ["Aurelia", "ethereum", "Parity"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Aurelia", "ethereum", "Parity"]
 +++
-In <a href="/ethereum-local-playground/">past article</a> I've written about some basic stuff we can do with <a href="https://www.ethereum.org/">Ethereum</a> client <a href="https://parity.io/">Parity</a> \- like transfering Ethers, creating multi-signature wallet and even writing our own contracts. Now I'll continue with writing our very own Distributed Application ( Dapp).<span id="more-1685"></span>
+In [past article](/ethereum-local-playground/) I've written about some basic stuff we can do with [Ethereum](https://www.ethereum.org/) client [Parity](https://parity.io/) \- like transfering Ethers, creating multi-signature wallet and even writing our own contracts. Now I'll continue with writing our very own Distributed Application ( Dapp).<span id="more-1685"></span>
 
 
 ## What is Dapp?
@@ -23,7 +24,7 @@ In <a href="/ethereum-local-playground/">past article</a> I've written about som
 In my understanding Distributed Application  is combination of contract(s) deployed in Ethereum blockchain and browser based UI that enables easy interaction with contracts. Some of application logic that is  normally hosted in server,  is in Smart Contracts in the distributed system - Ethereum - so that why they are called distributed. System is shown on following picture:
 <a href="/wp-content/uploads/dapp-schema.jpg"><img alt="dapp-schema" class="alignnone size-full wp-image-1688" decoding="async" height="1137" loading="eager" sizes="(max-width: 800px) 100vw, 800px" src="/wp-content/uploads/dapp-schema.jpg" srcset="/wp-content/uploads/dapp-schema.jpg 800w, /wp-content/uploads/dapp-schema-211x300.jpg 211w, /wp-content/uploads/dapp-schema-720x1024.jpg 720w" width="800"/></a>
 
-So Dapp consists of two parts - browser client, written in Javasript and Smart Contract(s), written in Solidity (or other Ethereum language). Browser calls contract(s) via <a href="http://www.jsonrpc.org/specification">JSON-RPC </a> (interface is <a href="https://github.com/ethereum/wiki/wiki/JSON-RPC">standardized</a> across Ethereum browsers, so Dapp browser part can theoretically work with any client). Though we can call directly JSON-RPC methods from general JavaScript, it's much easier to use existing library <a href="https://github.com/ethereum/web3.js/">web3.js</a>, which provides convenient objects and methods.
+So Dapp consists of two parts - browser client, written in Javasript and Smart Contract(s), written in Solidity (or other Ethereum language). Browser calls contract(s) via [JSON-RPC ](http://www.jsonrpc.org/specification) (interface is [standardized](https://github.com/ethereum/wiki/wiki/JSON-RPC) across Ethereum browsers, so Dapp browser part can theoretically work with any client). Though we can call directly JSON-RPC methods from general JavaScript, it's much easier to use existing library [web3.js](https://github.com/ethereum/web3.js/), which provides convenient objects and methods.
 
 
 ## Our Dapp - Name Registry
@@ -87,15 +88,15 @@ contract Registry {
 ```
 
 
-For UI part we  use Aurelia (as I have <a href="/starting-with-aurelia-pagination-with-back-and-sort/">played with Aurelia</a> framework before, so this is good opportunity to refresh  knowledge), <a href="https://getbootstrap.com/docs/3.3/">Bootstrap 3</a>  and web3.js for communication with Ethereum client. The resulting code is <a href="https://github.com/izderadicka/dapp-demo-registry">here in github</a>.
+For UI part we  use Aurelia (as I have [played with Aurelia](/starting-with-aurelia-pagination-with-back-and-sort/) framework before, so this is good opportunity to refresh  knowledge), [Bootstrap 3](https://getbootstrap.com/docs/3.3/)  and web3.js for communication with Ethereum client. The resulting code is [here in github](https://github.com/izderadicka/dapp-demo-registry).
 
 When creating this simple Dapp following two things showed as tricky:
 
 
-<ul>
-<li>Web application packing -  as several times before correct packing of web application was problematic. Finally web3.js worked correctly with <a href="https://webpack.js.org/">webpack</a> bundled application generated with Aurelia CLI and using recent version (3.5) of webpack.</li>
-<li>Web3.js version -  initially I started with latest beta version (1.0), but it does not seem to be ready yet, documentation is brief and I was missing some functionality or it was not working properly, so I finally used stable version 0.20.  This is a pity, because 1.0.0 has much modern interface, using Promises etc.</li>
-</ul>
+
+- Web application packing -  as several times before correct packing of web application was problematic. Finally web3.js worked correctly with [webpack](https://webpack.js.org/) bundled application generated with Aurelia CLI and using recent version (3.5) of webpack.
+- Web3.js version -  initially I started with latest beta version (1.0), but it does not seem to be ready yet, documentation is brief and I was missing some functionality or it was not working properly, so I finally used stable version 0.20.  This is a pity, because 1.0.0 has much modern interface, using Promises etc.
+
 
 
 The core ES6 class for interaction with `Registry` contract is `client.js`:
@@ -269,7 +270,7 @@ And here is screen for querying registry:
 ## Other tutorials
 
 
-You can check for instance this <a href="https://github.com/paritytech/parity/wiki/Dapp-Tutorial">Parity Dapp tutorial</a> \- which is focused particularly on Parity's special libraries integrating with <a href="https://facebook.github.io/react/">React</a>. I went through it (with some issues, partly related again to web application packaging) and it's really nice. Parity libraries provides cool reactive components - like `TransactButton` button, which visualizes transactions steps. Such components can significantly speed up and simplify application development.
+You can check for instance this [Parity Dapp tutorial](https://github.com/paritytech/parity/wiki/Dapp-Tutorial) \- which is focused particularly on Parity's special libraries integrating with [React](https://facebook.github.io/react/). I went through it (with some issues, partly related again to web application packaging) and it's really nice. Parity libraries provides cool reactive components - like `TransactButton` button, which visualizes transactions steps. Such components can significantly speed up and simplify application development.
 
 
 ## Conclusion

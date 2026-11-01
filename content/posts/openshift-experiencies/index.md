@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/openshift-experiencies/"
 source_guid = "http://zderadicka.eu/?p=1056"
 source_date_gmt = "2015-08-01 17:13:33"
-categories = ["Admin", "Programming"]
-tags = ["PaaS", "python"]
+[taxonomies]
+category = ["Admin", "Programming"]
+tag = ["PaaS", "python"]
 +++
-<a href="https://en.wikipedia.org/wiki/Platform_as_a_service">PaaS</a> is happily buzzing in the <a href="https://en.wikipedia.org/wiki/Cloud_computing">Cloud</a> and it seems to be hottest topic in the infrastructure  services today,  so I decided to test <a href="https://www.openshift.com">Openshift</a> \-  PaaS  offering  from Red Hat.  Couple of reasons make this platform interesting - firstly it's open source solution, so we can use it to build your own private solution, secondly on public service we  get 3 gears ( linux containers with predefined configuration) for free forever, so it's easy to experiment with this platform. As a sample project we will create very simple Python <a href="http://flask.pocoo.org/">Flask</a> web application with <a href="https://www.mongodb.org/">MongoDb</a>.<span id="more-1056"></span>
+[PaaS](https://en.wikipedia.org/wiki/Platform_as_a_service) is happily buzzing in the [Cloud](https://en.wikipedia.org/wiki/Cloud_computing) and it seems to be hottest topic in the infrastructure  services today,  so I decided to test [Openshift](https://www.openshift.com) \-  PaaS  offering  from Red Hat.  Couple of reasons make this platform interesting - firstly it's open source solution, so we can use it to build your own private solution, secondly on public service we  get 3 gears ( linux containers with predefined configuration) for free forever, so it's easy to experiment with this platform. As a sample project we will create very simple Python [Flask](http://flask.pocoo.org/) web application with [MongoDb](https://www.mongodb.org/).<span id="more-1056"></span>
 
 
 ## Intial Setup
@@ -37,7 +38,7 @@ Now we are ready for our first application.
 ## Create And Deploy Application
 
 
-We create application template using  sample application <a href="https://github.com/izderadicka/openshift-test">availabe here at github</a> :
+We create application template using  sample application [availabe here at github](https://github.com/izderadicka/openshift-test) :
 
 
 ```sh
@@ -61,7 +62,7 @@ source bin/activate
 ```
 
 
-Next we need to install required python libraries - they should be listed in file <a href="https://github.com/izderadicka/openshift-test/blob/master/requirements.txt">requirements.txt</a>. They are installed automatically during Openshift deployment,  however there is one issue there - it looks like by default  Openshift is installing packages from its own mirrors of python repositories and it could not find some packages for this application or right versions ( it also caused troubles in another project - where it installed older versions of django  and django-registration and application was not working then)-  <strong>enforcing official repository in requirements.txt</strong> helped:
+Next we need to install required python libraries - they should be listed in file [requirements.txt](https://github.com/izderadicka/openshift-test/blob/master/requirements.txt). They are installed automatically during Openshift deployment,  however there is one issue there - it looks like by default  Openshift is installing packages from its own mirrors of python repositories and it could not find some packages for this application or right versions ( it also caused troubles in another project - where it installed older versions of django  and django-registration and application was not working then)-  **enforcing official repository in requirements.txt** helped:
 
 
 ```sh
@@ -78,7 +79,7 @@ pip install -r requirements.txt
 
 
 For Openshift deployment there are two other important files:
-<a href="https://github.com/izderadicka/openshift-test/blob/master/setup.py">setup.py</a>, which is a standard python setup file, here we should edit metadata for our application and add any additional setup tasks (like creating database).  setup.py is also run automatically during deployment.  Here is for instance code to create postgresql database (if we choose postgresql instead of mongo) :
+[setup.py](https://github.com/izderadicka/openshift-test/blob/master/setup.py), which is a standard python setup file, here we should edit metadata for our application and add any additional setup tasks (like creating database).  setup.py is also run automatically during deployment.  Here is for instance code to create postgresql database (if we choose postgresql instead of mongo) :
 
 
 ```python
@@ -127,7 +128,7 @@ setup(name='random_thoughts',
 ```
 
 
-<a href="https://github.com/izderadicka/openshift-test/blob/master/wsgi.py">wsgi.py</a> \-  Openshift is using <a href="https://modwsgi.readthedocs.org/en/master/">mod_wsgi</a> to run python code,  by default it's looking for file wsgi.py in the root directory of our code.  For us it's just enough, to import  flask application, which is WSGI compatible:
+[wsgi.py](https://github.com/izderadicka/openshift-test/blob/master/wsgi.py) \-  Openshift is using <a href="https://modwsgi.readthedocs.org/en/master/">mod_wsgi</a> to run python code,  by default it's looking for file wsgi.py in the root directory of our code.  For us it's just enough, to import  flask application, which is WSGI compatible:
 
 
 ```python
@@ -135,7 +136,7 @@ from flaskapp import app as application
 ```
 
 
-Openshift also allows us to define custom scripts, which can run at different stages of deployment - so called <a href="https://docs.openshift.org/origin-m4/oo_user_guide.html#action-hooks">action hooks</a>. Action hooks can be added to directory .openshift/action\_hooks. In our case we  add <a href="https://github.com/izderadicka/openshift-test/blob/master/.openshift/action_hooks/deploy">deploy</a> script, which  enables fulltext in MongoDb configuration.
+Openshift also allows us to define custom scripts, which can run at different stages of deployment - so called [action hooks](https://docs.openshift.org/origin-m4/oo_user_guide.html#action-hooks). Action hooks can be added to directory .openshift/action\_hooks. In our case we  add [deploy](https://github.com/izderadicka/openshift-test/blob/master/.openshift/action_hooks/deploy) script, which  enables fulltext in MongoDb configuration.
 
 When our code is ready and works OK locally:
 
@@ -160,7 +161,7 @@ rhc app restart testpy
 ##  Scalable Application
 
 
-Openshift enables automatic <a href="https://developers.openshift.com/en/managing-scaling.html">scaling of applications</a> \-  when number of connections reaches certain threshold additional  gears with our web application are automatically  created and web traffic is load balanced between  them (Openshift is using HAProxy, installed in the first gear  - it's so called  Web Load Balancer cartridge).
+Openshift enables automatic [scaling of applications](https://developers.openshift.com/en/managing-scaling.html) \-  when number of connections reaches certain threshold additional  gears with our web application are automatically  created and web traffic is load balanced between  them (Openshift is using HAProxy, installed in the first gear  - it's so called  Web Load Balancer cartridge).
 
 When application is created it must be explicitly enabled for scaling.   Existing applications cannot be enabled for scaling after creation. So we first need to delete our exiting non-scalable application:
 
@@ -196,7 +197,7 @@ rhc push origin scaled
 ```
 
 
-In this scenario we need shared MongoDb database,  we can use MongoLab from <a href="https://marketplace.openshift.com/home">Openshift Marketplace</a>.  Just order MongoLab Free service there and then add it to this application via marketplace UI.  Now our application looks like:
+In this scenario we need shared MongoDb database,  we can use MongoLab from [Openshift Marketplace](https://marketplace.openshift.com/home).  Just order MongoLab Free service there and then add it to this application via marketplace UI.  Now our application looks like:
 
 
 ```sh
@@ -260,7 +261,7 @@ ab -n 100000 -c 100 http://testpy-ivanovo.rhcloud.com/
 ```
 
 
-After a while new gear is added, which we can see with command `rhc app show` (Scaling: x2).  It still takes quite some time (minutes), before new gear is ready and is added as new backend to HAProxy -   we can see HAProxy status at URL:  http://testpy-your-domain.rhcloud.com/haproxy-status.   Little bit later another gear (last remaining) is added.  Again it takes some time for it to be ready,  then if we again take a look  HAProxy status, we can see that the backend in the first gear is taken down (highlighted in brown) - this is an intended functionality -  according to documentation: '<em>'Once you scale to 3 gears, the web gear that is collocated with HAProxy is turned off, to allow HAProxy more resources to route traffic.</em>"
+After a while new gear is added, which we can see with command `rhc app show` (Scaling: x2).  It still takes quite some time (minutes), before new gear is ready and is added as new backend to HAProxy -   we can see HAProxy status at URL:  http://testpy-your-domain.rhcloud.com/haproxy-status.   Little bit later another gear (last remaining) is added.  Again it takes some time for it to be ready,  then if we again take a look  HAProxy status, we can see that the backend in the first gear is taken down (highlighted in brown) - this is an intended functionality -  according to documentation: '*'Once you scale to 3 gears, the web gear that is collocated with HAProxy is turned off, to allow HAProxy more resources to route traffic.*"
 
 Results from ab may look like:
 

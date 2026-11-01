@@ -11,24 +11,25 @@ author = "admin"
 source_url = "http://zderadicka.eu/performance-should-matter/"
 source_guid = "http://zderadicka.eu/?p=2154"
 source_date_gmt = "2020-02-15 09:49:36"
-categories = ["Programming"]
-tags = ["Coding exercises", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Coding exercises", "Rust"]
 +++
-As I did not have much time to focus on larger programming projects recently I've done several exercises on <a href="https://exercism.io">exercism</a> Rust track. It was quite fun and I hope learned a bit. But I found one issue there - when looking at solutions of others, some of them, even when code look very nice and has stars from other users, is performing very badly. I consider this as quite bad practice - if one chooses a "Systems Programming Language" as Rust he should think about performance and understand implications  of: 
+As I did not have much time to focus on larger programming projects recently I've done several exercises on [exercism](https://exercism.io) Rust track. It was quite fun and I hope learned a bit. But I found one issue there - when looking at solutions of others, some of them, even when code look very nice and has stars from other users, is performing very badly. I consider this as quite bad practice - if one chooses a "Systems Programming Language" as Rust he should think about performance and understand implications  of: 
 
 
 
 
 
 
-a) <strong>general algorithm complexity</strong><br/>So chosen solution should try to use sound algorithm, with complexity close to best possible
+a) **general algorithm complexity**<br/>So chosen solution should try to use sound algorithm, with complexity close to best possible
 
 
 
 
 
 
-b) <strong>using complex fancy functional constructs</strong><br/>Rust is advertising "zero cost abstractions", however while it works in many cases it has to be used with caution - you have to use a bit of common sense.
+b) **using complex fancy functional constructs**<br/>Rust is advertising "zero cost abstractions", however while it works in many cases it has to be used with caution - you have to use a bit of common sense.
 
 
 
@@ -487,4 +488,4 @@ I've presented couple of  cases where niceness of code was preferred over perfor
 
 
 
-Some programing learning/evaluation platforms (like <a href="https://app.codility.com/programmers/">codility</a>, which is quite explicit on complexity tests, or <a href="https://www.hackerrank.com">HackerRank</a>, which contains test cases for large input data sets, which timeouts for inefficient solution)  do take this in account and apart of functional test, they also measure that solution is performing within expected limits. That's is great because it forces you to come up with sound solution. <br/>(Unfortunately codility does not support Rust language and HackerRank only partially)
+Some programing learning/evaluation platforms (like [codility](https://app.codility.com/programmers/), which is quite explicit on complexity tests, or [HackerRank](https://www.hackerrank.com), which contains test cases for large input data sets, which timeouts for inefficient solution)  do take this in account and apart of functional test, they also measure that solution is performing within expected limits. That's is great because it forces you to come up with sound solution. <br/>(Unfortunately codility does not support Rust language and HackerRank only partially)

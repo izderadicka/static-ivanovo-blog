@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/analyzing-project-popularity-on-github/"
 source_guid = "http://zderadicka.eu/?p=2310"
 source_date_gmt = "2021-12-06 21:08:54"
-categories = ["Uncategorized"]
-tags = ["data analysis", "github"]
+[taxonomies]
+category = ["Uncategorized"]
+tag = ["data analysis", "github"]
 +++
-Wondering how you project is doing on github and stars and growing over the time?   I was (for my favorite project <a href="https://github.com/izderadicka/audioserve">audioserve</a>) so I created ipython notebook for to analyze trend on the time, which some predictions (which are now called AI  - even linear regression is now called AI :-).
+Wondering how you project is doing on github and stars and growing over the time?   I was (for my favorite project [audioserve](https://github.com/izderadicka/audioserve)) so I created ipython notebook for to analyze trend on the time, which some predictions (which are now called AI  - even linear regression is now called AI :-).
 
 
 

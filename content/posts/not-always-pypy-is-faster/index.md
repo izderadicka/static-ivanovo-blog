@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/not-always-pypy-is-faster/"
 source_guid = "http://zderadicka.eu/?p=860"
 source_date_gmt = "2014-09-05 06:43:43"
-categories = ["Admin", "Programming"]
-tags = ["python"]
+[taxonomies]
+category = ["Admin", "Programming"]
+tag = ["python"]
 +++
-<a href="http://pypy.org/">PyPy</a> is an alternative Python interpreter, which is known for it's speed.  However it does not have to be always faster as 'classic' Python interpreter (called here CPython). For one small project of mine - <a href="https://github.com/izderadicka/pdf-checker">PDF Checker</a> \- I was testing PyPy hoping to speed up PDF document processing (basically parsing to extract text - <a href="http://www.unixuser.org/~euske/python/pdfminer/">pdfminer</a> library is used and document parsing takes majority of time).  Below are results from running program for two different files and in CPython interpreter or in PyPy (with JIT and without JIT compilation):
+[PyPy](http://pypy.org/) is an alternative Python interpreter, which is known for it's speed.  However it does not have to be always faster as 'classic' Python interpreter (called here CPython). For one small project of mine - [PDF Checker](https://github.com/izderadicka/pdf-checker) \- I was testing PyPy hoping to speed up PDF document processing (basically parsing to extract text - [pdfminer](http://www.unixuser.org/~euske/python/pdfminer/) library is used and document parsing takes majority of time).  Below are results from running program for two different files and in CPython interpreter or in PyPy (with JIT and without JIT compilation):
 
 
 <div class="table-scroll" tabindex="0" role="region" aria-label="Reference table"><table style="font-size: 110% !important;">

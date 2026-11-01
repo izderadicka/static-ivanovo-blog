@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/title-over-search-input/"
 source_guid = "http://zderadicka.eu/?p=69"
 source_date_gmt = "2012-09-22 06:44:49"
-categories = ["Web Design"]
-tags = ["web design", "wordpress"]
+[taxonomies]
+category = ["Web Design"]
+tag = ["web design", "wordpress"]
 +++
 One of customization I've done for this WordPress  theme was to put label text over search input.   I've found that quite nice design element and space saving optimization.
 
@@ -23,7 +24,7 @@ Basically there are 2 main approaches:<span id="more-69"></span>
 
 
 This is very straightforward, but I did not like  usability of the solution - the problem is that label disappears only after you write your first letter, which I have to say I found bit annoying.
-But solution is super-simple, just add attribute  <strong>placeholder</strong>
+But solution is super-simple, just add attribute  **placeholder**
 
 
 ```html
@@ -97,4 +98,4 @@ wp_enqueue_script(
 ```
 
 
-The best place to put this code is <strong>functions.php</strong> in the theme - the function which is called on <strong>wp_enqueue_scripts</strong> action.
+The best place to put this code is **functions.php** in the theme - the function which is called on <strong>wp_enqueue_scripts</strong> action.

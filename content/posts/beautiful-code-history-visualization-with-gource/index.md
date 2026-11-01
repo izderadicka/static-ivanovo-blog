@@ -11,12 +11,13 @@ author = "admin"
 source_url = "http://zderadicka.eu/beautiful-code-history-visualization-with-gource/"
 source_guid = "http://zderadicka.eu/?p=1042"
 source_date_gmt = "2015-06-14 08:59:58"
-categories = ["Programming"]
-tags = ["version control", "visualization"]
+[taxonomies]
+category = ["Programming"]
+tag = ["version control", "visualization"]
 +++
-<a href="https://code.google.com/p/gource/">Gource</a> tool offers very nice and appealing visualization  of SW project history. Gource works with all major version control systems - git, svn, etc.  can be easily installed from Ubuntu repos and is fairly easy to use.<span id="more-1042"></span>
+[Gource](https://code.google.com/p/gource/) tool offers very nice and appealing visualization  of SW project history. Gource works with all major version control systems - git, svn, etc.  can be easily installed from Ubuntu repos and is fairly easy to use.<span id="more-1042"></span>
 
-Here is visualization of my <a href="https://github.com/izderadicka/btclient">btclient</a> project (videos works best in Firefox):
+Here is visualization of my [btclient](https://github.com/izderadicka/btclient) project (videos works best in Firefox):
 
 
 
@@ -34,7 +35,7 @@ gource --file-idle-time 0 -s 1 --auto-skip-seconds 1 --stop-at-end --title BTCli
 
  
 
-And here visualization of more complex project - <a href="http://www.libtorrent.org/">libtorrent</a>:
+And here visualization of more complex project - [libtorrent](http://www.libtorrent.org/):
 
 
 

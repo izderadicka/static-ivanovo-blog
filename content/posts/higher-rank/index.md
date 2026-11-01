@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/higher-rank/"
 source_guid = "http://zderadicka.eu/?p=2112"
 source_date_gmt = "2019-09-16 14:58:51"
-categories = ["Programming"]
-tags = ["Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Rust"]
 +++
-Higher Rank Trait Bounds (HRTB) is relatively advanced feature in Rust, you can read short explanation in the <a href="https://doc.rust-lang.org/reference/trait-bounds.html#higher-ranked-trait-bounds">reference</a>, and more detailed  explanation in in <a href="https://github.com/rust-lang/rfcs/blob/master/text/0387-higher-ranked-trait-bounds.md">the RFC</a> (frankly spoken RFC is bit more complicated, at least for me).
+Higher Rank Trait Bounds (HRTB) is relatively advanced feature in Rust, you can read short explanation in the [reference](https://doc.rust-lang.org/reference/trait-bounds.html#higher-ranked-trait-bounds), and more detailed  explanation in in [the RFC](https://github.com/rust-lang/rfcs/blob/master/text/0387-higher-ranked-trait-bounds.md) (frankly spoken RFC is bit more complicated, at least for me).
 
 
 
@@ -122,4 +123,4 @@ On the other hand, if we use `for<'a>` HRTB construct (on line 48) compiler know
 
 
 
-You can use this<a href="https://play.rust-lang.org/?version=nightly&amp;mode=debug&amp;edition=2018&amp;gist=33ca4a67829c48c25b79aff83f4f07d8"> rust playground link</a> to play with code yourself (for instance if you remove loop then HTRB is not needed) .
+You can use this[ rust playground link](https://play.rust-lang.org/?version=nightly&mode=debug&edition=2018&gist=33ca4a67829c48c25b79aff83f4f07d8) to play with code yourself (for instance if you remove loop then HTRB is not needed) .

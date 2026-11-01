@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/well-behaving-apex-item-plugin/"
 source_guid = "http://zderadicka.eu/?p=171"
 source_date_gmt = "2012-09-27 05:55:54"
-categories = ["Programming"]
-tags = ["Apex", "Javascript", "PL/SQL"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Apex", "Javascript", "PL/SQL"]
 +++
 I 've recently created <a href="/projects/oracle-application-express-and-plsql/" title="Oracle Application Express and PL/SQL"> multiselect plugin</a> for APEX 4.1 -  there is still little information about how exactly write APEX plugins,  and some aspects - like cascading LOV, I have not found explained anywhere, so I'd like to share my experiences here:
 
@@ -24,13 +25,13 @@ To write plugin you will need:
 
 
 <ul>
-<li>Oracle Database and APEX running somewhere -   the<a href="http://download.oracle.com/docs/cd/E23903_01/doc/doc.41/e21673/toc.htm"> installation manual</a> for APEX is very good and you can go step by step  according to it</li>
-<li>Knowledge of  PL/SQL - it is good to have <a href="http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/toc.htm">PL/SQL Reference</a> at your hand</li>
-<li><a href="http://download.oracle.com/docs/cd/E23903_01/doc/doc.41/e21676/toc.htmhttp://">Reference documentation for APEX 4.1 API</a></li>
+<li>Oracle Database and APEX running somewhere -   the[ installation manual](http://download.oracle.com/docs/cd/E23903_01/doc/doc.41/e21673/toc.htm) for APEX is very good and you can go step by step  according to it</li>
+<li>Knowledge of  PL/SQL - it is good to have [PL/SQL Reference](http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/toc.htm) at your hand</li>
+<li>[Reference documentation for APEX 4.1 API](http://download.oracle.com/docs/cd/E23903_01/doc/doc.41/e21676/toc.htmhttp://)</li>
 <li>Some knowledge of APEX and also some basic knowledge of plugins - try some available tutorials you can find on web - this article will focus on rather specific issues within Item plugin.</li>
 <li>Oracle SQL/Developer (or other development tool)- to write PL/SQL  - optional, if you are PL/SQL god and can write correct code by heart - if you struggling with PL/SQL like me this is an invaluable helper.</li>
 <li>Web server running on your local machine - to help to develop  Javascript part of plugin</li>
-<li>Firefox with <a href="http://getfirebug.org">Firebug</a> - to debug Javascript (or Chrome, if you prefer)<span id="more-171"></span></li>
+<li>Firefox with [Firebug](http://getfirebug.org) - to debug Javascript (or Chrome, if you prefer)<span id="more-171"></span></li>
 </ul>
 
 
@@ -39,7 +40,7 @@ To write plugin you will need:
 ### Creating plugin
 
 
-Create plugin in APEX -   follow usual steps - plug-in type has to be <em>Item</em>.
+Create plugin in APEX -   follow usual steps - plug-in type has to be *Item*.
 For Cascading  LOV, Read-Only and other  features you should enable Standard Attributes like this:
 
 <a href="/wp-content/uploads/attrs.png" rel="attachment wp-att-174"><img alt="" class="alignnone size-full wp-image-174" decoding="async" height="194" loading="eager" sizes="(max-width: 825px) 100vw, 825px" src="/wp-content/uploads/attrs.png" srcset="/wp-content/uploads/attrs.png 825w, /wp-content/uploads/attrs-300x70.png 300w" title="attrs" width="825"/></a>
@@ -50,7 +51,7 @@ Save and also add any plug-in custom attributes, that you need.
 ### Coding PL/SQL part - rendering
 
 
-Develop you PL/SQL code in a separate package in SQL Developer.  It is really hard to write more complex code directly in APEX.   You can then reference <em>Render function name</em> as package\_name.function\_name.  Only when coding is done and plugin is tested and working fine, copy body of the package to plugin definition.
+Develop you PL/SQL code in a separate package in SQL Developer.  It is really hard to write more complex code directly in APEX.   You can then reference *Render function name* as package\_name.function\_name.  Only when coding is done and plugin is tested and working fine, copy body of the package to plugin definition.
 
 Start with rendering function:
 
@@ -126,22 +127,22 @@ END;
 ```
 
 
-<strong> lines 18 -20</strong> \- It is always good to add  this debugging function, you can then see some info in Apex debug page - but do not expect too much - I did not find it  very appealing, but at least it shows with what parameters plugin was started.
+** lines 18 -20** \- It is always good to add  this debugging function, you can then see some info in Apex debug page - but do not expect too much - I did not find it  very appealing, but at least it shows with what parameters plugin was started.
 
-<strong>lines 22-27</strong> \- Each good page item should be able to render itself as read only.   For standard read only rendering you can use API function `apex_plugin_util.print_display_only`, which will render something like this `<span>item_value</span>`. If more sophisticated rendering is needed - like in my case - custom functions is needed.
+**lines 22-27** \- Each good page item should be able to render itself as read only.   For standard read only rendering you can use API function `apex_plugin_util.print_display_only`, which will render something like this `<span>item_value</span>`. If more sophisticated rendering is needed - like in my case - custom functions is needed.
 Also it is need to render hidden input element for read-only - so it's value is available to page processes after posting page. This is done by `apex_plugin_util.print_hidden_if_readonly` function.
 
-<strong>lines 29-38, 51-59</strong> \- Adding javascript and css - for development I highly recommend  to host files on your desktop, where you can easily edit it.   Just then set `p_direcory` parameter as 'http://localhost/your\_dir'. Also reminding that `p_name` has to be without extensions.
+**lines 29-38, 51-59** \- Adding javascript and css - for development I highly recommend  to host files on your desktop, where you can easily edit it.   Just then set `p_direcory` parameter as 'http://localhost/your\_dir'. Also reminding that `p_name` has to be without extensions.
 
-<strong>lines 39-49</strong> \-  The item will have some Javascript code, which needs to get started on the page. Best practice is to have one function for this into which you'll supply all necessary parameters:
-<em>item selector</em> \-   this is id of HTML element representing item - should be '#'||p\_item.name
-<em>ajaxIdentifier</em> \- this will be used in ajax calls to get new LOV values - or refresh item value in other cases
-<em>dependingOnSelector</em> \- <a tabindex="999">Cascading LOV Parent Item(s)</a> \- e.g. when they change, LOV has to be updated in this item via ajax call. In Javascript we will need their jQuery selectors - so there is convenient function`  apex_plugin_util.page_item_names_to_jquery `, which  creates list of selectors from array of item names.
-<em>optimizeRefresh</em> \- not used in this case
-<em>pageItemsToSubmit</em> \- selectors of  all other items, this item depends on - value of these must be posted with ajax request.
-<em>nullValue</em> \- the value that should be used when page item is null.
+**lines 39-49** \-  The item will have some Javascript code, which needs to get started on the page. Best practice is to have one function for this into which you'll supply all necessary parameters:
+*item selector* \-   this is id of HTML element representing item - should be '#'||p\_item.name
+*ajaxIdentifier* \- this will be used in ajax calls to get new LOV values - or refresh item value in other cases
+*dependingOnSelector* \- <a tabindex="999">Cascading LOV Parent Item(s)</a> \- e.g. when they change, LOV has to be updated in this item via ajax call. In Javascript we will need their jQuery selectors - so there is convenient function`  apex_plugin_util.page_item_names_to_jquery `, which  creates list of selectors from array of item names.
+*optimizeRefresh* \- not used in this case
+*pageItemsToSubmit* \- selectors of  all other items, this item depends on - value of these must be posted with ajax request.
+*nullValue* \- the value that should be used when page item is null.
 
-<strong>lines 61-65</strong> \- HTML code for your item should be outputted -  the name of input element has to created by `apex_plugin.GET_INPUT_NAME_FOR_PAGE_ITEM(true)` function and id has to be `p_item.name`.
+**lines 61-65** \- HTML code for your item should be outputted -  the name of input element has to created by `apex_plugin.GET_INPUT_NAME_FOR_PAGE_ITEM(true)` function and id has to be `p_item.name`.
 
  
 
@@ -195,7 +196,7 @@ end;
 ```
 
 
-And one more useful API function: `apex_plugin_util.get_data`, it  gives you LOV as an array - see <strong>line 8-12</strong> \- through which you can easily iterate as shown above.
+And one more useful API function: `apex_plugin_util.get_data`, it  gives you LOV as an array - see **line 8-12** \- through which you can easily iterate as shown above.
 
 Now you can put new item based on this new plugin on some page  and see how it renders in HTML (use Firebug to see details).
 
@@ -370,30 +371,30 @@ ms.bind("apexrefresh", refresh)
 ```
 
 
-<strong> line 1</strong> \- we will have one function to initialize our plugin on page - we need its unique selector (from id) and some options
+** line 1** \- we will have one function to initialize our plugin on page - we need its unique selector (from id) and some options
 
-<strong>lines 8-9 and lines 39-40</strong> \- the plugin item has to trigger change event on  element with id equal to item name (PXX\_...). In complex plugin, this might not be automatic - like in this one because the element is hidden select - thus we have to fire change event automatically.   Change event is require for this item to serve as cascading source (see below comment for receiving change event from cascading items - lines )
+**lines 8-9 and lines 39-40** \- the plugin item has to trigger change event on  element with id equal to item name (PXX\_...). In complex plugin, this might not be automatic - like in this one because the element is hidden select - thus we have to fire change event automatically.   Change event is require for this item to serve as cascading source (see below comment for receiving change event from cascading items - lines )
 
-<strong>lines 16-22</strong> \- these are options we set in rendering method and which are crucial for javascript.
+**lines 16-22** \- these are options we set in rendering method and which are crucial for javascript.
 
-<strong>lines 27-33</strong> \-  we need to register our page item with Apex JS framework - this will assure that it  behaves correctly and reacts on all appropriate client side events.
+**lines 27-33** \-  we need to register our page item with Apex JS framework - this will assure that it  behaves correctly and reacts on all appropriate client side events.
 Especially we can register JS functions, which  handle some aspects of an interactive interface - hide and show item,  enable and disable item,  set or get value via Apex JS API - functions `$v` and `$s` .
 
-<strong>line 48-70</strong> \- ajax call to Apex is basically HTTP POST request, which has to contain many mandatory parameters:
+**line 48-70** \- ajax call to Apex is basically HTTP POST request, which has to contain many mandatory parameters:
 <em>p_request</em>:  means request type - for plugin ajax call it has to be `"NATIVE="+options.ajaxIdentifier`, where ajaxIdentifier is generated by PL/SQL API function  `apex_plugin.get_ajax_identifier`.
-<em>p_flow_id</em>:  is numeric id of the application - provided by application item <em>pFLowId</em> via `$v('pFlowId')` Apex JS API function
-<em>p_step_id</em> : is numeric page id - provided by application item <em>pStepId</em>
-<em>p_instance</em>: current session id - provided by application item <em>pInstance</em>
+<em>p_flow_id</em>:  is numeric id of the application - provided by application item *pFLowId* via `$v('pFlowId')` Apex JS API function
+<em>p_step_id</em> : is numeric page id - provided by application item *pStepId*
+<em>p_instance</em>: current session id - provided by application item *pInstance*
 <em>p_arg_name</em>: is an array of names of all page items that has to be submitted within this ajax request( their actual values are necessary to get new LOV for this item). They are taken from options we provided, when rendered call to our JS function - `options.dependingOnSelector` \- all cascading parent items, `options.pageItemsToSubmit` \- any other relevant items.
 <em>p_arg_values</em>: is an array of their values
 
-<strong>line 70</strong> \- this function is used to get and update LOV for this item, if any cascading parent item has changed.
+**line 70** \- this function is used to get and update LOV for this item, if any cascading parent item has changed.
 
-<strong>lines 71 and 115</strong> \- we should trigger Apex specific events apexbeforerefresh and apexafterrefresh, when refreshing LOV
+**lines 71 and 115** \- we should trigger Apex specific events apexbeforerefresh and apexafterrefresh, when refreshing LOV
 
-<strong>lines 154-155</strong> \- in order to react on changes in cascading parents, we have to subscribe to their change event.
+**lines 154-155** \- in order to react on changes in cascading parents, we have to subscribe to their change event.
 
-<strong>line 157</strong> \- and also to bind to apex specific apexrefresh event
+**line 157** \- and also to bind to apex specific apexrefresh event
 
 
 ###  Ajax call and final steps
@@ -423,4 +424,4 @@ As you can see for all the work we can just leverage API function `apex_plugin_u
 
 To test LOV cascading add another item on page and make it cascading parent of this one.  When the other item changes, there should be a ajax call on background, fetching updated LOV for the plugin item. This can be observed in detail with Firebug (in  Net section - filter XHR request types only - to see only ajax calls).
 
-Remaining final touches are to remove development set-up - e.g. copy body of our PL/SQL development package into plugin definition <em>Source/PL/SQL Code</em> field, rename callbacks (remove package prefix). And load all JS and CSS files to plugin and change their location in PL/SQL code - parameter `p_directory` in functions `apex_javascript.add_library` and `apex_css.add_file` should be set as `p_plugin.file_prefix`.
+Remaining final touches are to remove development set-up - e.g. copy body of our PL/SQL development package into plugin definition *Source/PL/SQL Code* field, rename callbacks (remove package prefix). And load all JS and CSS files to plugin and change their location in PL/SQL code - parameter `p_directory` in functions `apex_javascript.add_library` and `apex_css.add_file` should be set as `p_plugin.file_prefix`.

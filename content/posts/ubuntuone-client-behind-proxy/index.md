@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/ubuntuone-client-behind-proxy/"
 source_guid = "http://zderadicka.eu/?p=615"
 source_date_gmt = "2013-08-28 11:04:07"
-categories = ["Admin"]
-tags = ["linux", "ubuntu", "ubuntuone"]
+[taxonomies]
+category = ["Admin"]
+tag = ["linux", "ubuntu", "ubuntuone"]
 +++
 It can sound bit weird, but most problematic platform for UbuntuOne client is Ubuntu itself - especially when your PC is behind proxy - or even worst when you're moving between several networks with your laptop, where some nets are using proxy.    <span id="more-615"></span>
 

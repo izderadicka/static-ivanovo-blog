@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/site-started/"
 source_guid = "http://zderadicka.eu/?p=47"
 source_date_gmt = "2012-09-21 15:54:07"
-categories = ["Announcement"]
-tags = ["drupal", "old site", "wordpress"]
+[taxonomies]
+category = ["Announcement"]
+tag = ["drupal", "old site", "wordpress"]
 +++
 So my new site is started.
 

@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/cicd-environment-for-a-smaller-project/"
 source_guid = "http://zderadicka.eu/?p=1804"
 source_date_gmt = "2017-12-16 11:31:02"
-categories = ["Admin", "Programming"]
-tags = ["docker", "git"]
+[taxonomies]
+category = ["Admin", "Programming"]
+tag = ["docker", "git"]
 +++
-Advantages of<strong> Continuous Integration (CI)</strong> and <strong>Continuous Delivery (CD)</strong> are obvious even for small projects with few contributors and are easily achievable with help of  free cloud tools - like for instance with mighty combo of <a href="https://github.com/">Github</a> plus <a href="https://travis-ci.org/">Travis</a>. But what if we want to achieve similarly convenient  environment inside of our private network, available only to our internal teams. Luckily open source is here again to help us with another great tool - <a href="https://about.gitlab.com/">GitLab</a> \-  GitLab  is a similar platform to GitHub, but the code is open source and we can easily install it in our environment. In this article I'll summarize my experiences and guidelines how to build convenient environment for a small project  with automatic testing and deployment.<span id="more-1804"></span>
+Advantages of** Continuous Integration (CI)** and **Continuous Delivery (CD)** are obvious even for small projects with few contributors and are easily achievable with help of  free cloud tools - like for instance with mighty combo of [Github](https://github.com/) plus [Travis](https://travis-ci.org/). But what if we want to achieve similarly convenient  environment inside of our private network, available only to our internal teams. Luckily open source is here again to help us with another great tool - [GitLab](https://about.gitlab.com/) \-  GitLab  is a similar platform to GitHub, but the code is open source and we can easily install it in our environment. In this article I'll summarize my experiences and guidelines how to build convenient environment for a small project  with automatic testing and deployment.<span id="more-1804"></span>
 
 
 ## What we what to achieve
@@ -23,13 +24,13 @@ Advantages of<strong> Continuous Integration (CI)</strong> and <strong>Continuou
 Our goals are:
 
 
-<ul>
-<li>Central code repository for our projects with friendly Web interface - similar to GitHub, but hosted by ourselves</li>
-<li>Developers can use their existing credentials to log into this central repository</li>
-<li>For projects we can setup CI, where for each push to central repository code is built and tested automatically</li>
-<li>If build  and tests are successful web application  (we are talking about web applications) in deployed automatically for current branch in the  projects repository, so we can have numerous "feature" versions, where developers, QA and operations can test new features.</li>
-<li>All this have to be rather simple and be able to run in couple of VMs - as our project is also rather small and we do not need complex architectures line <a href="https://kubernetes.io/">Kubernetes</a> for this project.</li>
-</ul>
+
+- Central code repository for our projects with friendly Web interface - similar to GitHub, but hosted by ourselves
+- Developers can use their existing credentials to log into this central repository
+- For projects we can setup CI, where for each push to central repository code is built and tested automatically
+- If build  and tests are successful web application  (we are talking about web applications) in deployed automatically for current branch in the  projects repository, so we can have numerous "feature" versions, where developers, QA and operations can test new features.
+- All this have to be rather simple and be able to run in couple of VMs - as our project is also rather small and we do not need complex architectures line [Kubernetes](https://kubernetes.io/) for this project.
+
 
 
 
@@ -41,27 +42,27 @@ Our goals are:
 </strong>
 
 
-<ul>
-<li>Size it appropriately 2 cores, 4GB mem 16GB free disk space should be enough for smaller projects.</li>
-<li>Install here <a href="https://about.gitlab.com/installation/">Gitlab - Omnibus package</a></li>
-<li>For authentication Gitlab can integrate with your corporate <a href="https://docs.gitlab.com/ee/administration/auth/ldap.html">LDAP</a> or through <a href="https://docs.gitlab.com/ee/integration/omniauth.html">OmniAuth</a> service  enable any popular SSO methods, including SAMLv2 (which I'm using)</li>
-<li>Create project(s) and push code to them</li>
-</ul>
+
+- Size it appropriately 2 cores, 4GB mem 16GB free disk space should be enough for smaller projects.
+- Install here [Gitlab - Omnibus package](https://about.gitlab.com/installation/)
+- For authentication Gitlab can integrate with your corporate [LDAP](https://docs.gitlab.com/ee/administration/auth/ldap.html) or through [OmniAuth](https://docs.gitlab.com/ee/integration/omniauth.html) service  enable any popular SSO methods, including SAMLv2 (which I'm using)
+- Create project(s) and push code to them
 
 
-<strong>2nd VM (Debian, Ubuntu, CentOS ...)</strong>
+
+**2nd VM (Debian, Ubuntu, CentOS ...)**
 
 
 <ul>
 <li>Size it appropriately - as you'll run there multiple containers you'll need more resources - say 4 cores, 16GB memory, 80 GB fee disk space (but it depends very much on your projects).</li>
-<li>Install here<a href="https://docs.gitlab.com/runner/install/linux-repository.html"> Gitlab Runner</a>, <a href="https://docs.docker.com/engine/installation/">Docker CE</a>, eventually <a href="https://docs.docker.com/compose/install/">Docker Compose</a></li>
-<li><a href="https://docs.gitlab.com/runner/register/">Register</a> two Gitlab <a href="https://docs.gitlab.com/runner/executors/">executors </a>(yes you can register several executors with one runner):
+<li>Install here[ Gitlab Runner](https://docs.gitlab.com/runner/install/linux-repository.html), [Docker CE](https://docs.docker.com/engine/installation/), eventually [Docker Compose](https://docs.docker.com/compose/install/)</li>
+<li>[Register](https://docs.gitlab.com/runner/register/) two Gitlab [executors ](https://docs.gitlab.com/runner/executors/)(yes you can register several executors with one runner):
 <ul>
 <li>Docker executor - will be used for running builds and  tests -  be sure to give it  a tag -  docker</li>
 <li>Shell executor - will run instances of our application in Docker container - again give it distinguishing tag - shell</li>
 </ul>
 </li>
-<li>If you want to share easily links to running application instances install <a href="https://www.nginx.com/resources/admin-guide/installing-nginx-open-source/#prebuilt">nginx</a>, <a href="http://uwsgi-docs.readthedocs.io/en/latest/Install.html#installing-from-a-distribution-package">uwsgi</a> and <a href="https://github.com/izderadicka/dockerfp">this small application of mine</a></li>
+<li>If you want to share easily links to running application instances install [nginx](https://www.nginx.com/resources/admin-guide/installing-nginx-open-source/#prebuilt), [uwsgi](http://uwsgi-docs.readthedocs.io/en/latest/Install.html#installing-from-a-distribution-package) and [this small application of mine](https://github.com/izderadicka/dockerfp)</li>
 <li>If you want to use local docker images for test tasks edit docker runner pull policy to <code>pull&#95;policy = "if-not-present"</code>  in file <code>/etc/gitlab-runner/config.toml</code> and restart runner</li>
 </ul>
 

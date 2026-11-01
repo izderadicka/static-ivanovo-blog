@@ -11,12 +11,13 @@ author = "admin"
 source_url = "http://zderadicka.eu/functional-fun-with-asyncio-and-monads/"
 source_guid = "http://zderadicka.eu/?p=1362"
 source_date_gmt = "2016-05-06 17:46:01"
-categories = ["Programming"]
-tags = ["asyncio", "functional programming", "monad", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asyncio", "functional programming", "monad", "python"]
 +++
-Python 3.4+ provides excellent <a href="https://docs.python.org/3/library/asyncio.html">Asyncio</a> library for asynchronous tasks scheduling and asynchronous I/O operations.   It's similar to <a href="http://www.gevent.org/">gevent</a>, but here tasks are implemented by generator based <a href="https://en.wikipedia.org/wiki/Coroutine">coroutines</a>.  Asynchronous I/O is useful for higher I/O loads, where it usually achieves better performance and scalability then other approaches (threads, processes). About a year ago I played with <a href="https://ocaml.org">OCaml</a>, where light weight threads/ coroutines and asynchronous I/O  approaches  are also very popular (Ocaml has same limitation for threading as Python - a global lock) and there were two great libraries - <a href="http://ocsigen.org/lwt/">lwt</a> and <a href="https://janestreet.github.io/">core async</a>.  Both libraries use monads as a programming style to work with asynchronous tasks. In this article we will try to implement something similar on basis of asyncio library. While our solution will  probably not provide "pure" monads it'll still be fun and we'll learn something about asyncio.<span id="more-1362"></span>
+Python 3.4+ provides excellent [Asyncio](https://docs.python.org/3/library/asyncio.html) library for asynchronous tasks scheduling and asynchronous I/O operations.   It's similar to [gevent](http://www.gevent.org/), but here tasks are implemented by generator based [coroutines](https://en.wikipedia.org/wiki/Coroutine).  Asynchronous I/O is useful for higher I/O loads, where it usually achieves better performance and scalability then other approaches (threads, processes). About a year ago I played with [OCaml](https://ocaml.org), where light weight threads/ coroutines and asynchronous I/O  approaches  are also very popular (Ocaml has same limitation for threading as Python - a global lock) and there were two great libraries - [lwt](http://ocsigen.org/lwt/) and [core async](https://janestreet.github.io/).  Both libraries use monads as a programming style to work with asynchronous tasks. In this article we will try to implement something similar on basis of asyncio library. While our solution will  probably not provide "pure" monads it'll still be fun and we'll learn something about asyncio.<span id="more-1362"></span>
 
-Monad is a term from <a href="https://en.wikipedia.org/wiki/Category_theory">category theory</a>, but mostly it's know by <a href="https://en.wikipedia.org/wiki/Monad_%28functional_programming%29">it's usage</a> in functional programming (in Haskell monads play <a href="https://wiki.haskell.org/Monad">a key role</a> in the language).  I never got into depth of monads theory, but from practical perspective they are quite similar to pipe operator in unix shell - they enable to chain operations together, where result of one operation is fed as input to another operation. For this purpose monads define two functions - `unit` \- which turns some value into monadic type and `bind`, which unpacks value from monadic type, calls a function on it and returns function's result packed as monadic type again. If this is not clear look around for various tutorial about monads (such tutorials were very popular several years ago).
+Monad is a term from [category theory](https://en.wikipedia.org/wiki/Category_theory), but mostly it's know by [it's usage](https://en.wikipedia.org/wiki/Monad_%28functional_programming%29) in functional programming (in Haskell monads play [a key role](https://wiki.haskell.org/Monad) in the language).  I never got into depth of monads theory, but from practical perspective they are quite similar to pipe operator in unix shell - they enable to chain operations together, where result of one operation is fed as input to another operation. For this purpose monads define two functions - `unit` \- which turns some value into monadic type and `bind`, which unpacks value from monadic type, calls a function on it and returns function's result packed as monadic type again. If this is not clear look around for various tutorial about monads (such tutorials were very popular several years ago).
 
 Monads have cool application in asynchronous programming,  because we can use them to express a set of serial tasks - something we would write in shell like:
 `cat "something" | task1 | task2 | task3`
@@ -25,7 +26,7 @@ If bind is represented as a pipe operator we can achieve same concise syntax as 
 
 For Javascript programers  this sounds quite similar to Promise -
 `fetch('http://something').then(task1).then(task2).then(task3)`
-and you are quite right - Promise is 'kind of' monad - see <a href="https://gist.github.com/briancavalier/3296186">here</a>.  Asyncio has similar construct called Future, which we will use later.
+and you are quite right - Promise is 'kind of' monad - see [here](https://gist.github.com/briancavalier/3296186).  Asyncio has similar construct called Future, which we will use later.
 
 Python is multi-paradigm programming language, with a lot of functional features.  So let's see if we can use monadic approach also with asyncio.  This could also serve as a small introduction into asyncio.
 
@@ -210,7 +211,7 @@ loop.run_until_complete(a.future)
 ```
 
 
-We can also modify our Async class for another great python3 library -  <a href="https://docs.python.org/3/library/concurrent.futures.html">concurrent.futures</a>, which creates asynchronous tasks in either thread or process pool:
+We can also modify our Async class for another great python3 library -  [concurrent.futures](https://docs.python.org/3/library/concurrent.futures.html), which creates asynchronous tasks in either thread or process pool:
 
 
 ```python
@@ -402,7 +403,7 @@ And result:
 ```
 
 
-Apart of assurance that Apache still rules and some people are still using IIS (and surprise by  <a href="https://www.cloudflare.com/">Cloudflare</a> popularity), we see fairly compact, readable and powerful code thanks to asyncio.  There is one special thing to mention -  from perspective of connections handling this asyncio code  is highly parallel - so it basically tries to open all 1000 connections at once.  This can easily lead to "Too many open files" errors- as each socket represents one file handle. We can increase limit of open files per process, but better approach here is to limit number of concurrent request with semaphore.
+Apart of assurance that Apache still rules and some people are still using IIS (and surprise by  [Cloudflare](https://www.cloudflare.com/) popularity), we see fairly compact, readable and powerful code thanks to asyncio.  There is one special thing to mention -  from perspective of connections handling this asyncio code  is highly parallel - so it basically tries to open all 1000 connections at once.  This can easily lead to "Too many open files" errors- as each socket represents one file handle. We can increase limit of open files per process, but better approach here is to limit number of concurrent request with semaphore.
 
 We can rewrite that code with our Async monadic class:
 

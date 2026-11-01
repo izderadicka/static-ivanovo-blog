@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/diskless-pc-booting-from-usb-stick-with-ubuntu/"
 source_guid = "http://zderadicka.eu/?p=508"
 source_date_gmt = "2013-03-18 13:52:06"
-categories = ["Admin"]
-tags = ["diskless", "linux", "overlay fs"]
+[taxonomies]
+category = ["Admin"]
+tag = ["diskless", "linux", "overlay fs"]
 +++
 Recently I decided to revamp my linux HTPC and this time to do it properly - there is no disk and all media are on separate server (or NAS - I prefer server, because I'd like to run some other things there, which might be problematic to run on pure NAS box). New PC should boot from from common USB stick - 8GB - value around 5 EUR (I thought it would be more convenient to build  system and I did not have any server yet to boot from network only - actually old HTPC would become server, but first new HTPC has to be created). To overcome two major issues of common USB stick - limit on number of write operations (too much writes decrease lifetime of the stick) and slow write operations speed I decided to use overlays file system (or sometimes called union file system), where (once all system is set up) all writes go to memory - this is similar to linux live CDs or USB sticks. In order to be able to do some user customizations after installation and that user can save various data his home directory, the home directory is hosted on server/NAS and shared via NFS. The  recipe described below is for xubuntu 12.10.<span id="more-508"></span>
 
@@ -22,10 +23,10 @@ Recently I decided to revamp my linux HTPC and this time to do it properly - the
 <li>Install Xubuntu to 8GB stick - format it as one single partition with ext2 file system (no swap, because it does not make sense, when stick will be read-only, also fs with journalling like ext3 or ext4 are not appropriate).</li>
 <li>Because all write operations really slow down work I recommend at least to mount /tmp to RAM FS and add noatime option to root fs as soon as possible - modify root line in and put this to /etc/fstab and reboot:
 <code>tmpfs /tmp tmpfs nodev,nosuid 0 0&#10;</code></li>
-<li>Setup NFS serverver - as described here <a href="https://help.ubuntu.com/community/SettingUpNFSHowTo">https://help.ubuntu.com/community/SettingUpNFSHowTo</a> - to host home directory later</li>
+<li>Setup NFS serverver - as described here [https://help.ubuntu.com/community/SettingUpNFSHowTo](https://help.ubuntu.com/community/SettingUpNFSHowTo) - to host home directory later</li>
 <li>Install overlayroot package ( part of 12.10,  for earlier version of ubuntu use  ppa:cloud-initramfs-tools/ppa)
 Overlay fs isa  new union like file system - which now seems to be preferred over its older colleagues.
-More information about overlayroot package is available here  <a href="http://blog.dustinkirkland.com/2012/08/introducing-overlayroot-overlayfs.html">http://blog.dustinkirkland.com/2012/08/introducing-overlayroot-overlayfs.html</a></li>
+More information about overlayroot package is available here  [http://blog.dustinkirkland.com/2012/08/introducing-overlayroot-overlayfs.html](http://blog.dustinkirkland.com/2012/08/introducing-overlayroot-overlayfs.html)</li>
 <li>Install nfs and autofs:
 <code>sudo apt-get install nfs-common autofs&#10;</code></li>
 <li>Install all other packages you need plus customize your system as you need

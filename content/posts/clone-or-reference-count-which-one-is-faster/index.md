@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/clone-or-reference-count-which-one-is-faster/"
 source_guid = "http://zderadicka.eu/?p=2207"
 source_date_gmt = "2020-03-22 14:47:41"
-categories = ["Programming"]
-tags = ["Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Rust"]
 +++
-While I was updating <a href="https://github.com/izderadicka/audioserve">audioserve </a>I hit one part of code, when I was passing a not so big structure (containing data for authentication) to asynchronous task (in tokio multi-threaded executor), as task might run potentially in different thread it has to have static lifetime. Easiest solution was to clone  the structure and move it to thread (which was  original solution). But during refactoring I realized that reference count - `Arc` type could be better solution - it can save a small piece of memory (Arc is 8 bytes), but  also it could perform better (or could not?). To check my later assumption I've run couple of of tests.
+While I was updating [audioserve ](https://github.com/izderadicka/audioserve)I hit one part of code, when I was passing a not so big structure (containing data for authentication) to asynchronous task (in tokio multi-threaded executor), as task might run potentially in different thread it has to have static lifetime. Easiest solution was to clone  the structure and move it to thread (which was  original solution). But during refactoring I realized that reference count - `Arc` type could be better solution - it can save a small piece of memory (Arc is 8 bytes), but  also it could perform better (or could not?). To check my later assumption I've run couple of of tests.
 
 
 

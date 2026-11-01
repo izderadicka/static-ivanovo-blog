@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/coverting-ebooks-with-multiple-processes/"
 source_guid = "http://zderadicka.eu/?p=304"
 source_date_gmt = "2012-10-24 14:09:28"
-categories = ["Programming"]
-tags = ["ebook", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["ebook", "python"]
 +++
 Recently I've been converting a batch of ebooks into epub and mobi formats.  I used python tools, parts of my project <a href="/projects/python/mybookshelf-ebooks-library/" title="MyBookshelf – EBooks Library">MyBookShelf</a>, which uses calibre and LibreOffice for all the hard work.   The conversion tool enables to run several conversion in parallel - in separate processes.  I wondered how the conversion will speed up with adding more processes.   I ran it  on my notebook with core i5 processor - two physical cores, each core can run two physical threads, 8GB memory. Graph below shows results for conversion of about 10 books into both formats.
 

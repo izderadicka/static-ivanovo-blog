@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/migrating-tokio-and-futures-what-to-look-for/"
 source_guid = "http://zderadicka.eu/?p=2188"
 source_date_gmt = "2020-03-15 09:33:44"
-categories = ["Programming"]
-tags = ["Futures", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Futures", "Rust"]
 +++
 I've finally found courage to look after migrating audioserve to new hyper and tokio and futures crates. As new futures (0.3) are significantly different from previous version, mainly due to support of async/await keywords, I was expecting significant effort, so I was kind of delaying it. Now when it's almost done, I'd like to reflect a bit on the effort. Firstly - it was not as bad as expected (although after updating cargo dependencies I've got about a hundred of errors). Secondly - there are some patterns to follow in migration, which I've like to describe further in the article.
 
@@ -71,7 +72,7 @@ pub trait Future {
 
 
 
-Key change is  pinning self. It's done to assure that self is not moved in memory  in cases when it's self-referencing some of it's own parts. This was introduced especially for `async`/`await` blocks, where self- referencing is common (short explanation of Pin is <a href="https://rust-lang.github.io/async-book/04_pinning/01_chapter.html">here</a>). <br/>So Future implementation has to be rewritten, if your future is `Unpin` then actually implementation is quite the same, as `Pin` implements `DerefMut` for `Unpin` targets. So you work with `self` in quite same way.  As `Unpin` is common for majority of types I was able to make my custom futures and streams `Unpin` too.
+Key change is  pinning self. It's done to assure that self is not moved in memory  in cases when it's self-referencing some of it's own parts. This was introduced especially for `async`/`await` blocks, where self- referencing is common (short explanation of Pin is [here](https://rust-lang.github.io/async-book/04_pinning/01_chapter.html)). <br/>So Future implementation has to be rewritten, if your future is `Unpin` then actually implementation is quite the same, as `Pin` implements `DerefMut` for `Unpin` targets. So you work with `self` in quite same way.  As `Unpin` is common for majority of types I was able to make my custom futures and streams `Unpin` too.
 
 
 
@@ -194,7 +195,7 @@ async fn main() {
 
 
 
-`async` and `await` keywords are really great improvement for writing asynchronous code. It does simplify code notably and it's a lot easier to write it (I already mentioned it <a href="/first-impressions-about-new-rust-async/">in this article</a>). 
+`async` and `await` keywords are really great improvement for writing asynchronous code. It does simplify code notably and it's a lot easier to write it (I already mentioned it [in this article](/first-impressions-about-new-rust-async/)). 
 
 
 
@@ -215,4 +216,4 @@ I did not covert all code to async/await (partially due to laziness, partially j
 
 
 
-<ol><li>Use <code>futures::prelude::&#42;</code> to import all useful traits, including Ext traits</li><li>Update references to <code>Future</code> and <code>Steam</code> traits- new ones should have one associated type <code>Result</code>, which contains success and error type of old future.</li><li>  Update your implementations of futures, streams, etc. Try to make them <code>Unpin</code> - it will make you life easier. If they have inner futures, store them pinned.  <code>Box::pin</code> is you friend to make future <code>Unpin</code> (but requires allocation).</li><li>Use <code>Box::pin</code> for you <code>Future</code> (or <code>Stream</code>)  trait objects</li><li>Rewrite code to <strong>async/await </strong>where necessary: too complex combinators,  new futures require mutable reference etc.</li></ol>
+<ol><li>Use <code>futures::prelude::&#42;</code> to import all useful traits, including Ext traits</li><li>Update references to <code>Future</code> and <code>Steam</code> traits- new ones should have one associated type <code>Result</code>, which contains success and error type of old future.</li><li>  Update your implementations of futures, streams, etc. Try to make them <code>Unpin</code> - it will make you life easier. If they have inner futures, store them pinned.  <code>Box::pin</code> is you friend to make future <code>Unpin</code> (but requires allocation).</li><li>Use <code>Box::pin</code> for you <code>Future</code> (or <code>Stream</code>)  trait objects</li><li>Rewrite code to **async/await **where necessary: too complex combinators,  new futures require mutable reference etc.</li></ol>

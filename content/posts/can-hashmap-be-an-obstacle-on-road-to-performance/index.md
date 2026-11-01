@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/can-hashmap-be-an-obstacle-on-road-to-performance/"
 source_guid = "http://zderadicka.eu/?p=2225"
 source_date_gmt = "2020-04-02 12:45:32"
-categories = ["Programming"]
-tags = ["performance", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["performance", "Rust"]
 +++
-I'm still playing with small exercises, one interesting is "<a href="https://en.wikipedia.org/wiki/Verbal_arithmetic">alphametics</a>"  (it's available on <a href="https://exercism.io">exercism</a>). Exercise goal is  to evaluate if an expression like "SEND + MORE == MONEY", when letters are replaced uniquely with numbers, is valid equation (more details in link above). As I have written in <a href="/performance-should-matter/">previous article</a>, I try to think about performance and this exercise was quite interesting from that perspective.
+I'm still playing with small exercises, one interesting is "[alphametics](https://en.wikipedia.org/wiki/Verbal_arithmetic)"  (it's available on [exercism](https://exercism.io)). Exercise goal is  to evaluate if an expression like "SEND + MORE == MONEY", when letters are replaced uniquely with numbers, is valid equation (more details in link above). As I have written in [previous article](/performance-should-matter/), I try to think about performance and this exercise was quite interesting from that perspective.
 
 
 
@@ -24,7 +25,7 @@ I'm still playing with small exercises, one interesting is "<a href="https://en.
 
 
 
-My initial solution was based on brute force approach, searching for all possible assignments of numbers to present letters - it did work, but it was slower then "best" solution, which was searching for solution per columns - e.g. first find solutions for "D+E == Y" (with possible carry over), then test them with next columns - this should reduce search space. So I modified code to similar approach (although with bit more explicit code) - the code is available on github - branch <a href="https://github.com/izderadicka/alphametics/tree/normal-hash">normal-hash</a> (for the competing solution see src/other.rs).
+My initial solution was based on brute force approach, searching for all possible assignments of numbers to present letters - it did work, but it was slower then "best" solution, which was searching for solution per columns - e.g. first find solutions for "D+E == Y" (with possible carry over), then test them with next columns - this should reduce search space. So I modified code to similar approach (although with bit more explicit code) - the code is available on github - branch [normal-hash](https://github.com/izderadicka/alphametics/tree/normal-hash) (for the competing solution see src/other.rs).
 
 
 
@@ -48,14 +49,14 @@ I did benchmark comparing to the other solution , but still my code was slower (
 
 
 
-As you can see mine is about 3 times slower (not looking much at variance). So when something is slower then required it's time for performance profiling. In past I used `valgrind callgrind`, but for this case I decided to use `perf` \-  especially because I found nice article how to use it for creating <a href="http://www.brendangregg.com/flamegraphs.html">flame graphs</a>, which is cool way how to visualize call graph and how individual functions consume CPU time. So join me on journey to better performance.
+As you can see mine is about 3 times slower (not looking much at variance). So when something is slower then required it's time for performance profiling. In past I used `valgrind callgrind`, but for this case I decided to use `perf` \-  especially because I found nice article how to use it for creating [flame graphs](http://www.brendangregg.com/flamegraphs.html), which is cool way how to visualize call graph and how individual functions consume CPU time. So join me on journey to better performance.
 
 
 
 
 
 
-Here are commands to record call graph and then  create a nice flame chart (install perf <a href="https://github.com/brendangregg/FlameGraph">FlameGraph</a> tools - create links to appropriate scripts to `~/.local/bin` so we can use these scripts easily):
+Here are commands to record call graph and then  create a nice flame chart (install perf [FlameGraph](https://github.com/brendangregg/FlameGraph) tools - create links to appropriate scripts to `~/.local/bin` so we can use these scripts easily):
 
 
 
@@ -100,7 +101,7 @@ Hashmaps are omnipresent data containers and some languages like Python are buil
 
 
 
-So this brings us back to the title of this article - significant part of time is spent in hashmap - it looks like here hashmap is really an obstacle  to reaching better performance. So how to fix this - Rust is known to have rather complex default hash function, which prevents against DOS attacks, but we probably do not need it here. Let's replace it (as hash functions are pluggable) with something faster from crate `fasthash` (quite indicative name, right, we do want fast hash here) and it is <a href="https://docs.rs/fasthash/0.4.0/fasthash/sea/index.html">seahash</a>, which advertise itself as "A bizarrely fast hash function". Modified exercise code is <a href="https://github.com/izderadicka/alphametics/tree/fast-hash">here</a>. And here are benchmark results:
+So this brings us back to the title of this article - significant part of time is spent in hashmap - it looks like here hashmap is really an obstacle  to reaching better performance. So how to fix this - Rust is known to have rather complex default hash function, which prevents against DOS attacks, but we probably do not need it here. Let's replace it (as hash functions are pluggable) with something faster from crate `fasthash` (quite indicative name, right, we do want fast hash here) and it is [seahash](https://docs.rs/fasthash/0.4.0/fasthash/sea/index.html), which advertise itself as "A bizarrely fast hash function". Modified exercise code is [here](https://github.com/izderadicka/alphametics/tree/fast-hash). And here are benchmark results:
 
 
 
@@ -145,7 +146,7 @@ It's looks kind of similar to previous case, right? But let's look at details - 
 
 
 
-Areas highlighted by blue lasso are parts of code, where I think actual hash calculation is done. So we can see that Seahash is faster, but it's not enough to make significant difference. Some more radical changes are needed. If we look at above flame graphs, we see that there is still quite some overhead related to hashmap machinery.  As we are mapping char to byte and chars are ASCII only we actually are mapping byte to byte - so we can represent this as 256 bytes long array - index is a key and array cell a value. So let's try it - code is <a href="https://github.com/izderadicka/alphametics">here</a> and array is actually implemented as `Vec` and it's wrapped in simple map and set interfaces, so it fits well into existing code. So does this version perform:
+Areas highlighted by blue lasso are parts of code, where I think actual hash calculation is done. So we can see that Seahash is faster, but it's not enough to make significant difference. Some more radical changes are needed. If we look at above flame graphs, we see that there is still quite some overhead related to hashmap machinery.  As we are mapping char to byte and chars are ASCII only we actually are mapping byte to byte - so we can represent this as 256 bytes long array - index is a key and array cell a value. So let's try it - code is [here](https://github.com/izderadicka/alphametics) and array is actually implemented as `Vec` and it's wrapped in simple map and set interfaces, so it fits well into existing code. So does this version perform:
 
 
 

@@ -11,16 +11,17 @@ author = "admin"
 source_url = "http://zderadicka.eu/cython-is-as-good-as-advertised/"
 source_guid = "http://zderadicka.eu/?p=1229"
 source_date_gmt = "2016-02-01 11:43:19"
-categories = ["Programming"]
-tags = ["cython", "numeric calculations", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["cython", "numeric calculations", "python"]
 +++
-I've have been aware of <a href="http://cython.org/">Cython</a> for a few years but newer had chance to really test it in practice (apart of few dummy exercises).  Recently I've decided to look at it again and test it on my old project <a href="/decoding-audio-captchas-in-python/">adecapcha</a>. I was quite pleased with results, where I was able speed up the program significantly with minimum changes to the code.<span id="more-1229"></span>
+I've have been aware of [Cython](http://cython.org/) for a few years but newer had chance to really test it in practice (apart of few dummy exercises).  Recently I've decided to look at it again and test it on my old project [adecapcha](/decoding-audio-captchas-in-python/). I was quite pleased with results, where I was able speed up the program significantly with minimum changes to the code.<span id="more-1229"></span>
 
-I used following <strong>approach</strong> to improve the app performance with Cython:
+I used following **approach** to improve the app performance with Cython:
 
 
 <ol>
-<li>Profile the application (or it's part) -  with <a href="https://docs.python.org/2/library/profile.html">cProfile</a> and <a href="https://github.com/jrfonseca/gprof2dot">gprof2dot</a> to give nice graphical view of computing time split across functions. (Alternatively you can use  <a href="http://www.pyvmmonitor.com/">pyvmmonitor</a>, which nicely integrates with PyDev or PyCharms).  Below is the profiling result of adecaptcha before Cython optimalization:
+<li>Profile the application (or it's part) -  with [cProfile](https://docs.python.org/2/library/profile.html) and [gprof2dot](https://github.com/jrfonseca/gprof2dot) to give nice graphical view of computing time split across functions. (Alternatively you can use  [pyvmmonitor](http://www.pyvmmonitor.com/), which nicely integrates with PyDev or PyCharms).  Below is the profiling result of adecaptcha before Cython optimalization:
 <a href="/wp-content/uploads/original.png"><img alt="original" class="alignnone wp-image-1231 size-medium" decoding="async" height="300" loading="eager" sizes="(max-width: 211px) 100vw, 211px" src="/wp-content/uploads/original-211x300.png" srcset="/wp-content/uploads/original-211x300.png 211w, /wp-content/uploads/original-720x1024.png 720w, /wp-content/uploads/original.png 833w" width="211"/></a>
 Here we can see two branches, which took majority on program time - one is for loading audio file, but it's spending most of its time in Python standard module wave (scipy.io provides faster alternative, but not compatible with all wav files) .  However the second branch is completely  under our control.  We can see that a lot of time is spent in <code>twin</code> and <code>wf</code> functions ( triangular window calculations).</li>
 <li>Let's look at functions identified by profiling:
@@ -35,17 +36,17 @@ As you can see <code>twin</code> function is not an issue any more ( all <code>c
 </ol>
 
 
-Cython can be also used to create Python bindings to C and C++ libraries.  Although the interface has to be written manually (while some other tools like <a href="http://www.swig.org/">SWIG</a> can generate it automatically) and it requires some  effort,  on the other hand it forces authors to think about the interface design  and it can result in very nice 'pythonic' interfaces, which can save you a lot of time later. Key insight here is that  we do not need to interface all functions and classes in C  or C++ library, but only those, which are important for our needs.  Recently I've created a <a href="https://github.com/izderadicka/pdfparser">binding</a> to <a href="https://poppler.freedesktop.org/">libpoppler</a> (PDF parsing library) and found this task fairly easy and quite enjoyable to do.
+Cython can be also used to create Python bindings to C and C++ libraries.  Although the interface has to be written manually (while some other tools like [SWIG](http://www.swig.org/) can generate it automatically) and it requires some  effort,  on the other hand it forces authors to think about the interface design  and it can result in very nice 'pythonic' interfaces, which can save you a lot of time later. Key insight here is that  we do not need to interface all functions and classes in C  or C++ library, but only those, which are important for our needs.  Recently I've created a [binding](https://github.com/izderadicka/pdfparser) to [libpoppler](https://poppler.freedesktop.org/) (PDF parsing library) and found this task fairly easy and quite enjoyable to do.
 
 
 ## Conclusions
 
 
 Even with few very simple changes into original code I was able to achieve significant performance improvements (run time 0.27s vs 0.41s - for one audio captcha, that's app. 35 % improvement).
-Programming in Cython is relatively easy so I was able to implement these changes quickly, without particular issues.  Complication errors were fairly well described, so I was able to fix problems quickly. Building can be defined in setup.py in a straightforward manner or can be even automatic ( with <a href="http://docs.cython.org/src/reference/compilation.html#compiling-with-pyximport">pyximport</a> \- however pyximport machinery takes some time - so for smaller programs manual compilation is more effective).
+Programming in Cython is relatively easy so I was able to implement these changes quickly, without particular issues.  Complication errors were fairly well described, so I was able to fix problems quickly. Building can be defined in setup.py in a straightforward manner or can be even automatic ( with [pyximport](http://docs.cython.org/src/reference/compilation.html#compiling-with-pyximport) \- however pyximport machinery takes some time - so for smaller programs manual compilation is more effective).
 
-However it has to be said that not always path to performance improvements with Cython is so straightforward.  In another project ( <a href="/voronoi-diagrams/">Voronoi diagram in bounded box</a> a part of <a href="/projects/python/myplaces/">myplaces</a> project) I've tried too and I was not able to achieve any performance gain ( quite opposite cythonized version  was about 30% slower). I probably should  try harder, but obviously sometimes it's difficult to achieve required improvements.
+However it has to be said that not always path to performance improvements with Cython is so straightforward.  In another project ( [Voronoi diagram in bounded box](/voronoi-diagrams/) a part of [myplaces](/projects/python/myplaces/) project) I've tried too and I was not able to achieve any performance gain ( quite opposite cythonized version  was about 30% slower). I probably should  try harder, but obviously sometimes it's difficult to achieve required improvements.
 
 Cython can be also used to create nice pythonic interfaces to existing C and C++ libraries.
 
-Overall I was quite <strong>impressed</strong> and looking forward to use Cython in future projects.
+Overall I was quite **impressed** and looking forward to use Cython in future projects.

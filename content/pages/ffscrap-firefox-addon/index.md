@@ -30,17 +30,17 @@ ffscrap is a Firefox addon that enables to extract  data (in CSV format) easily
 
 
 
-Many times in past I needed to get data from a HTML page into a spreadsheet -  sometimes it worked  fine  just by cut&paste, but many times HTML code was more complex and it did not work very well.   So I decided to write a Firefox extension that will help to extract data ( the term 'scrap' is also used in this context) into some useful form that can be easily used in a spreadsheet or in other applications (CSV format seemed to be best choice due to its simplicity and wide support).  I used <a href="https://addons.mozilla.org/en-us/developers/builder">Mozilla Add-on SDK</a>, which enables to write extensions with high level API.
+Many times in past I needed to get data from a HTML page into a spreadsheet -  sometimes it worked  fine  just by cut&paste, but many times HTML code was more complex and it did not work very well.   So I decided to write a Firefox extension that will help to extract data ( the term 'scrap' is also used in this context) into some useful form that can be easily used in a spreadsheet or in other applications (CSV format seemed to be best choice due to its simplicity and wide support).  I used [Mozilla Add-on SDK](https://addons.mozilla.org/en-us/developers/builder), which enables to write extensions with high level API.
 
-<strong>Features of the extension:</strong>
+**Features of the extension:**
 
 
-<ul>
-<li>Define data on the page using easy to understand JSON script/recipe.</li>
-<li>When scraping JSON script is defined you can extract data just by one click.</li>
-<li>Maintains scraping scripts for pages.</li>
-<li>Share scraping scripts easily within your community (scripts can be automatically downloaded from given URL).</li>
-</ul>
+
+- Define data on the page using easy to understand JSON script/recipe.
+- When scraping JSON script is defined you can extract data just by one click.
+- Maintains scraping scripts for pages.
+- Share scraping scripts easily within your community (scripts can be automatically downloaded from given URL).
+
 
 
 You can test extension and its scraping function easily on this page - <a href="http://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.jsp">http://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.jsp</a>
@@ -84,12 +84,12 @@ Then click "Apply to This Page" button.   "Scraping Result" dialogue will appe
 In order to use this addon you have to:
 
 
-<ol>
-<li>Install it in Firefox browser ( ver. 17+) - see Download tab.</li>
-<li>Define scraping script (right-click ffscrap icon - more details below)</li>
-<li>Extract data (left-click ffscrap icon) and save them or copy them to clipboard</li>
-<li>Optionally you can share your scraping scripts within your community</li>
-</ol>
+
+1. Install it in Firefox browser ( ver. 17+) - see Download tab.
+1. Define scraping script (right-click ffscrap icon - more details below)
+1. Extract data (left-click ffscrap icon) and save them or copy them to clipboard
+1. Optionally you can share your scraping scripts within your community
+
 
 
 
@@ -101,11 +101,11 @@ On any page you can define your own scraping script - just right-click ffscrap i
 
 In "Define Scrapping Script"  dialogue enter:
 
-<strong>Name</strong> \- arbitrary name for your script, just be aware that this name should be unique - if you use name of an existing script, it will be overwritten by this new definition. Name cannot be changed once script is saved for first time.
+**Name** \- arbitrary name for your script, just be aware that this name should be unique - if you use name of an existing script, it will be overwritten by this new definition. Name cannot be changed once script is saved for first time.
 
-<strong>URL Pattern</strong> \-   URL or partial URL for which this script should be applied.  Just leave enough of URL to identify this page, but leave out dynamic components which vary with different page views - like query strings etc.  Star (\*) can be user as "wild character" to match group of any characters.
+**URL Pattern** \-   URL or partial URL for which this script should be applied.  Just leave enough of URL to identify this page, but leave out dynamic components which vary with different page views - like query strings etc.  Star (\*) can be user as "wild character" to match group of any characters.
 
-<strong>Scraping Specification</strong> \-   JSON script defining  data scraping.   There is a skeleton/sample script shown initially so you can start with it and modify it.
+**Scraping Specification** \-   JSON script defining  data scraping.   There is a skeleton/sample script shown initially so you can start with it and modify it.
 
 When done with the script click "Apply to Page"  to test the script (it'll be also saved) or "Save Only" just to save it for later.
 
@@ -132,27 +132,27 @@ When some script is defined for a page ffscrap icon on Add-on Bar will change to
 ```
 
 
-Script uses <a href="http://www.json.org/">JSON</a>  syntax, so stick to it exactly - unfortunately parser is not very particular about syntax errors.
+Script uses [JSON](http://www.json.org/)  syntax, so stick to it exactly - unfortunately parser is not very particular about syntax errors.
 
-Script uses CSS <strong>selectors</strong>, with jQuery extensions -  for available selectors and their usage refer to <a href="http://api.jquery.com/category/selectors/?rdfrom=http%3A%2F%2Fdocs.jquery.com%2Fmw%2Findex.php%3Ftitle%3DSelectors%26redirect%3Dno">JQuery documentation</a>. Selectors are always evaluated in the context of their parent ( row in root context, field in row context). In order to identify right selectors you might need some other FF addon that will enable to browse page HTML code - I personally prefer <a href="https://getfirebug.com/">Firebug</a>.
+Script uses CSS **selectors**, with jQuery extensions -  for available selectors and their usage refer to [JQuery documentation](http://api.jquery.com/category/selectors/?rdfrom=http%3A%2F%2Fdocs.jquery.com%2Fmw%2Findex.php%3Ftitle%3DSelectors%26redirect%3Dno). Selectors are always evaluated in the context of their parent ( row in root context, field in row context). In order to identify right selectors you might need some other FF addon that will enable to browse page HTML code - I personally prefer [Firebug](https://getfirebug.com/).
 
 Script identifies  root element - an element which contains all required data (table, ul, div ...), then repeating row elemets (tr, div, li, ..) and finally individual fields/column elements (td, div, span, input ...).
 
-<strong>rowsRage</strong> \- for selected set of rows you can define its subset by defining starting index (zero based), ending index (can be negative, -2 means two before last) and step.  rowsRage is optional, if not used all rows identified by selector are used.
+**rowsRage** \- for selected set of rows you can define its subset by defining starting index (zero based), ending index (can be negative, -2 means two before last) and step.  rowsRage is optional, if not used all rows identified by selector are used.
 
-You can define as many fields as needed  within <strong>fields</strong> array(they need to be separated by comma). For each field on a row, apart of its selector,  you define:
+You can define as many fields as needed  within **fields** array(they need to be separated by comma). For each field on a row, apart of its selector,  you define:
 
-<strong>name</strong> \- name is mandatory and is used as column header in CSV format.
+**name** \- name is mandatory and is used as column header in CSV format.
 
-<strong>type</strong> \- <em>string</em> is the default type , <em>int</em> and <em>float</em> are numeric types (parsed by <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/parseInt">parseInt</a> and <a href="https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/parseFloat">parseFloat</a> JavaScript functions), <em>boolean</em> has values true (for 'true' or 'yes'or  'y' or  '1') or false (for everything else).
+**type** \- *string* is the default type , *int* and *float* are numeric types (parsed by [parseInt](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/parseInt) and [parseFloat](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/parseFloat) JavaScript functions), *boolean* has values true (for 'true' or 'yes'or  'y' or  '1') or false (for everything else).
 
-<strong>source</strong> \- determines what is used from selected element(s):
-<em>text</em>  - all  text  within selected element(this is default, if source is not specified)
-<em>attr:xxx</em> \- value of xxx attribute from  first selected element
-<em>input</em> \- value of first input found within selected element(s)
+**source** \- determines what is used from selected element(s):
+*text*  - all  text  within selected element(this is default, if source is not specified)
+*attr:xxx* \- value of xxx attribute from  first selected element
+*input* \- value of first input found within selected element(s)
 <em>input_or_text</em> \- value of first input found within selected element(s), if there is none, then all  text within selected element
 
-<strong>preprocess</strong> \- function to pre-process text of a field before converting it  to given type - currently there are 2 functions `numberNormalize` and `numberNormalizeCZ`, which  remove all non digit characters (numberNormalizeCZ also replaces , with .).
+**preprocess** \- function to pre-process text of a field before converting it  to given type - currently there are 2 functions `numberNormalize` and `numberNormalizeCZ`, which  remove all non digit characters (numberNormalizeCZ also replaces , with .).
 
 
 ## Sharing Scraping Scripts
@@ -200,11 +200,11 @@ In case of problems check Error Console (Tools/Web Developer/Error Console or Ct
 
 
 
-Install from <a href="https://addons.mozilla.org/en-US/firefox/addon/ffscrap/">here</a>.
+Install from [here](https://addons.mozilla.org/en-US/firefox/addon/ffscrap/).
 
-Source is available on <a href="https://github.com/izderadicka/ffscrap">GitHub</a>.
+Source is available on [GitHub](https://github.com/izderadicka/ffscrap).
 
-Dual licensed under<a href="http://www.mozilla.org/MPL/2.0/"> MPL 2.0</a> or<a href="http://www.gnu.org/licenses/gpl.html"> GPL v3</a>.
+Dual licensed under[ MPL 2.0](http://www.mozilla.org/MPL/2.0/) or[ GPL v3](http://www.gnu.org/licenses/gpl.html).
 
 
 

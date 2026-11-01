@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/protecting-django-application-against-brute-force-password-guessing/"
 source_guid = "http://zderadicka.eu/?p=724"
 source_date_gmt = "2014-01-18 10:13:02"
-categories = ["Programming", "Security"]
-tags = ["django", "python", "security"]
+[taxonomies]
+category = ["Programming", "Security"]
+tag = ["django", "python", "security"]
 +++
-<a href="/wp-content/uploads/lock.png"><img alt="lock" class="wp-image-733 alignleft" decoding="async" height="180" loading="eager" sizes="(max-width: 124px) 100vw, 124px" src="/wp-content/uploads/lock-207x300.png" srcset="/wp-content/uploads/lock-207x300.png 207w, /wp-content/uploads/lock.png 354w" width="124"/></a>When you bring  your web application live, you can expected various types of attacks -   one could be a brute force scanning of possible logins.   As a standard mean of prevention against such types of attacks login should be temporarily disabled after some number of unsuccessful attempts.  For <a href="http://djangoproject.com">Django</a> nice package called <a href="https://github.com/brianjaystanley/django-lockout">django-lockout</a> exists.
+<a href="/wp-content/uploads/lock.png"><img alt="lock" class="wp-image-733 alignleft" decoding="async" height="180" loading="eager" sizes="(max-width: 124px) 100vw, 124px" src="/wp-content/uploads/lock-207x300.png" srcset="/wp-content/uploads/lock-207x300.png 207w, /wp-content/uploads/lock.png 354w" width="124"/></a>When you bring  your web application live, you can expected various types of attacks -   one could be a brute force scanning of possible logins.   As a standard mean of prevention against such types of attacks login should be temporarily disabled after some number of unsuccessful attempts.  For [Django](http://djangoproject.com) nice package called [django-lockout](https://github.com/brianjaystanley/django-lockout) exists.
 
 Main advantage of this package is that it keeps history of unsuccessful login attempts in memory (using Django cache system),  so checks are very quick.   django-lockout is fairly easy to implement, however I've found one issue, when it is used together with django admin site.
 

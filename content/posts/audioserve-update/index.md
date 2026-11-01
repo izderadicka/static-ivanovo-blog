@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/audioserve-update/"
 source_guid = "http://zderadicka.eu/?p=1967"
 source_date_gmt = "2018-11-19 08:11:32"
-categories = ["Announcement", "Programming"]
-tags = ["Audiobook"]
+[taxonomies]
+category = ["Announcement", "Programming"]
+tag = ["Audiobook"]
 +++
-Some updates have been done on both <a href="/audioserve-audiobooks-server-stupidly-simple-or-simply-stupid/">audioserve</a> server (now in version 0.6.0) and Android client (now in version 0.7.0):<span id="more-1967"></span>
+Some updates have been done on both [audioserve](/audioserve-audiobooks-server-stupidly-simple-or-simply-stupid/) server (now in version 0.6.0) and Android client (now in version 0.7.0):<span id="more-1967"></span>
 
 
 <ul>

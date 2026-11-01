@@ -14,18 +14,18 @@ source_date_gmt = "2016-10-03 08:24:17"
 menu_order = 0
 parent = "/projects/python/"
 +++
-<strong>Mybookshelf2</strong> is next generation solution for sharing and managing ebooks for personal or community purposes. It's fully web based written in Python and Javascript. Basically it is a complete rewrite of my old project <a href="/projects/python/mybookshelf-ebooks-library/">Mybookshelf</a> (with completely new technologies)
+**Mybookshelf2** is next generation solution for sharing and managing ebooks for personal or community purposes. It's fully web based written in Python and Javascript. Basically it is a complete rewrite of my old project [Mybookshelf](/projects/python/mybookshelf-ebooks-library/) (with completely new technologies)
 
 The key focus is on:
 
 
-<ul>
-<li>enabling different files for an ebook - event same formats multiple times (that was one of my key issues with Calibre, because it enables only one file per format).</li>
-<li>Easy way to convert ebook to needed format (event from doc files) from selected file. Mass conversion of all ebooks of given author, all ebooks in series, bookshelf.</li>
-<li>Easy way to upload file to new or existing ebook (use metadata in file, auto-completes to add authors, series ...) .</li>
-<li>Accessible from any device, responsive design (at least for read - Ebooks readers usually have fairly basic web browsers, so simple pages should be available for ebooks listing and download in such devices).</li>
-<li>Easy and intuitive organization of ebooks using 'bookshelves' ( a list of books) -  you can have as many bookshelves as needed - ( like Want to read,  Top 100 books, Recommended to me, ...)</li>
-</ul>
+
+- enabling different files for an ebook - event same formats multiple times (that was one of my key issues with Calibre, because it enables only one file per format).
+- Easy way to convert ebook to needed format (event from doc files) from selected file. Mass conversion of all ebooks of given author, all ebooks in series, bookshelf.
+- Easy way to upload file to new or existing ebook (use metadata in file, auto-completes to add authors, series ...) .
+- Accessible from any device, responsive design (at least for read - Ebooks readers usually have fairly basic web browsers, so simple pages should be available for ebooks listing and download in such devices).
+- Easy and intuitive organization of ebooks using 'bookshelves' ( a list of books) -  you can have as many bookshelves as needed - ( like Want to read,  Top 100 books, Recommended to me, ...)
+
 
 
 
@@ -41,7 +41,7 @@ Basic usage of MBS2 - list, search, add ebooks, convert ebooks:
 
 
 
-<p class="embed-fallback"><a href="https://www.youtube.com/watch?v=VP0beQ-13V0&amp;feature=youtu.be">Watch on YouTube</a></p>
+<p class="embed-fallback"><a href="https://www.youtube.com/watch?v=VP0beQ-13V0&feature=youtu.be">Watch on YouTube</a></p>
 
 
 
@@ -61,5 +61,5 @@ New features added in current 'beta' version (bookshelves, merge, mass conversio
 ## Source Code
 
 
-Project is currently in beta status - code is available here <a href="https://github.com/izderadicka/mybookshelf2">at github</a>.
-Application can be easily installed and tried with help of the <a href="https://www.docker.com/">Docker</a> \- see <a href="https://github.com/izderadicka/mybookshelf2/blob/master/deploy/README.md">instructions for deployment</a>.
+Project is currently in beta status - code is available here [at github](https://github.com/izderadicka/mybookshelf2).
+Application can be easily installed and tried with help of the [Docker](https://www.docker.com/) \- see [instructions for deployment](https://github.com/izderadicka/mybookshelf2/blob/master/deploy/README.md).

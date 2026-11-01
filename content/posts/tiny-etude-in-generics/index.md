@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/tiny-etude-in-generics/"
 source_guid = "http://zderadicka.eu/?p=1933"
 source_date_gmt = "2018-10-04 14:24:19"
-categories = ["Programming"]
-tags = ["Generics", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Generics", "Rust"]
 +++
 Although Rust is mostly noted for it's memory safety and thus most prominent feature is borrow checker, it has also very decent type system, which was inspired by modern functional languages like OCAML or Haskel. In this article I'll look into very simple example, which will however show some nice features of Rust type system - especially generics.<span id="more-1933"></span>
 

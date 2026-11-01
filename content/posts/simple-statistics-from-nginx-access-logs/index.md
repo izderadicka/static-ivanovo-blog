@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/simple-statistics-from-nginx-access-logs/"
 source_guid = "http://zderadicka.eu/?p=942"
 source_date_gmt = "2014-11-13 08:13:17"
-categories = ["Admin"]
-tags = ["bash", "web server logs"]
+[taxonomies]
+category = ["Admin"]
+tag = ["bash", "web server logs"]
 +++
-I required some simple statistics (selected page visits per day)  from web-server logs.   I looked at some web log analyzer packages like <a href="http://www.awstats.org/">AWStats,</a> but it looked to me like as an overkill in my case - I'd probably spent more time to trying make it work then putting together some small script. So here it is - a simple bash script that will take all available access logs (by default on Debian nginx is using logrotate to rotate logs daily and keeps 52 daily logs, old logs are gzipped) and calculate page visits for certain request pattern:<span id="more-942"></span>
+I required some simple statistics (selected page visits per day)  from web-server logs.   I looked at some web log analyzer packages like [AWStats,](http://www.awstats.org/) but it looked to me like as an overkill in my case - I'd probably spent more time to trying make it work then putting together some small script. So here it is - a simple bash script that will take all available access logs (by default on Debian nginx is using logrotate to rotate logs daily and keeps 52 daily logs, old logs are gzipped) and calculate page visits for certain request pattern:<span id="more-942"></span>
 
 
 ```sh

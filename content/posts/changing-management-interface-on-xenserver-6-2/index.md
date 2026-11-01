@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/changing-management-interface-on-xenserver-6-2/"
 source_guid = "http://zderadicka.eu/?p=909"
 source_date_gmt = "2014-10-20 11:30:13"
-categories = ["Admin"]
-tags = ["XenServer"]
+[taxonomies]
+category = ["Admin"]
+tag = ["XenServer"]
 +++
 If you are changing management interface on XS (from eth1 to eth2, in my case, because eth1 was not connect to right subnet), be aware that management console must not update routing table for local subnet access appropriately - it keeps the record for previous interface there with same metric value, so actually old record will have preference.   So you might end up in situation, where you cannot access local subnet.
 

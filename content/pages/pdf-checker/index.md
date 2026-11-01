@@ -20,7 +20,7 @@ Organizations or teams producing manually many PDF documents might want to apply
 ## How it works?
 
 
-Application is using <a href="http://www.unixuser.org/~euske/python/pdfminer/">pdfminer</a> library to extract text from PDF documents -  text is separated to individual lines (as recognized by pdfminer, which actually reconstructs lines from characters position on page) and each line is also supplemented by page number, it's position on the page (top left point and bounding box of the line) and also some information about font used (name, variant, size).
+Application is using [pdfminer](http://www.unixuser.org/~euske/python/pdfminer/) library to extract text from PDF documents -  text is separated to individual lines (as recognized by pdfminer, which actually reconstructs lines from characters position on page) and each line is also supplemented by page number, it's position on the page (top left point and bounding box of the line) and also some information about font used (name, variant, size).
 
 Lines are then feed into checking algorithms (implemented as plugins),  which check for issues (like finding some unwanted word). Issues are collected and then displayed together with their position in the document.
 
@@ -30,13 +30,13 @@ Lines are then feed into checking algorithms (implemented as plugins),  which c
 
 
 
-<ul>
-<li>User friendly web interface with integrated PDF viewer</li>
-<li>One click error highlight - Click on the error and PDF viewer highlights it to you</li>
-<li>CLI interface to use from scripts</li>
-<li>Flexible -  new checks can be very easily added as plugins (see below)</li>
-<li>Easy to deploy</li>
-</ul>
+
+- User friendly web interface with integrated PDF viewer
+- One click error highlight - Click on the error and PDF viewer highlights it to you
+- CLI interface to use from scripts
+- Flexible -  new checks can be very easily added as plugins (see below)
+- Easy to deploy
+
 
 
 
@@ -104,8 +104,8 @@ You can change name and help for this check, if reusing existing check with diff
 ## Download and install
 
 
-Code is available under <a href="http://www.gnu.org/copyleft/gpl.html">GPL v3 license</a>.
+Code is available under [GPL v3 license](http://www.gnu.org/copyleft/gpl.html).
 
-Code can be downloaded from <a href="https://github.com/izderadicka/pdf-checker">github</a>. You''l need to write your own checking plugins to make it useful - because included ones are quite specific for my case.
+Code can be downloaded from [github](https://github.com/izderadicka/pdf-checker). You''l need to write your own checking plugins to make it useful - because included ones are quite specific for my case.
 
-For installation instructions check <a href="https://github.com/izderadicka/pdf-checker/blob/master/README.md">README</a> file.
+For installation instructions check [README](https://github.com/izderadicka/pdf-checker/blob/master/README.md) file.

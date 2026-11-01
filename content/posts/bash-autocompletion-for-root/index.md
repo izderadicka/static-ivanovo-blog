@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/bash-autocompletion-for-root/"
 source_guid = "http://zderadicka.eu/?p=313"
 source_date_gmt = "2012-10-29 07:57:12"
-categories = ["Admin"]
-tags = ["linux"]
+[taxonomies]
+category = ["Admin"]
+tag = ["linux"]
 +++
 Debian/Ubuntu do not have bash autocompletion enabled for  root account by default.  When working under root account, this is quite missed feature,   but luckily it can be enabled very easily:
 

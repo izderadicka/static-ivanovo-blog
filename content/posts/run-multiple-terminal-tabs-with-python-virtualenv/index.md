@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/run-multiple-terminal-tabs-with-python-virtualenv/"
 source_guid = "http://zderadicka.eu/?p=1382"
 source_date_gmt = "2016-05-27 10:53:19"
-categories = ["Programming"]
-tags = ["linux", "python", "virtualenv"]
+[taxonomies]
+category = ["Programming"]
+tag = ["linux", "python", "virtualenv"]
 +++
-<a href="https://github.com/pypa/virtualenv">Virtualenv</a> is a must have for python development.  If your project is a complex beast consisting  of multiple services/components you want them see running  in different terminals  (ideally tabs of one terminal window).  Staring all terminal manually could be cumbersome. This simple script starts terminal tabs (in gnome-terminal) with activated virtual environments and eventually appropriate services/applications started:
+[Virtualenv](https://github.com/pypa/virtualenv) is a must have for python development.  If your project is a complex beast consisting  of multiple services/components you want them see running  in different terminals  (ideally tabs of one terminal window).  Staring all terminal manually could be cumbersome. This simple script starts terminal tabs (in gnome-terminal) with activated virtual environments and eventually appropriate services/applications started:
 
 
 ```sh

@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/what-happened-to-audioserve-in-past-year/"
 source_guid = "http://zderadicka.eu/?p=2273"
 source_date_gmt = "2021-01-23 13:48:06"
-categories = ["Programming"]
-tags = ["audio streaming", "Audiobook"]
+[taxonomies]
+category = ["Programming"]
+tag = ["audio streaming", "Audiobook"]
 +++
 Not much, but definitely it's not dead.  Actually I'm quite happy with current functionality and do not need more (actually there are couple of things that would be nice to have like shared bookmarks and read/finished audiobook attribute, but these will probably require to go beyond it's simplistic design) and I'm using it every day.  But some coding was done during past year and some small improvements were implemented.
 
@@ -38,7 +39,11 @@ Concerning features, just few were added:
 
 
 
-<ul><li>possibility to set  base-dir - for cases when you are behind reverse proxy and need to add some root path before audioserve our path.</li><li>Enhanced logging of authentication and access failures - with remote ip (even if audioserve is behind reverse proxy)</li><li>Build in web client was enhanced with possibility to use space and arrow keys to control playback and login dialog is now correctly indicating failures. </li></ul>
+
+- possibility to set  base-dir - for cases when you are behind reverse proxy and need to add some root path before audioserve our path.
+- Enhanced logging of authentication and access failures - with remote ip (even if audioserve is behind reverse proxy)
+- Build in web client was enhanced with possibility to use space and arrow keys to control playback and login dialog is now correctly indicating failures.
+
 
 
 
@@ -52,4 +57,4 @@ On Android client I started with dark theme,   I do have some version in separat
 
 
 
-For code and changes check <a href="https://github.com/izderadicka/audioserve">audioserve on github</a>.
+For code and changes check [audioserve on github](https://github.com/izderadicka/audioserve).

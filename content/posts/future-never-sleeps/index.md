@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/future-never-sleeps/"
 source_guid = "http://zderadicka.eu/?p=1943"
 source_date_gmt = "2018-10-07 10:02:09"
-categories = ["Programming"]
-tags = ["Futures", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Futures", "Rust"]
 +++
-Recently I've been reading this book:  <a href="https://www.packtpub.com/application-development/network-programming-rust">"Network Programming with Rust" by Abhishek Chanda</a>. I found this book bit problematic. It's just collection of many unrelated examples (often taken from crates documentation), with just little of background and concepts explanation and in some parts this book is just wrong, in other parts it's using too much simplifications, so the result does not make much sense or worst it introduces some dangerous ideas. One of these  places is part about futures and streams - let's look at one example:<span id="more-1943"></span>
+Recently I've been reading this book:  ["Network Programming with Rust" by Abhishek Chanda](https://www.packtpub.com/application-development/network-programming-rust). I found this book bit problematic. It's just collection of many unrelated examples (often taken from crates documentation), with just little of background and concepts explanation and in some parts this book is just wrong, in other parts it's using too much simplifications, so the result does not make much sense or worst it introduces some dangerous ideas. One of these  places is part about futures and streams - let's look at one example:<span id="more-1943"></span>
 
 
 ```rust
@@ -81,11 +82,11 @@ fn main() {
 
 As you can see on line 37 above the poll method is blocked by `thread::sleep` \- the author explanation is :
 
-<em><strong>"We simulate a delay in returning the result by sleeping for a random amount of time between 1 and 5 seconds."</strong></em>
+<em>**"We simulate a delay in returning the result by sleeping for a random amount of time between 1 and 5 seconds."**</em>
 
 But this is wrong, very wrong, going against very basic principle of asynchronous  programing and Futures in Rust.  Because what is happening here is that whole event loop is blocked and no other `Future` can progress. Future's `poll` method should never block, rather it should return`  Async::NotReady ` to indicate that it cannot proceed and also schedule next poll for later time, when it expects it could proceed.
 
-So as an exercise I tried to create proper implementation, probably bit simplistic and suboptimal (for proper delay in futures look for instance at <a href="https://github.com/tokio-rs/tokio/tree/master/tokio-timer">tokio-timer</a> crate).
+So as an exercise I tried to create proper implementation, probably bit simplistic and suboptimal (for proper delay in futures look for instance at [tokio-timer](https://github.com/tokio-rs/tokio/tree/master/tokio-timer) crate).
 
 So here is the code:
 

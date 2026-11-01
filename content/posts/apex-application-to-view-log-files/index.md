@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/apex-application-to-view-log-files/"
 source_guid = "http://zderadicka.eu/?p=824"
 source_date_gmt = "2014-07-07 06:45:22"
-categories = ["Programming"]
-tags = ["Apex", "Java", "PL/SQL"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Apex", "Java", "PL/SQL"]
 +++
 Oracle APEX is keeping all data in database and makes it easy to create different reports for tables or views.  But what if we want to present something outside of database?   Like text log files - how this could be done in APEX?   For regular web server it is a trivial task - usually simple configuration of web server enables to list directory and download any files from it (and it probably would be easiest way to do it). But what if we need to integrate logs browsing into APEX application?  Actually there is a way to list and serve files even in APEX, if it is required.<span id="more-824"></span>
 

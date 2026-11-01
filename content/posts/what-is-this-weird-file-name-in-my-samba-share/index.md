@@ -11,14 +11,15 @@ author = "admin"
 source_url = "http://zderadicka.eu/what-is-this-weird-file-name-in-my-samba-share/"
 source_guid = "http://zderadicka.eu/?p=1752"
 source_date_gmt = "2017-10-17 11:00:22"
-categories = ["Admin"]
-tags = ["file names", "samba"]
+[taxonomies]
+category = ["Admin"]
+tag = ["file names", "samba"]
 +++
 In IT there are big things and there are small things. Some small things can be pretty annoying and they seem to stay here forever.  One of these annoying little things is difference between restrictions for file names in Windows versus  unix/linux (others are for instance legacy character encodings, http proxy support, these things has teased me many times in past).  Have you ever seen strange file name like W3NEM5~I on shared disc instead of meaningful file name, that you expected? If so and you're interested what's going on continue reading. <span id="more-1752"></span>
 
-So what is the issue actually:  while linux is pretty tolerant for file names -  only two characters  are not allowed:  forward slash / and  null byte \\x00 , Windows are much more restrictive - they do not allow any control character below \\x20 (32 decimal, space character), but what is worst neither of rather common characters:  \< \> : " / \\ ? | \* is allowed  and if this is not enough there is one more special rule that file names cannot end with space or dot.   One of places where this discrepancy between filesystems is often visible are <a href="https://www.samba.org/">Samba</a> shares - sharing linux based filesystem across local network. Samba is one of most common ways for running small home <a href="https://en.wikipedia.org/wiki/Network-attached_storage">NAS</a>.
+So what is the issue actually:  while linux is pretty tolerant for file names -  only two characters  are not allowed:  forward slash / and  null byte \\x00 , Windows are much more restrictive - they do not allow any control character below \\x20 (32 decimal, space character), but what is worst neither of rather common characters:  \< \> : " / \\ ? | \* is allowed  and if this is not enough there is one more special rule that file names cannot end with space or dot.   One of places where this discrepancy between filesystems is often visible are [Samba](https://www.samba.org/) shares - sharing linux based filesystem across local network. Samba is one of most common ways for running small home [NAS](https://en.wikipedia.org/wiki/Network-attached_storage).
 
-When Samba is sharing linux filesystem, it has to somehow cope with this problem - that potentially  some valid local file names are not valid for network clients.  Samba handles it with so called file name mangling (here is <a href="http://www.oreilly.com/openbook/samba/book/ch05_04.html">bit outdated description</a>, in Samba 3 it's slightly different). Mangling basically means that windows illegal name is transformed to legal name automatically and Samba server maintains mapping between real name and mangled name so client can work with file normally. Downsize of this method is that mangled names are not very informative, matching with original file name only by first letter.
+When Samba is sharing linux filesystem, it has to somehow cope with this problem - that potentially  some valid local file names are not valid for network clients.  Samba handles it with so called file name mangling (here is [bit outdated description](http://www.oreilly.com/openbook/samba/book/ch05_04.html), in Samba 3 it's slightly different). Mangling basically means that windows illegal name is transformed to legal name automatically and Samba server maintains mapping between real name and mangled name so client can work with file normally. Downsize of this method is that mangled names are not very informative, matching with original file name only by first letter.
 
 So what we can do if we do not want to see those ugly file names? There are several possibilities, which I'll list later in the article.  First let's look at directory in linux server - it contains files with problematic names (last one in first row has space at the end):
 
@@ -31,7 +32,7 @@ wrong->-test  wrong-:-test  wrong-"-test  wrong-\-test  wrong-test.
 
  
 
-First options indeed is to do nothing.  The discrepancy between file systems is real and this is how to Samba deals with it.  You'll see files like this (in <a href="https://wiki.gnome.org/Apps/Nautilus">Nautilus</a> file explorer):
+First options indeed is to do nothing.  The discrepancy between file systems is real and this is how to Samba deals with it.  You'll see files like this (in [Nautilus](https://wiki.gnome.org/Apps/Nautilus) file explorer):
 <a href="/wp-content/uploads/files1.png"><img alt="files1" class="alignnone size-full wp-image-1756" decoding="async" height="349" loading="eager" sizes="(max-width: 564px) 100vw, 564px" src="/wp-content/uploads/files1.png" srcset="/wp-content/uploads/files1.png 564w, /wp-content/uploads/files1-300x186.png 300w" width="564"/></a>
 
  
@@ -108,7 +109,7 @@ wrong--test
 
 In windows files are visible, but cannot be accessed ( error is  path does not exist).
 
-Another option is to use <a href="https://www.samba.org/samba/docs/man/manpages/vfs_catia.8.html">catia vfs module</a> which is by default bundled with Samba -in can be activated with this addition to smb.conf :
+Another option is to use [catia vfs module](https://www.samba.org/samba/docs/man/manpages/vfs_catia.8.html) which is by default bundled with Samba -in can be activated with this addition to smb.conf :
 
 
 ```sh

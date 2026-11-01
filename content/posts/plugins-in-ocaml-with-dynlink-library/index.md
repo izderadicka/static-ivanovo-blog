@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/plugins-in-ocaml-with-dynlink-library/"
 source_guid = "http://zderadicka.eu/?p=919"
 source_date_gmt = "2014-10-25 08:28:47"
-categories = ["Programming"]
-tags = ["OCaml"]
+[taxonomies]
+category = ["Programming"]
+tag = ["OCaml"]
 +++
-I slowly continue with learning of OCAML -  as a training project I work on  <a href="https://github.com/izderadicka/mapred">simplified Map-Reduce framework</a> (utilizing Core and Async libraries).   Here I had a need to plug  a selectable code (map reduce algorithm) to main program.   Ocaml provides <a href="http://caml.inria.fr/pub/docs/manual-ocaml/libref/Dynlink.html">Dynlink</a> library, which can dynamically link either byte-code or native object/library to running program.  This can be utilize to create simple plugin framework as explained below.<span id="more-919"></span>
+I slowly continue with learning of OCAML -  as a training project I work on  [simplified Map-Reduce framework](https://github.com/izderadicka/mapred) (utilizing Core and Async libraries).   Here I had a need to plug  a selectable code (map reduce algorithm) to main program.   Ocaml provides [Dynlink](http://caml.inria.fr/pub/docs/manual-ocaml/libref/Dynlink.html) library, which can dynamically link either byte-code or native object/library to running program.  This can be utilize to create simple plugin framework as explained below.<span id="more-919"></span>
 
 Key function is `Dynlink.loadfile`, which can load .cmo/cma (bytecode) or .cmxs file (native code) from given file.  Loaded modules cannot be referenced from main program, so they must register themselves in defined extension points in main program during their load, where all code in plugin modules is executed. Key insight here (which is not well documented) is that loaded modules can reference only fully evaluated modules in main program - e.g. <span style="text-decoration: underline;">they cannot reference module, which is loading them</span>.
 

@@ -11,9 +11,10 @@ author = "admin"
 source_url = "http://zderadicka.eu/crayon-wp-plugin-and-comments/"
 source_guid = "http://zderadicka.eu/?p=757"
 source_date_gmt = "2014-03-30 08:13:30"
-categories = ["Web Design"]
-tags = ["wordpress"]
+[taxonomies]
+category = ["Web Design"]
+tag = ["wordpress"]
 +++
-<a href="http://wordpress.org/plugins/crayon-syntax-highlighter/">Crayon</a> is WordPress syntax highlighting plugin.   It works great and I use it for years, however I found recently strange interaction of this plugin with comments on posts and pages.
+[Crayon](http://wordpress.org/plugins/crayon-syntax-highlighter/) is WordPress syntax highlighting plugin.   It works great and I use it for years, however I found recently strange interaction of this plugin with comments on posts and pages.
 
-If this Crayon option - <strong>Display the Tag Editor in any TinyMCE instances on the frontend (e.g. bbPress) </strong>is enabled then TinyMCE editor is displayed also for adding comments!  Also this editor will not work if you click Reply link on an existing comment (Editor will be somehow disabled). Solution is to uncheck this option.
+If this Crayon option - **Display the Tag Editor in any TinyMCE instances on the frontend (e.g. bbPress) **is enabled then TinyMCE editor is displayed also for adding comments!  Also this editor will not work if you click Reply link on an existing comment (Editor will be somehow disabled). Solution is to uncheck this option.

@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/replacing-failed-disk-in-linux-raid1/"
 source_guid = "http://zderadicka.eu/?p=904"
 source_date_gmt = "2014-10-21 05:04:53"
-categories = ["Admin"]
-tags = ["linux", "raid1"]
+[taxonomies]
+category = ["Admin"]
+tag = ["linux", "raid1"]
 +++
 In <a href="/software-raid-1-and-lvm/" title="Software RAID 1 And LVM">this past article</a> I've written about setting a sofware based RAID1 on Linux.   After less then two years one disks failed,  so I had to replace it - here are my experiences with this procedure.<span id="more-904"></span>
 

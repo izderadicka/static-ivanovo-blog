@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/writing-simple-parser-in-python/"
 source_guid = "http://zderadicka.eu/?p=1128"
 source_date_gmt = "2015-11-14 09:12:07"
-categories = ["Programming"]
-tags = ["parser", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["parser", "python"]
 +++
-From time to time one might need to write simple language parser to  implement  some domain specific language for his application.  As always python ecosystem offers  various solutions - overview of python parser generators is available <a href="https://wiki.python.org/moin/LanguageParsing">here</a>.  In this article I'd like to describe my experiences with <a href="https://github.com/erikrose/parsimonious">parsimonious</a> package. For recent project of mine ( <a href="/projects/python/imap_detach-tool-download-email-attachments/">imap_detach</a> \-  a tool to automatically download attachment from IMAP mailbox) I needed simple expressions to specify what emails and what exact parts should be downloaded.<span id="more-1128"></span>
+From time to time one might need to write simple language parser to  implement  some domain specific language for his application.  As always python ecosystem offers  various solutions - overview of python parser generators is available [here](https://wiki.python.org/moin/LanguageParsing).  In this article I'd like to describe my experiences with [parsimonious](https://github.com/erikrose/parsimonious) package. For recent project of mine ( <a href="/projects/python/imap_detach-tool-download-email-attachments/">imap_detach</a> \-  a tool to automatically download attachment from IMAP mailbox) I needed simple expressions to specify what emails and what exact parts should be downloaded.<span id="more-1128"></span>
 
 
 ## Requirements
@@ -42,7 +43,7 @@ Meaning all email part where filename contains .pdf and is from jack or jim
 ## Grammar
 
 
-Parsimonious implements <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> grammar which enables to create very compact grammar definitions. Unlike some other parser generators, where grammar in expressed in Python, parsimonious  has it's own syntax, which enables to create short and easy to overview grammar definitions:
+Parsimonious implements [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) grammar which enables to create very compact grammar definitions. Unlike some other parser generators, where grammar in expressed in Python, parsimonious  has it's own syntax, which enables to create short and easy to overview grammar definitions:
 
 
 ```python
@@ -73,9 +74,9 @@ There are  couple of things which has to be remembered, when creating grammar:
 <li>PEG grammar should avoid left recursion, so rules like
 <pre class="code-highlight" data-language="sh"><code><span class="code-line"><span class="nv">and</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>expr<span class="w"> </span>space<span class="w"> </span><span class="s2">&quot;&amp;&quot;</span><span class="w"> </span>space<span class="w"> </span>expr</span></code></pre>
 Don not work and will result in recursion error ( infinite recursion).  They have to be rewritten as indirect left recursion, which might be sometime challenging.</li>
-<li>PEG grammar grammar are more deterministic that <a href="https://en.wikipedia.org/wiki/Context-free_grammar">context free grammars</a> -  so there is always one rule that is matched - there is no ambiguity like in  CFG.   This is assured by deterministic selection  / - always first match is selected and by greedy repetition operators * + ?  (they always match maximum possible length from input).
+<li>PEG grammar grammar are more deterministic that [context free grammars](https://en.wikipedia.org/wiki/Context-free_grammar) -  so there is always one rule that is matched - there is no ambiguity like in  CFG.   This is assured by deterministic selection  / - always first match is selected and by greedy repetition operators * + ?  (they always match maximum possible length from input).
 Practically this means that rules has to be more carefully designed and they need to be design in particular way to assure required priority of operators.</li>
-<li>Only named rules can have some special treatment when walking <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a> tree ( see below).  I think this is special feature of parsimonious,  but AST contains  nodes for a part of rule - like expressions that are in brackets.   This means if I have rule like this:
+<li>Only named rules can have some special treatment when walking [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree) tree ( see below).  I think this is special feature of parsimonious,  but AST contains  nodes for a part of rule - like expressions that are in brackets.   This means if I have rule like this:
 <pre class="code-highlight" data-language="sh"><code><span class="code-line"><span class="nv">and</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>term<span class="w"> </span><span class="o">(</span><span class="w"> </span>space<span class="w"> </span><span class="s2">&quot;&amp;&quot;</span><span class="w"> </span>space<span class="w"> </span>term<span class="w"> </span><span class="o">)</span>*</span></code></pre>
 I have no control on evaluating the right part, so I rather split it into two rules.</li>
 </ul>
@@ -86,7 +87,7 @@ I have no control on evaluating the right part, so I rather split it into two ru
 ## Evaluation
 
 
-Once we have the grammar, we can evaluate expressions by walking the parsed AST. Parsimonious provides nice support for this with <a href="https://en.wikipedia.org/wiki/Visitor_pattern">visitor pattern</a> . We can create subclass of `parsimonious.NodeVisitor` with `visit_rulename` methods for all (relevant) rules from the grammar.   visit method receives current node in AST and list of values from its already visited (evaluated ) children.
+Once we have the grammar, we can evaluate expressions by walking the parsed AST. Parsimonious provides nice support for this with [visitor pattern](https://en.wikipedia.org/wiki/Visitor_pattern) . We can create subclass of `parsimonious.NodeVisitor` with `visit_rulename` methods for all (relevant) rules from the grammar.   visit method receives current node in AST and list of values from its already visited (evaluated ) children.
 
 We will need some supporting code (error class and function to decode binary strings to unicode):
 

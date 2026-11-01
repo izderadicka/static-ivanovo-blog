@@ -11,14 +11,15 @@ author = "admin"
 source_url = "http://zderadicka.eu/wamp-is-websocket-on-steroids/"
 source_guid = "http://zderadicka.eu/?p=1385"
 source_date_gmt = "2016-06-13 15:24:21"
-categories = ["Programming"]
-tags = ["asyncio", "network", "python", "Websocket"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asyncio", "network", "python", "Websocket"]
 +++
-If you look for WAMP abbreviation over Internet, you will probably find that <a href="https://en.wikipedia.org/wiki/LAMP_%28software_bundle%29#WAMP">WAMP</a> = Windows + Apache + MySQL + PHP - which was popular web stack some time ago (but who wants to run web server on Windows today?  And other components  now also have  viable alternatives).   But in this article I'd like to talk about <a href="http://wamp-proto.org/">WAMP</a> = Web Application Messaging Protocol.  WAMP is available  as <a href="https://en.wikipedia.org/wiki/LAMP_%28software_bundle%29#WAMP">WebSocket</a> subprotocol, but also can work on plain TCP or Unix domain sockets.<span id="more-1385"></span>
+If you look for WAMP abbreviation over Internet, you will probably find that [WAMP](https://en.wikipedia.org/wiki/LAMP_%28software_bundle%29#WAMP) = Windows + Apache + MySQL + PHP - which was popular web stack some time ago (but who wants to run web server on Windows today?  And other components  now also have  viable alternatives).   But in this article I'd like to talk about [WAMP](http://wamp-proto.org/) = Web Application Messaging Protocol.  WAMP is available  as [WebSocket](https://en.wikipedia.org/wiki/LAMP_%28software_bundle%29#WAMP) subprotocol, but also can work on plain TCP or Unix domain sockets.<span id="more-1385"></span>
 
-Key difference from plain WebSocket or similar protocols is  that WAMP is <strong>routed</strong> protocol - it requires central router server to work. This enables loose coupling of components - because each component just need to connect to the central router, however the router then becomes  a single point of failure.  As per now there is no model nor implementation for multiple interconnected routers and inter-routers protocol(s), so this limits large scale implementations.
+Key difference from plain WebSocket or similar protocols is  that WAMP is **routed** protocol - it requires central router server to work. This enables loose coupling of components - because each component just need to connect to the central router, however the router then becomes  a single point of failure.  As per now there is no model nor implementation for multiple interconnected routers and inter-routers protocol(s), so this limits large scale implementations.
 
-Also WAMP is not very common protocol - it has been designed and maintained by small German company <a href="http://tavendo.com/">Tavendo</a>, which also maintains reference router implementation <a href="http://crossbar.io/">crossbar.io</a> and client libraries for Python, Javascript, Android and C++ - <a href="http://autobahn.ws/">autobahn</a>. WAMP protocol is also <a href="https://tools.ietf.org/html/draft-oberstet-hybi-tavendo-wamp">IETF draft </a>(but draft is expired, so question is if it makes to standard or not).
+Also WAMP is not very common protocol - it has been designed and maintained by small German company [Tavendo](http://tavendo.com/), which also maintains reference router implementation [crossbar.io](http://crossbar.io/) and client libraries for Python, Javascript, Android and C++ - [autobahn](http://autobahn.ws/). WAMP protocol is also [IETF draft ](https://tools.ietf.org/html/draft-oberstet-hybi-tavendo-wamp)(but draft is expired, so question is if it makes to standard or not).
 
 Yet for small to medium size projects, experiments with micro-services and real time communication  this protocol looks attractive and I decided to give it a try in my current project.
 
@@ -76,7 +77,7 @@ currentSession.call('my.remote.proc', ['dummy task', 'arg'], {'other_arg': 'valu
 ```
 
 
-Messages  in WAMP are based on <a href="http://www.json.org/">JSON</a> format -  so basically anything that is JSON serializable could be an argument or result of remote procedure or content of published event. Internally WAMP can leverage more efficient data serialization like <a href="http://msgpack.org/index.html">MessagePack,</a> <a href="http://ubjson.org/">UBJSON</a> or <a href="http://cbor.io/">CBOR</a>. (serializers are basically pluggable into protocol).
+Messages  in WAMP are based on [JSON](http://www.json.org/) format -  so basically anything that is JSON serializable could be an argument or result of remote procedure or content of published event. Internally WAMP can leverage more efficient data serialization like [MessagePack,](http://msgpack.org/index.html) [UBJSON](http://ubjson.org/) or [CBOR](http://cbor.io/). (serializers are basically pluggable into protocol).
 
 As WAMP is intended to be used  on both private and public networks security is indeed an important part of the protocol.   It can leverage SSL/TSL channel encryption for both Websocket or raw socket and the protocol itself offers authentication ( token, challenge-response, Websocket based ...) and authorization. Authorization allows to granularly define who can call, register procedure or publish, subscribe event based on procedure/event URI and user authentication credentials.
 
@@ -86,15 +87,15 @@ In my use-case I required clients (browser) to be able to submit various potenti
 
 Idea is to extend regular Single Page Application  (browser client communicating with RESTful API server) with WAMP real time communication for specific tasks (conversion of ebooks).  Clients can easily submit requests for long running task via RPC and subscribe to updates via WAMP publish-subscribe model.
 
-So we need server side component to schedule and launch tasks (conversion programs) in separate processes. It also talks WAMP and implements RPC to schedule task and publishes tasks updates.  This component is implemented in Python with autobahn library.   Autobahn library enforces asynchronous programming style using either <a href="https://twistedmatrix.com/trac/">twisted</a> or <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a>.  I choose asyncio, because
+So we need server side component to schedule and launch tasks (conversion programs) in separate processes. It also talks WAMP and implements RPC to schedule task and publishes tasks updates.  This component is implemented in Python with autobahn library.   Autobahn library enforces asynchronous programming style using either [twisted](https://twistedmatrix.com/trac/) or [asyncio](https://docs.python.org/3/library/asyncio.html).  I choose asyncio, because
 a) it's now part of python standard libraries (and new `async` keywords  in 3.5 are really cool) and
 b) I think it cleaner and easier to use that twisted (I never liked Twisted library very much -  it always seems to me, how to say it,  ehmm "twisted").
 
-Crossbar.io is written in twisted and can run twisted server components within same process.  However asyncio components need to run in separate process and connect to the router via WAMP.  For server side I would prefer some efficient communication - ideally <a href="https://en.wikipedia.org/wiki/Unix_domain_socket">unix domain socket</a>, (Websocket overhead here would be useless). Small problem was that autobahn library did not have WAMP raw socket support for asyncio.  Fortunately it was not so difficult to add it - so I added it via <a href="https://github.com/crossbario/autobahn-python/pull/679">this pull request</a>.
+Crossbar.io is written in twisted and can run twisted server components within same process.  However asyncio components need to run in separate process and connect to the router via WAMP.  For server side I would prefer some efficient communication - ideally [unix domain socket](https://en.wikipedia.org/wiki/Unix_domain_socket), (Websocket overhead here would be useless). Small problem was that autobahn library did not have WAMP raw socket support for asyncio.  Fortunately it was not so difficult to add it - so I added it via [this pull request](https://github.com/crossbario/autobahn-python/pull/679).
 
-The proof of concept tasks scheduler/manager called <a href="https://github.com/izderadicka/asexor">ASEXOR</a> (ASynchronous  EXecutOR) is available <a href="https://github.com/izderadicka/asexor">here on github</a>.
+The proof of concept tasks scheduler/manager called [ASEXOR](https://github.com/izderadicka/asexor) (ASynchronous  EXecutOR) is available [here on github](https://github.com/izderadicka/asexor).
 
-But WAMP has many other applications - look for instance at this <a href="https://github.com/crossbario/crossbarexamples/tree/master/django/realtimemonitor">example of simple system real time monitoring solution</a> (with Django frontend).  Or <a href="https://demo.crossbar.io/">look at these demos</a>. Or <a href="http://crossbario.com/iotcookbook">IoT Cookbook</a>.
+But WAMP has many other applications - look for instance at this [example of simple system real time monitoring solution](https://github.com/crossbario/crossbarexamples/tree/master/django/realtimemonitor) (with Django frontend).  Or [look at these demos](https://demo.crossbar.io/). Or [IoT Cookbook](http://crossbario.com/iotcookbook).
 
 
 ## Conclusion

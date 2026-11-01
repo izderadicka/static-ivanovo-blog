@@ -11,16 +11,17 @@ author = "admin"
 source_url = "http://zderadicka.eu/removing-diacritics-marks-from-strings/"
 source_guid = "http://zderadicka.eu/?p=287"
 source_date_gmt = "2012-10-24 13:41:47"
-categories = ["Programming"]
-tags = ["diacritics", "python", "unicode"]
+[taxonomies]
+category = ["Programming"]
+tag = ["diacritics", "python", "unicode"]
 +++
-Many Latin alphabets (like my native Czech) contain characters with diacritical marks (or can be called accent marks). For some application in computers (like searching, cross systems compatible file names etc.) we would like to remove diacritics and translate  to string containing just ASCII  characters.   Common approach for this is to use <strong>UNICODE character decomposition</strong>.
+Many Latin alphabets (like my native Czech) contain characters with diacritical marks (or can be called accent marks). For some application in computers (like searching, cross systems compatible file names etc.) we would like to remove diacritics and translate  to string containing just ASCII  characters.   Common approach for this is to use **UNICODE character decomposition**.
 
-It utilizes fact, that unicode has two ways how to represent characters with diacritics - for instance character <strong>á</strong> (LATIN SMALL LETTER A WITH ACUTE) normaly has code 225,  but this character can be decomposed into two unicode characters   code 97 (LATIN SMALL LETTER A) and character code 769 (COMBINING ACUTE ACCENT).   This process will work for majority of common 'special' Latin characters, however there are still few left, for which unicode does not have decomposition defined - these include characters like <strong>ø</strong>  (LATIN SMALL LETTER O WITH STROKE)  used in Norwegian language or <strong>ł</strong> (LATIN SMALL LETTER L WITH STROKE) used in Polish language.  A special handling is needed for these characters - basically a transcription table to map these into some basic Latin characters (it could be 1 to many mapping - for instance æ (LATIN SMALL LETTER AE) should map to 'ae').
+It utilizes fact, that unicode has two ways how to represent characters with diacritics - for instance character **á** (LATIN SMALL LETTER A WITH ACUTE) normaly has code 225,  but this character can be decomposed into two unicode characters   code 97 (LATIN SMALL LETTER A) and character code 769 (COMBINING ACUTE ACCENT).   This process will work for majority of common 'special' Latin characters, however there are still few left, for which unicode does not have decomposition defined - these include characters like **ø**  (LATIN SMALL LETTER O WITH STROKE)  used in Norwegian language or **ł** (LATIN SMALL LETTER L WITH STROKE) used in Polish language.  A special handling is needed for these characters - basically a transcription table to map these into some basic Latin characters (it could be 1 to many mapping - for instance æ (LATIN SMALL LETTER AE) should map to 'ae').
 
 Characters decomposition is defined in unicode standard and all common computer languages contains libraries which contain unicode definitions and can decompose characters.  Below Ishow how this can be done in python.<span id="more-287"></span>
 
-Python contains module <strong>unicodedata</strong>, which holds all key information from unicode standard. This module can be used to get metadata about individual characters - like name, category,   to decompose a character or to normalize whole unicode string.
+Python contains module **unicodedata**, which holds all key information from unicode standard. This module can be used to get metadata about individual characters - like name, category,   to decompose a character or to normalize whole unicode string.
 
 For our solution we first need to define mapping (transcription) of non-decomposable characters to basic Latin characters (ASCII characters with code \<128):
 

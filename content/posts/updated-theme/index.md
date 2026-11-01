@@ -11,18 +11,19 @@ author = "admin"
 source_url = "http://zderadicka.eu/updated-theme/"
 source_guid = "http://zderadicka.eu/?p=761"
 source_date_gmt = "2014-03-31 10:51:05"
-categories = ["Announcement", "Web Design"]
-tags = ["wordpress"]
+[taxonomies]
+category = ["Announcement", "Web Design"]
+tag = ["wordpress"]
 +++
-Finally I decided to update theme of my site.   New theme is <a href="https://wordpress.org/themes/twentyfourteen">twentyfourteen</a>,  with very few custom css styling in <a href="https://codex.wordpress.org/Child_Themes">child theme</a>.
+Finally I decided to update theme of my site.   New theme is [twentyfourteen](https://wordpress.org/themes/twentyfourteen),  with very few custom css styling in [child theme](https://codex.wordpress.org/Child_Themes).
 
 As a key benefit of new theme I see its responsive design,  which it looks well also on mobile devices.  Key mine customizations are:
 
 
-<ul>
-<li>Customized logo</li>
-<li>Extended max-width of content -   twentyfourteen has width of content some 440px,   which leaves much unused space on normal screens,  I extend it to double size.</li>
-</ul>
+
+- Customized logo
+- Extended max-width of content -   twentyfourteen has width of content some 440px,   which leaves much unused space on normal screens,  I extend it to double size.
+
 
 
 <span id="more-761"></span>

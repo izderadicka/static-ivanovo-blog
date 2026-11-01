@@ -15,4 +15,4 @@ menu_order = 20
 +++
 If you find anything interesting on this site and want to contact me you can drop me an email at  ivan at zderadicka dot eu.
 
-Majority of recent open source code is on github, so you can check <a href="https://github.com/izderadicka">my profile</a> there.
+Majority of recent open source code is on github, so you can check [my profile](https://github.com/izderadicka) there.

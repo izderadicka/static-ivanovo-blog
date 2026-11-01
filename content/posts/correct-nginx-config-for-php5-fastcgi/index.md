@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/correct-nginx-config-for-php5-fastcgi/"
 source_guid = "http://zderadicka.eu/?p=953"
 source_date_gmt = "2014-11-22 17:30:18"
-categories = ["Admin"]
-tags = ["nginx", "php"]
+[taxonomies]
+category = ["Admin"]
+tag = ["nginx", "php"]
 +++
-It's surprising how much incorrect informations  are available on web for this topic.   I was struggling to get correct configuration for <a href="https://simplesamlphp.org/">simpleSAMLphp</a> package (on Ubuntu 14.04). This is finally correct config (inside server section):<span id="more-953"></span>
+It's surprising how much incorrect informations  are available on web for this topic.   I was struggling to get correct configuration for [simpleSAMLphp](https://simplesamlphp.org/) package (on Ubuntu 14.04). This is finally correct config (inside server section):<span id="more-953"></span>
 
 
 ```sh

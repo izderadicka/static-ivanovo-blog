@@ -11,14 +11,15 @@ author = "admin"
 source_url = "http://zderadicka.eu/the-different-approach-to-a-parser-parser-combinators/"
 source_guid = "http://zderadicka.eu/?p=1817"
 source_date_gmt = "2017-12-20 13:59:07"
-categories = ["Programming"]
-tags = ["parser", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["parser", "python"]
 +++
-Some <a href="/writing-simple-parser-in-python/">time ago I've looked into building parser</a> for simple logical language used by <a href="/projects/python/imap_detach-tool-download-email-attachments/">imap_detach Tool</a>. I used there <a href="https://github.com/erikrose/parsimonious">parsimonious</a> module which uses <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> grammars. Recently I learned about another parsing technique -<a href="https://en.wikipedia.org/wiki/Parser_combinator"> Parser Combinators</a>. The idea comes from functional programming and is about combining (with help of higher order functions - so called combinators) simple parsing functions, which parse primitive tokens, into more complex parsing functions, which parse parts of text and further combine those into more complex ones, ending finally with one function, which parses all given data. I first met with parser combinators in <a href="https://www.rust-lang.org">Rust</a> library <a href="https://github.com/Geal/nom">nom</a>. Here parsers and  combinators are express as macros, which is convenient on one side (concise syntax), but can lead to pretty cryptic error messages and one cannot rely much on editor's help with auto-completions, context help etc..  I used nom to build very <a href="https://github.com/izderadicka/uri_parser">simple URI parser</a>.  I was wondering also if parser combinators are available for Python and how they would compare with other approaches - like above mentioned PEG grammars.<span id="more-1817"></span>
+Some [time ago I've looked into building parser](/writing-simple-parser-in-python/) for simple logical language used by <a href="/projects/python/imap_detach-tool-download-email-attachments/">imap_detach Tool</a>. I used there [parsimonious](https://github.com/erikrose/parsimonious) module which uses [PEG](https://en.wikipedia.org/wiki/Parsing_expression_grammar) grammars. Recently I learned about another parsing technique -[ Parser Combinators](https://en.wikipedia.org/wiki/Parser_combinator). The idea comes from functional programming and is about combining (with help of higher order functions - so called combinators) simple parsing functions, which parse primitive tokens, into more complex parsing functions, which parse parts of text and further combine those into more complex ones, ending finally with one function, which parses all given data. I first met with parser combinators in [Rust](https://www.rust-lang.org) library [nom](https://github.com/Geal/nom). Here parsers and  combinators are express as macros, which is convenient on one side (concise syntax), but can lead to pretty cryptic error messages and one cannot rely much on editor's help with auto-completions, context help etc..  I used nom to build very [simple URI parser](https://github.com/izderadicka/uri_parser).  I was wondering also if parser combinators are available for Python and how they would compare with other approaches - like above mentioned PEG grammars.<span id="more-1817"></span>
 
-Looking around I found <a href="https://github.com/sighingnow/parsec.py">parsec</a> \- Python parser combinators library inspired by well know <a href="https://www.haskell.org/">Haskell</a> library.  Parsec is a small library with as much of functional style one can get out of Python.  You can check example for<a href="https://github.com/sighingnow/parsec.py/blob/master/examples/jsonc.py"> JSON parser</a>.
+Looking around I found [parsec](https://github.com/sighingnow/parsec.py) \- Python parser combinators library inspired by well know [Haskell](https://www.haskell.org/) library.  Parsec is a small library with as much of functional style one can get out of Python.  You can check example for[ JSON parser](https://github.com/sighingnow/parsec.py/blob/master/examples/jsonc.py).
 
-In my test I wanted to create a parser for same logical expressions as in previous <a href="/writing-simple-parser-in-python/"> article</a> \- so we can parse and evaluate following expressions into either True or False value (assuming names are replaced with actual values):
+In my test I wanted to create a parser for same logical expressions as in previous [ article](/writing-simple-parser-in-python/) \- so we can parse and evaluate following expressions into either True or False value (assuming names are replaced with actual values):
 
 
 <div>
@@ -42,7 +43,7 @@ In my test I wanted to create a parser for same logical expressions as in previo
 
  
 
-After playing a bit with the parsec library I started to construct parsers and hit obvious problem (similarly as in initial trials with parsimonious) - <a href="https://en.wikipedia.org/wiki/Left_recursion"> left recursion</a> \- though there are some advanced parser combinators that can handle left recursion with help of memoization,  Python parsec is a simple library, so combinators with left recursion have to avoided.  Below is the final code that works similarly to parsimonious grammar:
+After playing a bit with the parsec library I started to construct parsers and hit obvious problem (similarly as in initial trials with parsimonious) - [ left recursion](https://en.wikipedia.org/wiki/Left_recursion) \- though there are some advanced parser combinators that can handle left recursion with help of memoization,  Python parsec is a simple library, so combinators with left recursion have to avoided.  Below is the final code that works similarly to parsimonious grammar:
 
 
 ```python

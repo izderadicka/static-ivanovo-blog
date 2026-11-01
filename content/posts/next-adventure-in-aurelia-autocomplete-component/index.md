@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/next-adventure-in-aurelia-autocomplete-component/"
 source_guid = "http://zderadicka.eu/?p=1405"
 source_date_gmt = "2016-07-16 09:42:02"
-categories = ["Programming"]
-tags = ["Aurelia", "autocomplete", "Javascript", "Web UI"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Aurelia", "autocomplete", "Javascript", "Web UI"]
 +++
-As I have written in <a href="/starting-with-aurelia-pagination-with-back-and-sort/">this post</a> I'm slowly getting into <a href="http://aurelia.io">Aurelia</a> Web UI framework. Recently I needed an autocomplete component.  My requirements were:
+As I have written in [this post](/starting-with-aurelia-pagination-with-back-and-sort/) I'm slowly getting into [Aurelia](http://aurelia.io) Web UI framework. Recently I needed an autocomplete component.  My requirements were:
 
 
 <ul>
@@ -27,15 +28,15 @@ As I have written in <a href="/starting-with-aurelia-pagination-with-back-and-so
 </ul>
 
 
-I'm sure that existing autocomplete components like <a href="https://twitter.github.io/typeahead.js/">typeahead</a> or <a href="https://jqueryui.com/autocomplete/">JQuery UI Autocomplete</a> would serve my purpose quite well. It's fairly easy to integrate existing components from other frameworks into Aurelia (see <a href="http://ilikekillnerds.com/2016/02/using-jquery-ui-widgets-in-aurelia/">this post</a> for instance).  But I decided to create my own, using only Aurelia (and a bit of <a href="https://jquery.com/">JQuery</a> \- but it can be easily rewritten in pure DOM API - JQuery is used just for convenience, because it's anyhow  used in Aurelia skeleton app). I though it would be nice learning exercise (and it really was) and also we programmers (especially leisure programmers like myself) do like to reinvent the wheel, right? (But it's not always bad idea - image world when only one type of wheel exists - by recreating existing solutions, improving them, changing them we can also achieve progress - Web UI frameworks themselves are good example of such progress).  I'd like to share my experiences further in this article.<span id="more-1405"></span>
+I'm sure that existing autocomplete components like [typeahead](https://twitter.github.io/typeahead.js/) or [JQuery UI Autocomplete](https://jqueryui.com/autocomplete/) would serve my purpose quite well. It's fairly easy to integrate existing components from other frameworks into Aurelia (see [this post](http://ilikekillnerds.com/2016/02/using-jquery-ui-widgets-in-aurelia/) for instance).  But I decided to create my own, using only Aurelia (and a bit of [JQuery](https://jquery.com/) \- but it can be easily rewritten in pure DOM API - JQuery is used just for convenience, because it's anyhow  used in Aurelia skeleton app). I though it would be nice learning exercise (and it really was) and also we programmers (especially leisure programmers like myself) do like to reinvent the wheel, right? (But it's not always bad idea - image world when only one type of wheel exists - by recreating existing solutions, improving them, changing them we can also achieve progress - Web UI frameworks themselves are good example of such progress).  I'd like to share my experiences further in this article.<span id="more-1405"></span>
 
 
 # Coding And Learning
 
 
-I'll not show all the code here - sources are available <a href="https://github.com/izderadicka/mybookshelf2/tree/master/client/src/components/autocomplete">here at github</a>, as part of my other project.
+I'll not show all the code here - sources are available [here at github](https://github.com/izderadicka/mybookshelf2/tree/master/client/src/components/autocomplete), as part of my other project.
 
-So let's start with component's view ( template) <a href="https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.html">autocomplete.html</a>:
+So let's start with component's view ( template) [autocomplete.html](https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.html):
 
 
 ```html
@@ -90,9 +91,9 @@ Only remaining bindings are:
 </ul>
 
 
-We  also need some styling for our autocomplete  component (absolute position for suggestions list), which is contained in file <a href="https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.css">autocomplete.css </a>required on line 2.
+We  also need some styling for our autocomplete  component (absolute position for suggestions list), which is contained in file [autocomplete.css ](https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.css)required on line 2.
 
-Next we have to implement view-model for our template - <a href="https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.js">autocomplete.js</a>. The basic skeleton of view-model class is:
+Next we have to implement view-model for our template - [autocomplete.js](https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.js). The basic skeleton of view-model class is:
 
 
 ```javascript
@@ -190,7 +191,7 @@ More interesting behaviour happens when `loader` is a function. This function sh
 
 This simple strategy  works fine in most cases,  because people are writing sequentially, so in some moment we've got in cache all suggestions needed for all following strings with this prefix and can filter suggestions locally in client. Just stick to KISS (Keep It Simple Stupid) approach here.
 
-So basically that's the core of our view model - for complete implementation check full code in <a href="https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.js">autocomplete.js</a>.
+So basically that's the core of our view model - for complete implementation check full code in [autocomplete.js](https://github.com/izderadicka/mybookshelf2/blob/master/client/src/components/autocomplete/autocomplete.js).
 
 Now we can use our component in the page:
 

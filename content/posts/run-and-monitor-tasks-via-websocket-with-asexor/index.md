@@ -11,18 +11,19 @@ author = "admin"
 source_url = "http://zderadicka.eu/run-and-monitor-tasks-via-websocket-with-asexor/"
 source_guid = "http://zderadicka.eu/?p=1556"
 source_date_gmt = "2017-03-28 10:21:50"
-categories = ["Programming"]
-tags = ["asyncio", "python", "Websocket"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asyncio", "python", "Websocket"]
 +++
-Many modern web applications require more then just displaying data in the browser.  Data may need to be processed and transformed in various ways, which require intensive processing tasks on server side. Such processing is best done asynchronously outside of web application server, as such tasks can be relatively  long running. There are already many existing solutions for asynchronous task scheduling, some of them are quite sophisticated general frameworks like <a href="http://www.celeryproject.org/">Celery</a>, <a href="https://kafka.apache.org/">Kafka</a>, others are build in features of application servers ( like <a href="http://uwsgi-docs.readthedocs.io/en/latest/Mules.html">mules</a> and <a href="http://uwsgi-docs.readthedocs.io/en/latest/Spooler.html">spoolers</a> in <a href="http://uwsgi-docs.readthedocs.io/en/latest/index.html">uWSGI</a>).  But what if we need something simpler, which can work  directly with Javascript clients and is super simple to use in a project.  Meet <a href="https://github.com/izderadicka/asexor">asexor</a> \- ASynchronous EXecuOR,  a small project of mime.<span id="more-1556"></span>
+Many modern web applications require more then just displaying data in the browser.  Data may need to be processed and transformed in various ways, which require intensive processing tasks on server side. Such processing is best done asynchronously outside of web application server, as such tasks can be relatively  long running. There are already many existing solutions for asynchronous task scheduling, some of them are quite sophisticated general frameworks like [Celery](http://www.celeryproject.org/), [Kafka](https://kafka.apache.org/), others are build in features of application servers ( like [mules](http://uwsgi-docs.readthedocs.io/en/latest/Mules.html) and [spoolers](http://uwsgi-docs.readthedocs.io/en/latest/Spooler.html) in [uWSGI](http://uwsgi-docs.readthedocs.io/en/latest/index.html)).  But what if we need something simpler, which can work  directly with Javascript clients and is super simple to use in a project.  Meet [asexor](https://github.com/izderadicka/asexor) \- ASynchronous EXecuOR,  a small project of mime.<span id="more-1556"></span>
 
 Asexor was initially created as supporting project for Mybookshelf2,  but recently I refactored it and extended it to make it more general. Asexor is written in Python  leveraging heavily asyncio module. The key function of Asexor is to run tasks in separate processes and for this purpose it contains three main parts:
 
-<strong>Tasks </strong>\- tasks are defined as simple Python wrapper around  program to be executed - just to validate and prepare command line arguments and parsing results returned by the program.  The is a special kind of task - MultiTask - that can generate and schedule other new tasks.
+**Tasks **\- tasks are defined as simple Python wrapper around  program to be executed - just to validate and prepare command line arguments and parsing results returned by the program.  The is a special kind of task - MultiTask - that can generate and schedule other new tasks.
 
-<strong>Scheduler </strong>\- schedules tasks using priority queue, executes them concurrently assuring  that number of tasks running  in parallel is limited ( to defined value). Scheduler also contains authentication (based on user tokens) and authorization functions, assuring that only authorized users can run tasks.
+**Scheduler **\- schedules tasks using priority queue, executes them concurrently assuring  that number of tasks running  in parallel is limited ( to defined value). Scheduler also contains authentication (based on user tokens) and authorization functions, assuring that only authorized users can run tasks.
 
-<strong>Protocols </strong>\- communication protocols to submit a task and receive feedback about task status (scheduled, started, finished, error ...). The primary focus in Asexor was to WebSocket protocol - so tasks can be easily controlled directly from web Javascript client. However additional protocols are available for more flexibility (HTTP long poll, raw socket TCP protocol, <a href="http://wamp-proto.org/">WAMP</a>), so tasks can be scheduled efficiently also from backend components.
+**Protocols **\- communication protocols to submit a task and receive feedback about task status (scheduled, started, finished, error ...). The primary focus in Asexor was to WebSocket protocol - so tasks can be easily controlled directly from web Javascript client. However additional protocols are available for more flexibility (HTTP long poll, raw socket TCP protocol, [WAMP](http://wamp-proto.org/)), so tasks can be scheduled efficiently also from backend components.
 
 Below is simple block schema of asexor:
 
@@ -110,10 +111,10 @@ Interacting with asexor from Javascript client consists of 3 main actions:
 </ol>
 
 
-For bit more detailed demos of asexor look into<a href="https://github.com/izderadicka/asexor/tree/master/test"> asexor/test</a> directory for dummy\_\* files.
+For bit more detailed demos of asexor look into[ asexor/test](https://github.com/izderadicka/asexor/tree/master/test) directory for dummy\_\* files.
 
 
 ## Deployment
 
 
-Asexor is basically a toolkit, so for deployment you should first build your own backend server module.  This module should run as a daemon process,  possibly  behind reverse proxy (<a href="https://www.nginx.com/">nginx</a>, <a href="http://www.haproxy.org/">haproxy</a>) that can also provide SSL offloading or load balancing in case that horizontal scaling of asexor is needed.
+Asexor is basically a toolkit, so for deployment you should first build your own backend server module.  This module should run as a daemon process,  possibly  behind reverse proxy ([nginx](https://www.nginx.com/), [haproxy](http://www.haproxy.org/)) that can also provide SSL offloading or load balancing in case that horizontal scaling of asexor is needed.

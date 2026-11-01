@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/social-media-influence-on-project-popularity/"
 source_guid = "http://zderadicka.eu/?p=2318"
 source_date_gmt = "2022-06-18 13:06:53"
-categories = ["Uncategorized"]
-tags = ["audioserve", "github"]
+[taxonomies]
+category = ["Uncategorized"]
+tag = ["audioserve", "github"]
 +++
-Interesting picture - couple of posts on discussions servers are very much visible on <a href="https://github.com/izderadicka/audioserve">audioserve</a> popularity (number of stars on github project):
+Interesting picture - couple of posts on discussions servers are very much visible on [audioserve](https://github.com/izderadicka/audioserve) popularity (number of stars on github project):
 
 
 
@@ -28,4 +29,4 @@ Interesting picture - couple of posts on discussions servers are very much visib
 
 
 
-First jump is <a href="https://www.reddit.com/r/selfhosted/comments/r8mym7/audioserve_new_version_annoucement/">my post on reddit</a>, second is <a href="https://news.ycombinator.com/item?id=31713047#31724571">this post on Hacker News</a>.
+First jump is [my post on reddit](https://www.reddit.com/r/selfhosted/comments/r8mym7/audioserve_new_version_annoucement/), second is [this post on Hacker News](https://news.ycombinator.com/item?id=31713047#31724571).

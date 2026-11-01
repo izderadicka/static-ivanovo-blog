@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/quick-way-to-debug-objects-in-python/"
 source_guid = "http://zderadicka.eu/?p=216"
 source_date_gmt = "2012-10-02 13:42:40"
-categories = ["Programming"]
-tags = ["python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["python"]
 +++
 Often it is necessary to print an object to debugging log. This small utility function can help to print all  properties:
 

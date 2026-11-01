@@ -2,7 +2,7 @@
 
 A small Zola blog containing 154 posts and 21 standalone pages from the accepted
 WordPress snapshot. Markdown is authoritative. Zola renders the articles, homepage
-pagination, year-grouped archive, navigation, sitemap, and main RSS feed directly.
+pagination, tags/categories, year-grouped archive, sitemap, and main RSS feed directly.
 Pagefind adds search. There is no generated content model or archive generator.
 
 ## Setup
@@ -39,8 +39,10 @@ draft = true
 +++
 ```
 
-Write a short introduction, then `<!-- more -->`, then the article. Homepage
-excerpts use the introduction as plain text, capped at 420 characters. Label
+Write a short introduction, including any image you want in the preview, then
+`<!-- more -->`, then the article. Homepage and topic excerpts retain the introduction’s
+HTML, images, and formatting. Older posts use their existing WordPress “more” marker;
+short posts without a marker are shown in full. Label
 fenced code blocks with their language, such as `python` or `rust`; Zola handles
 highlighting. Place new images beside `index.md` and use relative links:
 
@@ -52,7 +54,7 @@ Drafts stay out of production pages, feeds, and search. Colocated media may stil
 be copied by Zola, so keep private material outside the site tree. Future dates
 are metadata, not a publication scheduler: keep `draft = true` until ready.
 
-For faster writing without rebuilding search, `zola serve --drafts` also works
+For faster writing without rebuilding search, `zola serve --drafts --output-dir .build/preview --force` also works
 and reloads on edits. Use the Python preview when reviewing search and legacy
 query redirects; those are outside Zola's development server.
 
@@ -67,10 +69,18 @@ Standalone pages live in `content/pages/<slug>/index.md`. Set
 public path adds the page to its parent's list of subpages. Moving a source
 between directories does not change its explicit public URL.
 
-Archives are now a single `/archives/` page grouped by year. The homepage has
-native Zola pagination. Category, tag, author, daily, and monthly archive pages
-and their feeds are retired; old taxonomy metadata can remain in articles but
-is not used for navigation. `/rss.xml` and `/feed/` serve the same main feed,
+Archives remain a single `/archives/` page grouped by year, with one sidebar link.
+The sidebar also lists categories and popular tags; “All tags” opens the complete
+list. Their topic pages and the homepage use native Zola pagination. Add labels
+using Zola front matter (the names `category` and `tag` match the public URLs):
+
+```toml
+[taxonomies]
+category = ["Programming"]
+tag = ["Rust", "Svelte"]
+```
+
+Author, daily, and monthly archives and topic feeds remain retired. `/rss.xml` and `/feed/` serve the same main feed,
 retaining migrated subscriber GUIDs.
 
 ## Publish occasionally
@@ -83,12 +93,13 @@ retaining migrated subscriber GUIDs.
    python3 scripts/build_site.py
    ```
 
-4. Copy **only `public/`** to your static host. See [deployment.md](docs/deployment.md)
+4. Serve **only `public/`** with Docker, or copy it to your static host. See [deployment.md](docs/deployment.md)
    for the optional Docker server and the simple build-and-copy workflow.
 
 The production build excludes drafts, builds search, and validates local links,
 fragments, feed membership, and article coverage. It never publishes remotely.
-Always rebuild production after previewing, since previews use local URLs.
+Production builds write `public/`; preview/review builds write `.build/preview/`
+so drafts and local URLs cannot replace the directory served by Docker.
 
 For changes to tooling or templates:
 

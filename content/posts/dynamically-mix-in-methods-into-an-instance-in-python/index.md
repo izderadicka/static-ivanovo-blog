@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/dynamically-mix-in-methods-into-an-instance-in-python/"
 source_guid = "http://zderadicka.eu/?p=626"
 source_date_gmt = "2013-09-16 10:17:42"
-categories = ["Programming"]
-tags = ["python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["python"]
 +++
 As Python is a dynamic language it offers many possibilities how to manipulate object instances during runtime.   We may for instance inject methods from another class,  achieving similar results as  if  this instance has this calls as a mix-in super class. This approach could be useful to hack some existing libraries with extra functionality, in case we have to work with created  instances.
 

@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/timezones-and-dst-in-oracle-apex/"
 source_guid = "http://zderadicka.eu/?p=485"
 source_date_gmt = "2013-01-11 13:18:18"
-categories = ["Programming"]
-tags = ["Apex", "Javascript", "PL/SQL"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Apex", "Javascript", "PL/SQL"]
 +++
 Almost all APEX applications I've been working with recently are used across multiple timezones, where many timezones uses DST (Daylight Saving Time) - that is basically almost all Europe and North America. The natural requirement is that users can see date+time information in their timezone time, reflecting if DST is active or not. Timezones and time conversions are always bit of mess and APEX is not supporting this completely out of box, but with small effort we can make our applications really global.<span id="more-485"></span>
 
@@ -47,7 +48,7 @@ As you can see this script  redirecta back to original page and it adds tz quer
 ## Proper DST handling
 
 
-In order to handle DST timezones properly we have to set them in APEX session by their name (Europe/Berlin), which  assures that timestamp is converted with DST  in mind.   To help us detect user timezone name we can use <a href="https://bitbucket.org/pellepim/jstimezonedetect">jsTimezoneDetect library</a>.
+In order to handle DST timezones properly we have to set them in APEX session by their name (Europe/Berlin), which  assures that timestamp is converted with DST  in mind.   To help us detect user timezone name we can use [jsTimezoneDetect library](https://bitbucket.org/pellepim/jstimezonedetect).
 
 Here are steps how to assure proper automatic detection of user timezone name, that will work with DST zones (assuming that application is using login and is based on default 101 login page):
 

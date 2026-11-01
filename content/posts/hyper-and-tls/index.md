@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/hyper-and-tls/"
 source_guid = "http://zderadicka.eu/?p=2204"
 source_date_gmt = "2020-03-15 19:07:10"
-categories = ["Programming"]
-tags = ["asynchronous I/O", "Rust"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asynchronous I/O", "Rust"]
 +++
-For <a href="https://github.com/izderadicka/audioserve">audioserve </a>update I wanted use new `hyper` with `tokio-tls`. Actually it required a bit of documentation reading, but finally  turned our quite straightforward.  
+For [audioserve ](https://github.com/izderadicka/audioserve)update I wanted use new `hyper` with `tokio-tls`. Actually it required a bit of documentation reading, but finally  turned our quite straightforward.  
 
 
 

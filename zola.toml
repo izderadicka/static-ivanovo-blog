@@ -9,6 +9,10 @@ build_search_index = false
 generate_feeds = true
 feed_filenames = ["rss.xml", "feed/index.html"]
 feed_limit = 10
+taxonomies = [
+  {name = "category", paginate_by = 10},
+  {name = "tag", paginate_by = 10},
+]
 
 [markdown.highlighting]
 theme = "github-light"

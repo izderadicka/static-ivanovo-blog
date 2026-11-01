@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/gsettings-flexible-configuration-system/"
 source_guid = "http://zderadicka.eu/?p=374"
 source_date_gmt = "2012-11-26 11:32:17"
-categories = ["Programming"]
-tags = ["desktop", "gnome 3", "linux", "python"]
+[taxonomies]
+category = ["Programming"]
+tag = ["desktop", "gnome 3", "linux", "python"]
 +++
-GSetttings is the standard way how Gnome 3 applications store their configuration. GSettings is the front-end interface for application, actual values are stored by back-end - standard one is called dconf. We can then use the tool <a href="http://developer.gnome.org/dconf/unstable/dconf-editor.html">dconf-editor</a> to easily browse all stored configurations for all applications. Thanks to GObject introspection we can also work easily with GSettings from python.<span id="more-374"></span>
+GSetttings is the standard way how Gnome 3 applications store their configuration. GSettings is the front-end interface for application, actual values are stored by back-end - standard one is called dconf. We can then use the tool [dconf-editor](http://developer.gnome.org/dconf/unstable/dconf-editor.html) to easily browse all stored configurations for all applications. Thanks to GObject introspection we can also work easily with GSettings from python.<span id="more-374"></span>
 
 
 ### Introduction to GSettings in Python
@@ -80,7 +81,7 @@ Before we can start with programming, we have to define so call schema of our co
 
 Each schema has an unique  id (using dot notation to make it unique) and also it needs to have a  path under whitch values are stored. But path is derived from id (dots converted to slashes), so it is not necessary to specify it, unless you plan to use some special path, then you can do it with path attribute on schema element.
 
-Within schema you can define various elements with simple or complex types (values are stored as GLib.Variant - so see for its<a href="http://developer.gnome.org/glib/stable/glib-GVariantType.html"> types definition notation</a>). For integer types you can define ranges (see line 16), or define enumerated  type (see lines 3-7 and 36).  Also the schema can have a child schema - when this child schema will have path path/of/parent/child-name/ (and is accessible via `get_child('child-name')` method of Settings object).
+Within schema you can define various elements with simple or complex types (values are stored as GLib.Variant - so see for its[ types definition notation](http://developer.gnome.org/glib/stable/glib-GVariantType.html)). For integer types you can define ranges (see line 16), or define enumerated  type (see lines 3-7 and 36).  Also the schema can have a child schema - when this child schema will have path path/of/parent/child-name/ (and is accessible via `get_child('child-name')` method of Settings object).
 
 Before we can work with schema we have to compile it, schemas normally reside in directory /usr/share/glib-2.0/schemas  - so we should copy our schema there (with mandatory extension gschema.xml)  and compile:
 
@@ -99,7 +100,7 @@ settings = Gio.Settings('eu.zderadicka.sample')
 ```
 
 
-Now we can get and set values like this (for all available methods of Settings class see<a href="http://developer.gnome.org/gio/stable/GSettings.html"> its C documentation</a>\- in python they are available without g\_settings\_ prefix) :
+Now we can get and set values like this (for all available methods of Settings class see[ its C documentation](http://developer.gnome.org/gio/stable/GSettings.html)\- in python they are available without g\_settings\_ prefix) :
 
 
 ```python
@@ -133,7 +134,7 @@ instance= Gio.Settings.new_full(schema, None, path)
 ```
 
 
-This opens Settings with schema from DIRECTORY.    In an application it would be nice if it opens local schema, while in development, but when installed regularly  it' uses schema from central location.   In my project <a href="/wp-content/uploads/thetool.png" title="TheTool">thetool</a> I created class that  does this - you can check it <a href="https://github.com/izderadicka/thetool/blob/master/thetool/gsettings.py">here</a>.
+This opens Settings with schema from DIRECTORY.    In an application it would be nice if it opens local schema, while in development, but when installed regularly  it' uses schema from central location.   In my project <a href="/wp-content/uploads/thetool.png" title="TheTool">thetool</a> I created class that  does this - you can check it [here](https://github.com/izderadicka/thetool/blob/master/thetool/gsettings.py).
 On line 6 the second parameter, which is None, can be an instance of  configuration back-end, this way I think you can even have separated store for development - but did not play with it yet.
 
 

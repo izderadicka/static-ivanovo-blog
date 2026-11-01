@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/long-running-taks-in-web-appdjango/"
 source_guid = "http://zderadicka.eu/?p=582"
 source_date_gmt = "2013-07-18 13:43:04"
-categories = ["Programming"]
-tags = ["django", "python", "tasks manager", "web socket", "zeromq"]
+[taxonomies]
+category = ["Programming"]
+tag = ["django", "python", "tasks manager", "web socket", "zeromq"]
 +++
-Some types of web applications require to start long running tasks - like import of file, compilation etc., but  user still needs to have real time updates about progress of the task, eventually some error messages, warnings from the task (cannot import particular line, compilation error).   There are existing robust solutions like <a href="http://www.celeryproject.org/">Celery</a>, but it is aways fun to reinvent the wheel :-)   In this case we focus on simple solution, without need for request broker in middle, which enables  immediate/ real time updates on running tasks to client browser.
+Some types of web applications require to start long running tasks - like import of file, compilation etc., but  user still needs to have real time updates about progress of the task, eventually some error messages, warnings from the task (cannot import particular line, compilation error).   There are existing robust solutions like [Celery](http://www.celeryproject.org/), but it is aways fun to reinvent the wheel :-)   In this case we focus on simple solution, without need for request broker in middle, which enables  immediate/ real time updates on running tasks to client browser.
 
 For our solution we will use two cool technologies/libraries web sockets and zeromq library.<span id="more-582"></span>
 
@@ -22,15 +23,15 @@ For our solution we will use two cool technologies/libraries web sockets and zer
 ## Used Libraries
 
 
-<a href="http://www.zeromq.org/">zeromq</a>  (or zmq)- is C library for asynchronous messaging  with binding to many languages (python included). ZMQ has very good reputation for robustness and ease of use. In this example we used zeromq library 3.2.3, with python binding pyzmq 13.0.2, which was not yet available in latest Ubuntu distro (in there it's still old version 2 of zmq library), so it has to be installed manually from source.
+[zeromq](http://www.zeromq.org/)  (or zmq)- is C library for asynchronous messaging  with binding to many languages (python included). ZMQ has very good reputation for robustness and ease of use. In this example we used zeromq library 3.2.3, with python binding pyzmq 13.0.2, which was not yet available in latest Ubuntu distro (in there it's still old version 2 of zmq library), so it has to be installed manually from source.
 
-<a href="https://github.com/abourget/gevent-socketio">gevent-socketio</a> \- is python port of <a href="http://socket.io/">socket.io</a> server part. Socket.io is Javascript library, that wraps web sockets and provides advanced functionality on top web socket (namespaces, custom events/messages,  heartbeat etc.). Also for web browsers, which do not support web socket, it provides alternative communication mechanism via same interface.
+[gevent-socketio](https://github.com/abourget/gevent-socketio) \- is python port of [socket.io](http://socket.io/) server part. Socket.io is Javascript library, that wraps web sockets and provides advanced functionality on top web socket (namespaces, custom events/messages,  heartbeat etc.). Also for web browsers, which do not support web socket, it provides alternative communication mechanism via same interface.
 
-<a href="http://www.gevent.org/">gevent</a> \- is requirement for gevent-socketio  - gevent is a networking library that enables non-blocking usage of sockets, for this purpose gevent is using so call <a href="http://en.wikipedia.org/wiki/Green_threads">green threads</a> (<a href="http://greenlet.readthedocs.org/en/latest/">greenlets</a>)
+[gevent](http://www.gevent.org/) \- is requirement for gevent-socketio  - gevent is a networking library that enables non-blocking usage of sockets, for this purpose gevent is using so call [green threads](http://en.wikipedia.org/wiki/Green_threads) ([greenlets](http://greenlet.readthedocs.org/en/latest/))
 
-optionally <a href="https://www.djangoproject.com/">django</a> \- web application framework, it is not basically necessary - pages and socket server part can run in any other web server that support gevent (gevent itself, gunicorn, ...)
+optionally [django](https://www.djangoproject.com/) \- web application framework, it is not basically necessary - pages and socket server part can run in any other web server that support gevent (gevent itself, gunicorn, ...)
 
-<a href="http://jquery.com/">jquery</a> \- Javascript library
+[jquery](http://jquery.com/) \- Javascript library
 
 
 ## Solution Architecture
@@ -50,7 +51,7 @@ Workers Server  contains also proxy for all PUB messages, so they are collected
 ## Python code
 
 
-First let's have some utility functions (all supporting code is in remote module - for convenience- zipped <a href="/wp-content/uploads/remote.py_.zip">remote.py</a> ):
+First let's have some utility functions (all supporting code is in remote module - for convenience- zipped [remote.py](/wp-content/uploads/remote.py_.zip) ):
 
 
 ```python
@@ -379,11 +380,11 @@ And finally Javascript code using JQuery, which sits on page that initiates remo
 The function  `launchTask`   is called on button click or other appropriate event on the page.  Itl first connects to our namespace '/log', then when connected it sends 'start' message, which  makes namespace to listen on zmq SUB socket for messages coming from task process.  When namespace  socket  is connected we  do Ajax call to start the task on server.  URL of the ajax call is directed to the view we've introduced earlier - and we use some generated id -`  stream_id ` \- to identify both `call_id` (unique identifier of remote call - to prevent duplicate calls) and `stream_id` (to identify messages coming from our task process). When a message l come sfrom process we display it on the page ( where we have this html: `<div id="result"><ul id=<messages"></ul></div>` to hold messages). Also note that there are several places to report errors:
 
 
-<ol>
-<li>When view returns HTTP error - it is handled  by error option of Ajax call</li>
-<li>When view cannot launch remote task - then Ajax returns JSON with errors key</li>
-<li>When task itself has a problem - it can return appropriate messages, which are displayed</li>
-</ol>
+
+1. When view returns HTTP error - it is handled  by error option of Ajax call
+1. When view cannot launch remote task - then Ajax returns JSON with errors key
+1. When task itself has a problem - it can return appropriate messages, which are displayed
+
 
 
 We  also need a page to host our Javascript code (in Django it means page template + view+ url definition).

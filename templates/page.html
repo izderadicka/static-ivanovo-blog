@@ -4,12 +4,18 @@
 {% set kind = page.extra.kind | default(value="post") %}
 <article class="single {{ kind }}">
   <header class="entry-header" data-pagefind-ignore>
+    {% if page.taxonomies.category %}<div class="category-links">{% for name in page.taxonomies.category %}{% set term = get_taxonomy_term(kind="category", term=name) %}<a href="{{ term.permalink }}">{{ name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</div>{% endif %}
     <h1 class="entry-title" data-pagefind-meta="title">{{ page.title }}</h1>
     {% if kind == "post" and page.date %}<div class="entry-meta"><time datetime="{{ page.date }}">{{ page.date | date(format="%B %d, %Y") }}</time>{% if page.extra.author %} | {{ page.extra.author }}{% endif %}</div>{% endif %}
   </header>
   <div class="entry-content" data-pagefind-body data-pagefind-meta="title:{{ page.title }}">
     {{ page.content | safe }}
   </div>
+  {% if page.taxonomies.tag %}
+  <footer class="entry-footer" data-pagefind-ignore>
+    <div class="tag-links">{% for name in page.taxonomies.tag %}{% set term = get_taxonomy_term(kind="tag", term=name) %}<a href="{{ term.permalink }}">{{ name }}</a>{% endfor %}</div>
+  </footer>
+  {% endif %}
   {% if kind == "page" %}
     {% for item in information.pages %}
       {% if item.extra.parent and item.extra.parent == page.path %}<p class="child-page"><a href="{{ item.permalink }}">{{ item.title }}</a></p>{% endif %}

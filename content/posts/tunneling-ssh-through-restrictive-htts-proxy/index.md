@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/tunneling-ssh-through-restrictive-htts-proxy/"
 source_guid = "http://zderadicka.eu/?p=996"
 source_date_gmt = "2015-02-27 11:09:06"
-categories = ["Admin"]
-tags = ["proxy", "SSH"]
+[taxonomies]
+category = ["Admin"]
+tag = ["proxy", "SSH"]
 +++
-In <a href="/accessing-imapsmtp-via-https-proxy/">one of past articles</a> I've described how to use HTTP CONNECT method to tunnel other protocols through a proxy.  It worked for me for various protocols ( mainly email access IMAP, SMTP),  but recently it stopped working for SSH protocol. After some investigation I've found  that proxy is checking  what protocol it is tunnelling through and expects it to be SSL/TLS.  If it is anything else, proxy closes connection with an error.  It still worked for mail protocols,  because they were already wrapped in SSL. But to be still able to use SSH through proxy some more sophisticated setup was needed -  tunnelling SSH through SSL protocol, which is then tunnelled via HTTPS proxy ( HTTP CONNECT method).  Below I describe a setup,  which works for me.<span id="more-996"></span>
+In [one of past articles](/accessing-imapsmtp-via-https-proxy/) I've described how to use HTTP CONNECT method to tunnel other protocols through a proxy.  It worked for me for various protocols ( mainly email access IMAP, SMTP),  but recently it stopped working for SSH protocol. After some investigation I've found  that proxy is checking  what protocol it is tunnelling through and expects it to be SSL/TLS.  If it is anything else, proxy closes connection with an error.  It still worked for mail protocols,  because they were already wrapped in SSL. But to be still able to use SSH through proxy some more sophisticated setup was needed -  tunnelling SSH through SSL protocol, which is then tunnelled via HTTPS proxy ( HTTP CONNECT method).  Below I describe a setup,  which works for me.<span id="more-996"></span>
 
 
 ##  Tools used
@@ -22,9 +23,9 @@ In <a href="/accessing-imapsmtp-via-https-proxy/">one of past articles</a> I've 
 
 All tools could be installed from Ubuntu/Debian repositories via apt-get.
 
-<strong>stunnel4</strong> \-   is a program that can wrap/unwrap any connection into/from SSL protocol
-<strong>openssl</strong> \- SSL utilities and SSL client
-<strong>proxytunnel</strong> \-  utility to tunnel connection through HTTPS proxy
+**stunnel4** \-   is a program that can wrap/unwrap any connection into/from SSL protocol
+**openssl** \- SSL utilities and SSL client
+**proxytunnel** \-  utility to tunnel connection through HTTPS proxy
 
 
 ##  Sever Setup
@@ -100,4 +101,4 @@ ssh user@ssh_server_host
 ## Possible Improvements
 
 
-This <a href="http://blog.chmd.fr/ssh-over-ssl-episode-4-a-haproxy-based-configuration.html">article describes</a> how to use <a href="http://www.haproxy.org/">haproxy</a> to serve both HTTPS and SSH (tunneled in SSL) on same port, e.g. 443 - so service will look like normal secure web site.
+This [article describes](http://blog.chmd.fr/ssh-over-ssl-episode-4-a-haproxy-based-configuration.html) how to use [haproxy](http://www.haproxy.org/) to serve both HTTPS and SSH (tunneled in SSL) on same port, e.g. 443 - so service will look like normal secure web site.

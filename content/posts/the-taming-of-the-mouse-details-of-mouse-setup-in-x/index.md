@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/the-taming-of-the-mouse-details-of-mouse-setup-in-x/"
 source_guid = "http://zderadicka.eu/?p=265"
 source_date_gmt = "2012-10-13 07:37:06"
-categories = ["Admin"]
-tags = ["desktop", "linux", "X"]
+[taxonomies]
+category = ["Admin"]
+tag = ["desktop", "linux", "X"]
 +++
 <a href="/wp-content/uploads/point.jpeg" rel="attachment wp-att-275"><img alt="" class="wp-image-275 alignleft" decoding="async" height="150" loading="eager" src="/wp-content/uploads/point-150x150.jpeg" title="point" width="150"/></a>After upgrade to  the new version of Linux (Mint 13, which is based on Ubuntu Precise) I'd found that my trackpoint is not working right (on Dell E6410), it was bit unresponsive and movement was not smooth.   Touchpad was generally  OK, but trackpoint really sucked. So I had to look into details of mouse setup in X and I was really surprised how many various parameters are there and how many aspects of mouse behaviour could be modified.   So I'd like to share few tips how to set pointing device - apart of those obvious settings, which are available in desktop settings (Acceleration and Sensitivity).
 
@@ -60,10 +61,10 @@ Device 'DualPoint Stick':
 
 
 To influence cursor movement these 4 properties are of interest:
-<strong>Device Accel Profile</strong> \- this is most important parameter, because it set  an algorithm for cursor behaviour - how it accelerates  and decelerates based on mouse movement.  I have found that profile 2 - <strong>polynomial</strong> is most appropriate for me.   Also default profile 0 can behave well for trackpoint, but I have found one flaw -  this profile is dependent on <em>threshold</em> value (the desktop setting window calls it Sensitivity) that is set by `xset mouse` \- and this value is common for several pointer devices, so if you optimize your trackpoint for profile 0,  and then you go to touchpad settings and change Sensitivity value there, your trackpoint settings get suboptimal again.  So profile 2 can assure completely independent control of  this device.
-<strong>Device Accel Constant Deceleration</strong> and <strong>Device Accel Adaptive Deceleration</strong> parameters controls how cursor will slow down and are quite important for precise movement.  Especially Adaptive Deceleration is worth to play with.
-<strong>Device Accel Velocity Scaling</strong> basically influences how sensitive cursor is to mouse movements and determines sampling rate of mouse movement.
-Very detailed and profound explanation of  how these parameters works and how they should be set up can be found <a href="http://xorg.freedesktop.org/wiki/Development/Documentation/PointerAcceleration#Scenarios">here</a>.
+**Device Accel Profile** \- this is most important parameter, because it set  an algorithm for cursor behaviour - how it accelerates  and decelerates based on mouse movement.  I have found that profile 2 - **polynomial** is most appropriate for me.   Also default profile 0 can behave well for trackpoint, but I have found one flaw -  this profile is dependent on *threshold* value (the desktop setting window calls it Sensitivity) that is set by `xset mouse` \- and this value is common for several pointer devices, so if you optimize your trackpoint for profile 0,  and then you go to touchpad settings and change Sensitivity value there, your trackpoint settings get suboptimal again.  So profile 2 can assure completely independent control of  this device.
+**Device Accel Constant Deceleration** and **Device Accel Adaptive Deceleration** parameters controls how cursor will slow down and are quite important for precise movement.  Especially Adaptive Deceleration is worth to play with.
+**Device Accel Velocity Scaling** basically influences how sensitive cursor is to mouse movements and determines sampling rate of mouse movement.
+Very detailed and profound explanation of  how these parameters works and how they should be set up can be found [here](http://xorg.freedesktop.org/wiki/Development/Documentation/PointerAcceleration#Scenarios).
 
 To find optimal parameters we have to play with them for a while - using`  xinput set-prop ` \- the mouse reacts immediately after property is changed. Property can be referenced either by name or id - I've found using ids easier. So we can try something like this:
 

@@ -19,7 +19,8 @@ def create_post(slug, title, root=ROOT):
     stamp = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     body = '\n'.join(['+++', 'title = ' + json.dumps(title, ensure_ascii=False),
                       'path = ' + json.dumps('/' + slug + '/'),
-                      'date = ' + json.dumps(stamp), 'draft = true', '[extra]',
+                      'date = ' + json.dumps(stamp), 'draft = true', '[taxonomies]',
+                      'category = []', 'tag = []', '[extra]',
                       'kind = "post"', 'author = ' + json.dumps(author),
                       '+++', '',
                       'Write the opening paragraph here.', '', '<!-- more -->', '',

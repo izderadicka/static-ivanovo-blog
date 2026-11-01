@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/django-tests-auto-discover/"
 source_guid = "http://zderadicka.eu/?p=622"
 source_date_gmt = "2013-09-05 09:47:18"
-categories = ["Programming"]
-tags = ["django", "python", "unit testing"]
+[taxonomies]
+category = ["Programming"]
+tag = ["django", "python", "unit testing"]
 +++
-Django framework  provides integrated tests runner, which can be started by `./manage/py test` (see <a href="https://docs.djangoproject.com/en/1.5/topics/testing/overview/#running-tests">docs</a> for more details, key advantage of this runner is that it'll create new empty database for tests, so they do not interfere with each other or your development instance).   This tests runner runs unit tests from `tests.py` or `models.py` modules in active projects.  However in larger projects we would like to have other organization of tests code -   have for instance special test package within project that  contains many testing modules, each focused on particular aspect of the application.<span id="more-622"></span>
+Django framework  provides integrated tests runner, which can be started by `./manage/py test` (see [docs](https://docs.djangoproject.com/en/1.5/topics/testing/overview/#running-tests) for more details, key advantage of this runner is that it'll create new empty database for tests, so they do not interfere with each other or your development instance).   This tests runner runs unit tests from `tests.py` or `models.py` modules in active projects.  However in larger projects we would like to have other organization of tests code -   have for instance special test package within project that  contains many testing modules, each focused on particular aspect of the application.<span id="more-622"></span>
 
 This simple code in tests.py will assure that test cases are auto-discovered from `test_cases` package within the project:
 

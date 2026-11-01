@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/partly-cloudy-openstack-in-vm/"
 source_guid = "http://zderadicka.eu/?p=283"
 source_date_gmt = "2012-10-21 07:24:00"
-categories = ["Admin"]
-tags = ["cloud", "linux", "virtualization"]
+[taxonomies]
+category = ["Admin"]
+tag = ["cloud", "linux", "virtualization"]
 +++
 Having heard so much about clouds and 'Infrastructure as A Service' recently I decided to try Openstack - complete open source solution for cloud computing.   Openstack is actually a set of softwares, that together provide necessary services for a cloud infrastructure.  Openstack (Essex release) can be installed in virtual machine, Virtual Box in my case, so I gave it a try and here are some of my observations:<span id="more-283"></span>
 
@@ -20,17 +21,17 @@ Having heard so much about clouds and 'Infrastructure as A Service' recently I d
 ### Installation
 
 
-I used <a href="http://stackgeek.com/guides/gettingstarted.html">this guide for Ubuntu server</a>, which is available on Openstack web,  getting starting section. Actually it took bit more then advertised 10 minutes, due to some small issues and detours, but finally I got it running (computing service with all related components).   There are few important things for an installation in VM:
+I used [this guide for Ubuntu server](http://stackgeek.com/guides/gettingstarted.html), which is available on Openstack web,  getting starting section. Actually it took bit more then advertised 10 minutes, due to some small issues and detours, but finally I got it running (computing service with all related components).   There are few important things for an installation in VM:
 
 
 <ul>
-<li><strong>VM disk size</strong> - since Nova VM disk images are stored in the root file system (see below for explanation), the disk size should be reasonably big - at least 20GB - to enable so experiments.  The guide also require separate volume block devices (nova-volume service), but this is something completely else then VM images.</li>
-<li><strong>Memory</strong> - 4GB of memory worked for me without any issues</li>
-<li><strong>Network interfaces</strong> -   the setup that worked for me :
+<li>**VM disk size** - since Nova VM disk images are stored in the root file system (see below for explanation), the disk size should be reasonably big - at least 20GB - to enable so experiments.  The guide also require separate volume block devices (nova-volume service), but this is something completely else then VM images.</li>
+<li>**Memory** - 4GB of memory worked for me without any issues</li>
+<li>**Network interfaces** -   the setup that worked for me :
 Adapter 1 - Host-Only 'vboxnet0' - public cloud interface
 Adapter 2 - Host-Only 'vboxnet1' - private cloud interface
 Adapter 3 - NAT - internet access to install SW packages</li>
-<li>If openstack is running in VM it has to use <strong>qemu as virtual machine type</strong> - in this case edit <code>/etc/nova/nova-compute.conf</code>  and put there <code>--libvirt&#95;type=qemu</code></li>
+<li>If openstack is running in VM it has to use **qemu as virtual machine type** - in this case edit <code>/etc/nova/nova-compute.conf</code>  and put there <code>--libvirt&#95;type=qemu</code></li>
 </ul>
 
 
@@ -39,7 +40,7 @@ Adapter 3 - NAT - internet access to install SW packages</li>
 ### VNC console
 
 
-Some additional effort is needed for VNC console to work ( as explained <a href="http://docs.openstack.org/essex/openstack-compute/install/apt/content/ch_install-dashboard.html#getting-started-with-vnc-proxy">here</a>):
+Some additional effort is needed for VNC console to work ( as explained [here](http://docs.openstack.org/essex/openstack-compute/install/apt/content/ch_install-dashboard.html#getting-started-with-vnc-proxy)):
 
 
 <ul>

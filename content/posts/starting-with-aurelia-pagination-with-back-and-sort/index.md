@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/starting-with-aurelia-pagination-with-back-and-sort/"
 source_guid = "http://zderadicka.eu/?p=1289"
 source_date_gmt = "2016-04-10 10:27:17"
-categories = ["Programming"]
-tags = ["Aurelia", "ES6", "Javascript", "MVVM", "SPA", "Web UI"]
+[taxonomies]
+category = ["Programming"]
+tag = ["Aurelia", "ES6", "Javascript", "MVVM", "SPA", "Web UI"]
 +++
-I do not like very much programming of User Interfaces (UIs) and frankly spoken I'm not very good at that, but alas sometimes UIs are necessary so I have to try my best. Many recent applications use web browser as UI, and  situation here is  quite messy ( see this nice article about<a href="https://www.allenpike.com/2015/javascript-framework-fatigue/"> JS Frameworks Fatigue)</a>.  Last time I was involved with web UIs I had utilized <a href="/projects/python/rest2backbone/">Backbone with Django based RESTful server</a>.  Recently I've decided to rewrite <a href="/projects/python/mybookshelf-ebooks-library/">MyBookshelf</a> application with modern technonogies (it's about 8 years old, which is something like prehistory considering changes in web development).  New architecture should be based on RESTful services and Single Page Application (SPA) relying on recent browser capabilities.   I've have been looking around and found that Backbone is already almost forgotten and we have two new stars on the stage - <a href="https://angularjs.org/">AngujarJS</a> and <a href="https://facebook.github.io/react/">React </a>\- I have very quickly looked at both and finally decide for another framework <a href="http://aurelia.io/">Aurelia</a>.<span id="more-1289"></span>
+I do not like very much programming of User Interfaces (UIs) and frankly spoken I'm not very good at that, but alas sometimes UIs are necessary so I have to try my best. Many recent applications use web browser as UI, and  situation here is  quite messy ( see this nice article about[ JS Frameworks Fatigue)](https://www.allenpike.com/2015/javascript-framework-fatigue/).  Last time I was involved with web UIs I had utilized [Backbone with Django based RESTful server](/projects/python/rest2backbone/).  Recently I've decided to rewrite [MyBookshelf](/projects/python/mybookshelf-ebooks-library/) application with modern technonogies (it's about 8 years old, which is something like prehistory considering changes in web development).  New architecture should be based on RESTful services and Single Page Application (SPA) relying on recent browser capabilities.   I've have been looking around and found that Backbone is already almost forgotten and we have two new stars on the stage - [AngujarJS](https://angularjs.org/) and [React ](https://facebook.github.io/react/)\- I have very quickly looked at both and finally decide for another framework [Aurelia](http://aurelia.io/).<span id="more-1289"></span>
 
 
 ## Why not AngularJS or React?
@@ -22,13 +23,13 @@ I do not like very much programming of User Interfaces (UIs) and frankly spoken 
 
 AngularJS is moving to AngularJS2, which is significantly different form previous version and not compatible.  So it probably worth to start directly with AngularJS2 - however I somehow did not like it's syntax and overall approach - it looked bit complicated and inconsistent, relying on experiences from previous version, which I have not tried.
 
-React is only View layer ( so it'll require other libraries for router, their fancy <a href="https://facebook.github.io/flux/">flux</a> pattern etc.) and it's Facebook product. Maybe it's just my prejudice, but I try to avoid everything related to this company (however generally people are quite positive about React).
+React is only View layer ( so it'll require other libraries for router, their fancy [flux](https://facebook.github.io/flux/) pattern etc.) and it's Facebook product. Maybe it's just my prejudice, but I try to avoid everything related to this company (however generally people are quite positive about React).
 
 
 ## Why Aurelia
 
 
-Aurelia got some publicity last year and it has been highly prised as well designed, next generation web UI framework.  Generally from what I've seen it looked attractive so I give it a try. You can check this <a href="https://channel9.msdn.com/Events/Seth-on-the-Road/DevIntersection-2015/Rob-Eisenberg-on-Aurelia">cool video</a>, where creator and chief architect of Aurelia  Rob Eisenberg introduces the framework.
+Aurelia got some publicity last year and it has been highly prised as well designed, next generation web UI framework.  Generally from what I've seen it looked attractive so I give it a try. You can check this [cool video](https://channel9.msdn.com/Events/Seth-on-the-Road/DevIntersection-2015/Rob-Eisenberg-on-Aurelia), where creator and chief architect of Aurelia  Rob Eisenberg introduces the framework.
 
 
 ### What I liked
@@ -36,16 +37,16 @@ Aurelia got some publicity last year and it has been highly prised as well desig
 
 
 
-<ul>
-<li>Based on latest <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_Resources">Javascript (ES6, ES7)</a> - so basically by learning Aurelia, you are also learning new and future Javascript, which generally feels much better, with a lot of advanced language features present by default.  (in order to use latest JS project has to be compiled(transpiled) with <a href="https://babeljs.io/">Babel</a>).</li>
-<li>Consistent and compact grammar -   majority is just plain modern JavaScript. I particularly like decorations, because I'm used to them from Python and they are very easy to use and understand. Extensions to HTML (for view templates) are nicely designed and easy to remember (simply named attributes as value.bind, repeat.for, if.bind, ref etc.).</li>
-<li>Convention over configuration - conventions  are easy to understand, logical, so it's no problem to follow them and they save your time.</li>
-<li>Template binding - <a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel">MVVM</a> architecture is easy to understand and supports decomposition of UI into reusable components.</li>
-<li>Basically all solutions and concepts in Aurelia are 'natural' and understandable -  if you think it should work in this way it usually does.</li>
-<li>Batteries included - Aurelia aims to provide complete framework, with all necessary components included.  (However this is not completely true today,  as some libraries are in early stages of development and I have not seen comprehensive widgets library for Aurelia).</li>
-<li>Although Aurelia tries to be self-contained , it can be integrated with other libraries ( for instance <a href="http://getbootstrap.com/">boostrap</a> in already included by default, others like <a href="https://jquery.com/">JQuery</a>,  <a href="https://www.polymer-project.org/1.0/">Polymer</a> can be integrated).  Aurelia is also very modular, so any part can be customized, replaced if needed.</li>
-<li>Although it not directly related to this framework, it was first time I used <a href="https://www.browsersync.io/">BrowserSync</a> and it looks like very powerful tool for testing and experimenting with code and I liked it very much .  All changes are automatically reloaded into browser, which helps a lot.</li>
-</ul>
+
+- Based on latest [Javascript (ES6, ES7)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_Resources) - so basically by learning Aurelia, you are also learning new and future Javascript, which generally feels much better, with a lot of advanced language features present by default.  (in order to use latest JS project has to be compiled(transpiled) with [Babel](https://babeljs.io/)).
+- Consistent and compact grammar -   majority is just plain modern JavaScript. I particularly like decorations, because I'm used to them from Python and they are very easy to use and understand. Extensions to HTML (for view templates) are nicely designed and easy to remember (simply named attributes as value.bind, repeat.for, if.bind, ref etc.).
+- Convention over configuration - conventions  are easy to understand, logical, so it's no problem to follow them and they save your time.
+- Template binding - [MVVM](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel) architecture is easy to understand and supports decomposition of UI into reusable components.
+- Basically all solutions and concepts in Aurelia are 'natural' and understandable -  if you think it should work in this way it usually does.
+- Batteries included - Aurelia aims to provide complete framework, with all necessary components included.  (However this is not completely true today,  as some libraries are in early stages of development and I have not seen comprehensive widgets library for Aurelia).
+- Although Aurelia tries to be self-contained , it can be integrated with other libraries ( for instance [boostrap](http://getbootstrap.com/) in already included by default, others like [JQuery](https://jquery.com/),  [Polymer](https://www.polymer-project.org/1.0/) can be integrated).  Aurelia is also very modular, so any part can be customized, replaced if needed.
+- Although it not directly related to this framework, it was first time I used [BrowserSync](https://www.browsersync.io/) and it looks like very powerful tool for testing and experimenting with code and I liked it very much .  All changes are automatically reloaded into browser, which helps a lot.
+
 
 
 
@@ -55,16 +56,16 @@ Aurelia got some publicity last year and it has been highly prised as well desig
 
 
 
-<ul>
-<li>There is only limited amount of documentation, so you are left very much on your own. Apart of basic "Getting Started" there is very little detailed documentation. API reference is minimal.  Articles on the web are often outdated due to massive development  of the framework in last year.</li>
-<li>Key concepts are not well explained -  you can see some examples, but for real work  you need to understand core concepts of this framework like  detailed flow of binding, differences between various options (for instance using component directly vs composing), when view models properties could be used directly and when they have to decorated with @bindable. How  property getters should be used and what is advantage of decorating them with composedForm, how components can be interconnected (observers, events, signals ...) etc.</li>
-<li>Learning experience for somebody without exposure to most recent frameworks (e.g. AngularJS etc.) could be quite steep.</li>
-<li>It's still not production ready, but it's getting there.</li>
-<li>Requires a lot of tools to support it. For one not so familiar with Node and current JS tools stack it's another layer of complexity.</li>
-<li>Framework is quite large (even small app can have 1M) -   so it can be problem for older devices and for slow connections.</li>
-<li>I got into some issues with browsers -  In Firefox some strange interaction with Firebug, which resulted in mysterious errors.  On Chromium fetch requests freeze in pending state randomly.</li>
-<li>Without deeper understanding of component lifetime and data binding I was sometimes surprised how things finally worked (bindings did not changed when expected, or changed too early from undefined to null and only then to final value,   behaviour of components differs based on way how page was routed etc.)</li>
-</ul>
+
+- There is only limited amount of documentation, so you are left very much on your own. Apart of basic "Getting Started" there is very little detailed documentation. API reference is minimal.  Articles on the web are often outdated due to massive development  of the framework in last year.
+- Key concepts are not well explained -  you can see some examples, but for real work  you need to understand core concepts of this framework like  detailed flow of binding, differences between various options (for instance using component directly vs composing), when view models properties could be used directly and when they have to decorated with @bindable. How  property getters should be used and what is advantage of decorating them with composedForm, how components can be interconnected (observers, events, signals ...) etc.
+- Learning experience for somebody without exposure to most recent frameworks (e.g. AngularJS etc.) could be quite steep.
+- It's still not production ready, but it's getting there.
+- Requires a lot of tools to support it. For one not so familiar with Node and current JS tools stack it's another layer of complexity.
+- Framework is quite large (even small app can have 1M) -   so it can be problem for older devices and for slow connections.
+- I got into some issues with browsers -  In Firefox some strange interaction with Firebug, which resulted in mysterious errors.  On Chromium fetch requests freeze in pending state randomly.
+- Without deeper understanding of component lifetime and data binding I was sometimes surprised how things finally worked (bindings did not changed when expected, or changed too early from undefined to null and only then to final value,   behaviour of components differs based on way how page was routed etc.)
+
 
 
 
@@ -72,19 +73,19 @@ Aurelia got some publicity last year and it has been highly prised as well desig
 ## Getting started
 
 
-The official documentation gives you quick way to <a href="http://aurelia.io/docs.html">start up </a> with a mock-up application, which has some basic navigation and a page, which consumes RESTful API.  Similar app can be cloned from <a href="https://github.com/aurelia/skeleton-navigation">github aurelia-skeleton</a>, but from then you are left to your own skill and to yet limited documentation.
+The official documentation gives you quick way to [start up ](http://aurelia.io/docs.html) with a mock-up application, which has some basic navigation and a page, which consumes RESTful API.  Similar app can be cloned from [github aurelia-skeleton](https://github.com/aurelia/skeleton-navigation), but from then you are left to your own skill and to yet limited documentation.
 
 One of features I required, was flexible pagination, which:
 
 
-<ul>
-<li>is general and can be used on various data sources</li>
-<li>is native to Aurelia (use core Aurelia components)</li>
-<li>supports browser back button - so I can go to an item detail and then back to the given page</li>
-<li>supports sorting of paginated list</li>
-<li>can be embedded on various pages</li>
-<li>displays spinner when next page is loaded from server</li>
-</ul>
+
+- is general and can be used on various data sources
+- is native to Aurelia (use core Aurelia components)
+- supports browser back button - so I can go to an item detail and then back to the given page
+- supports sorting of paginated list
+- can be embedded on various pages
+- displays spinner when next page is loaded from server
+
 
 
 There are few existing plugins for Aurelia, but none really matched my requirements, so I decided to create my own solution, thinking that it could be good learning exercise.
@@ -326,7 +327,7 @@ Apart of the constructor we have several method, which are called back during co
 
 Another examples of Aurelia conventions are `...Changed(oldValue, newValue)` methods on lines 58-73, which are called every time observable property changes.  We use them to load new page when either page number, sorting, or data loader changes.
 
-Pages are loaded in method loadPage on lines 47-56.  It uses bound function - loader, which should return Promise (loader function is basically some kind of wrapper around Aurelia <a href="https://github.com/aurelia/fetch-client/tree/master/doc">HttpClient</a>).
+Pages are loaded in method loadPage on lines 47-56.  It uses bound function - loader, which should return Promise (loader function is basically some kind of wrapper around Aurelia [HttpClient](https://github.com/aurelia/fetch-client/tree/master/doc)).
 
 Finally we need a page, where all three components  are used together, let's start with view template first:
 
@@ -350,7 +351,7 @@ Finally we need a page, where all three components  are used together, let's st
         <div class="col-sm-6 col-md-4 col-lg-3" repeat.for="ebook of paginator.data">
           <div class='ebook-detail'>
             <authors authors.one-time="ebook.authors" compact.bind="true"></authors>
-            <div class="ebook-title"><a href="#/ebook/${ebook._id}">${ebook.title}</a></div>
+            <div class="ebook-title">[${ebook.title}](#/ebook/${ebook._id})</div>
             <div class="ebook-series" if.bind="ebook.series">${ebook.series} #${ebook.series_index}</div>
           </div>
         </div>
@@ -418,6 +419,6 @@ Aurelia appears to be a promising framework, which very much make a sense.  It'
 
 As per pagination component, I'm sure it can be done better, when one gets more insight into the framework. Now for instance there is a problem when switching between pages with sub path - like #/search/aaa to search/bbb -   pagination works, but it's not restored to last page  when back button is used (because components are already displayed so constructor is not called).
 
-For curious readers source code is on <a href="https://github.com/izderadicka/mybookshelf2/tree/master/client/src/components/pagination">github</a>.
+For curious readers source code is on [github](https://github.com/izderadicka/mybookshelf2/tree/master/client/src/components/pagination).
 
 I'd like very much hear comments, experiences and advices from other Aurelia users.

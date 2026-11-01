@@ -11,20 +11,21 @@ author = "admin"
 source_url = "http://zderadicka.eu/asynchronous-again-rewriting-ptunnel-in-rust/"
 source_guid = "http://zderadicka.eu/?p=1789"
 source_date_gmt = "2017-11-26 12:36:32"
-categories = ["Programming"]
-tags = ["asynchronous I/O", "proxy", "Rust", "tokio"]
+[taxonomies]
+category = ["Programming"]
+tag = ["asynchronous I/O", "proxy", "Rust", "tokio"]
 +++
-Asynchronous programing model is quite popular for I/0 intensive tasks - it enables you effective use of resources, while maintaining agility of and assuring scalability of the application. I myself used asynchronous programming many times -   in JavaScript (where it's omnipresent) , Python ( mainly  in <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> recently, but also bit in <a href="https://twistedmatrix.com/trac/">twisted</a>, which was one of first network asynchronous libraries I met) and also in OCAML with  <a href="http://ocsigen.org/lwt/">lwt</a> or <a href="https://realworldocaml.org/v1/en/html/concurrent-programming-with-async.html">Core Async</a>. The concept is always similar for all implementations -  I/O operations are returning handles to future results - they are called either  Futures, Promises, or Deferred  - and they are returned immediately.  These futures can have functions attached to them, which are executed later, when I/O result becomes available.  Asynchronous  programming is very much about functions, it requires first class functions  and anonymous functions are very useful here, that's why asynchronous model flourishes in functional languages.  Apart of I/O deferred processing usually there are other utilities for later execution - like timeouts, pausing execution for some time (sleep), tasks synchronization (events, locks). Futures are executed in an "event loop",   a loop that monitors various events from OS (availability of data from I/O), timers, etc. to execute futures (meaning functions attached to them), when appropriate. It's also very common to chain futures, executing second one with result of first one , when first one is resolved and result is available and the third one with results from the second one and so on. Apart of this basic scheme languages may provide some syntactic sugar around asynchronous model like await and async keywords in Python or C#, which makes it easier to write the code.
+Asynchronous programing model is quite popular for I/0 intensive tasks - it enables you effective use of resources, while maintaining agility of and assuring scalability of the application. I myself used asynchronous programming many times -   in JavaScript (where it's omnipresent) , Python ( mainly  in [asyncio](https://docs.python.org/3/library/asyncio.html) recently, but also bit in [twisted](https://twistedmatrix.com/trac/), which was one of first network asynchronous libraries I met) and also in OCAML with  [lwt](http://ocsigen.org/lwt/) or [Core Async](https://realworldocaml.org/v1/en/html/concurrent-programming-with-async.html). The concept is always similar for all implementations -  I/O operations are returning handles to future results - they are called either  Futures, Promises, or Deferred  - and they are returned immediately.  These futures can have functions attached to them, which are executed later, when I/O result becomes available.  Asynchronous  programming is very much about functions, it requires first class functions  and anonymous functions are very useful here, that's why asynchronous model flourishes in functional languages.  Apart of I/O deferred processing usually there are other utilities for later execution - like timeouts, pausing execution for some time (sleep), tasks synchronization (events, locks). Futures are executed in an "event loop",   a loop that monitors various events from OS (availability of data from I/O), timers, etc. to execute futures (meaning functions attached to them), when appropriate. It's also very common to chain futures, executing second one with result of first one , when first one is resolved and result is available and the third one with results from the second one and so on. Apart of this basic scheme languages may provide some syntactic sugar around asynchronous model like await and async keywords in Python or C#, which makes it easier to write the code.
 
 
 
 
-Recently, as I'm progressing in learning of <a href="https://www.rust-lang.org">Rust, </a> I wondered how asynchronous programing is done in Rust. I decided to remake my <a href="/accessing-imapsmtp-via-https-proxy/">old project ptunnel</a> (written in Python) into Rust - ptunnel is a program that tunnels arbitrary connection/protocol through HTTPS proxy, so it can be used to connect IMAP, SMTP or SSH through proxy. In the rest of this article I''l share my experiences from this project.<span id="more-1789"></span>
+Recently, as I'm progressing in learning of [Rust, ](https://www.rust-lang.org) I wondered how asynchronous programing is done in Rust. I decided to remake my [old project ptunnel](/accessing-imapsmtp-via-https-proxy/) (written in Python) into Rust - ptunnel is a program that tunnels arbitrary connection/protocol through HTTPS proxy, so it can be used to connect IMAP, SMTP or SSH through proxy. In the rest of this article I''l share my experiences from this project.<span id="more-1789"></span>
 
 
 
 
-Rust is relatively young language and asynchronous programing in Rust is even younger - now most popular library is <a href="https://tokio.rs/">Tokio</a>, which is still in version <a href="https://crates.io/crates/tokio-core">0.1,</a> so basically in its infancy.  But site contains good documentation and guidance so it's was relatively easy to get started.
+Rust is relatively young language and asynchronous programing in Rust is even younger - now most popular library is [Tokio](https://tokio.rs/), which is still in version [0.1,](https://crates.io/crates/tokio-core) so basically in its infancy.  But site contains good documentation and guidance so it's was relatively easy to get started.
 
 
 
@@ -34,7 +35,7 @@ Rust is relatively young language and asynchronous programing in Rust is even yo
 
 
 
-I have to admit I'm still  struggling with some Rust concepts (lifetime mainly) and Tokio was quite demanding for sticking with core concepts. Tokio is using intensively <a href="https://crates.io/crates/futures">futures</a> module and all programing  and data processing is done through chaining of futures - this can create very complex types ( especially when anonymous closures are used) and thus provide very cryptic errors ( with type description over half of the screen - reminding me monstrous types in OCAML <a href="/ocaml-ocsigen-i-ching-and-web-applications/">Ocsigen</a> libraries ). In order to make various complex Future types compatible with rest of the program is quite often necessary to create trait objects - e.g. to box values. There is also one hideous features of rustc,  errors concerning lifetime of variables are reported as last - when all more 'serious' errors are resolved. So often it happened to me that I had removed one final error in code only to find that others pop up and I had found that I had screwed lifetime of some variables/parameters and that it couldn't be easily fixed and had to redesign code.
+I have to admit I'm still  struggling with some Rust concepts (lifetime mainly) and Tokio was quite demanding for sticking with core concepts. Tokio is using intensively [futures](https://crates.io/crates/futures) module and all programing  and data processing is done through chaining of futures - this can create very complex types ( especially when anonymous closures are used) and thus provide very cryptic errors ( with type description over half of the screen - reminding me monstrous types in OCAML [Ocsigen](/ocaml-ocsigen-i-ching-and-web-applications/) libraries ). In order to make various complex Future types compatible with rest of the program is quite often necessary to create trait objects - e.g. to box values. There is also one hideous features of rustc,  errors concerning lifetime of variables are reported as last - when all more 'serious' errors are resolved. So often it happened to me that I had removed one final error in code only to find that others pop up and I had found that I had screwed lifetime of some variables/parameters and that it couldn't be easily fixed and had to redesign code.
 
 
 
@@ -69,7 +70,7 @@ So rather then fair benchmark it's just a toy comparison, just to assure that Ru
 
 
 
-For quick test I used <a href="http://www.squid-cache.org/">squid</a> proxy, <a href="https://nginx.org/">nginx</a> server and <a href="https://httpd.apache.org/docs/2.4/programs/ab.html">ab</a> (apache benchmark tool), all installed locally on my notebook - sending 1000 HTTP GET requests in 5 concurrent threads. So setup is like this:
+For quick test I used [squid](http://www.squid-cache.org/) proxy, [nginx](https://nginx.org/) server and [ab](https://httpd.apache.org/docs/2.4/programs/ab.html) (apache benchmark tool), all installed locally on my notebook - sending 1000 HTTP GET requests in 5 concurrent threads. So setup is like this:
 
 
 
@@ -141,9 +142,9 @@ Looking at code base Rust program is about 3 times bigger then old Python progra
 
 
 
-<ol>
-<li>The code is available <a href="https://github.com/izderadicka/ptunnel-rust">on the github</a>, where kind reader can review it, README.md file contains instructions for installation. New Rust program functionality and CLI copies basically old python program, only new feature available is basic authentication with proxy.</li>
-</ol>
+
+1. The code is available [on the github](https://github.com/izderadicka/ptunnel-rust), where kind reader can review it, README.md file contains instructions for installation. New Rust program functionality and CLI copies basically old python program, only new feature available is basic authentication with proxy.
+
 
 
 
@@ -156,7 +157,7 @@ Looking at code base Rust program is about 3 times bigger then old Python progra
 
 
 
-Main motivation for ptunnel was to be able to use Thunderbird behind corporate proxy for Gmail account (via IMAP/SMTP protocols). You can basically proxy any protocol (like SSH), but these two were most interesting for me. Setup is described somehow in the <a href="/accessing-imapsmtp-via-https-proxy/">original article</a>, but here I'd like to highlight main steps/gotchas for this particular combination ( I tested on both Linux and Windows).
+Main motivation for ptunnel was to be able to use Thunderbird behind corporate proxy for Gmail account (via IMAP/SMTP protocols). You can basically proxy any protocol (like SSH), but these two were most interesting for me. Setup is described somehow in the [original article](/accessing-imapsmtp-via-https-proxy/), but here I'd like to highlight main steps/gotchas for this particular combination ( I tested on both Linux and Windows).
 
 
 

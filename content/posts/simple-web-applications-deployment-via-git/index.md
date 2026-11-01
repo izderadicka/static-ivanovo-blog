@@ -11,20 +11,21 @@ author = "admin"
 source_url = "http://zderadicka.eu/simple-web-applications-deployment-via-git/"
 source_guid = "http://zderadicka.eu/?p=1085"
 source_date_gmt = "2015-09-15 14:48:55"
-categories = ["Admin", "Programming"]
-tags = ["devops", "git"]
+[taxonomies]
+category = ["Admin", "Programming"]
+tag = ["devops", "git"]
 +++
-<a href="https://git-scm.com/">Git</a> is not only great version control tool,  but can be easily used for web application deployment to testing or production environmenst.  For more complex projects some continuous integration (CI), tools/services can be more appropriate  (like <a href="https://jenkins-ci.org/">Jenkins</a>), but for smaller project we can do just fine with Git , SSH and simple script installed as <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks">git hook</a>. Below is the scenario I'm using for one Python <a href="http://flask.pocoo.org/">Flask</a> web application.<span id="more-1085"></span>
+[Git](https://git-scm.com/) is not only great version control tool,  but can be easily used for web application deployment to testing or production environmenst.  For more complex projects some continuous integration (CI), tools/services can be more appropriate  (like [Jenkins](https://jenkins-ci.org/)), but for smaller project we can do just fine with Git , SSH and simple script installed as [git hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks). Below is the scenario I'm using for one Python [Flask](http://flask.pocoo.org/) web application.<span id="more-1085"></span>
 
-Flask application is deployed on Debian server (running in VM), in <a href="https://uwsgi-docs.readthedocs.org/en/latest/">uwsgi</a> container behind <a href="http://nginx.org/">nginx</a> frontend (nginx is also serving static files).   We have two VMs -  one production and one testing. If necessary production instance can be easily scaled horizontally  by adding more uwsgi instances behind nginx frontend.
+Flask application is deployed on Debian server (running in VM), in [uwsgi](https://uwsgi-docs.readthedocs.org/en/latest/) container behind [nginx](http://nginx.org/) frontend (nginx is also serving static files).   We have two VMs -  one production and one testing. If necessary production instance can be easily scaled horizontally  by adding more uwsgi instances behind nginx frontend.
 
 
 ## Git Flow
 
 
 We have two long running branches in Git:
-<strong>devel</strong> \- for latest development version
-<strong>master</strong> \- for production version
+**devel** \- for latest development version
+**master** \- for production version
 
 Developers work on feature branches, which they can run locally (with Flask embedded WSGI server),  when  features are ready, they are merged to `devel` branch and  `devel` branch is then pushed to test instance, where all new features are tested by users.  When we are fine with new functionality,  `devel` branch is merged to master branch and master branch is pushed to production instance.
 

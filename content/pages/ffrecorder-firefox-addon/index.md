@@ -17,7 +17,7 @@ parent = "/projects/firefox-add-ons/"
 The plugin will disable input change events (only DOM 0 level ), but it will record changes and you can replay them later in bulk operation. Assumes that input change initiates page reload. Generally very specific use-case - created to ease work with one specific application in mind, but addon is generic and should work with any form, where change in inputs resubmits form (or it part - but not with Ajax - main page needs to be posted)
 
 
-### <strong>How to use it:</strong>
+### **How to use it:**
 
 
 
@@ -39,7 +39,7 @@ The plugin will disable input change events (only DOM 0 level ), but it will rec
 
 
 
-### <strong>Troubleshooting:</strong>
+### **Troubleshooting:**
 
 
 In case of any troubles check first error console - Tools/ Web Developer / Error Console. Scroll down and see if there are any error messaged relates to ffrecorder.
@@ -50,4 +50,4 @@ Application of changes got stuck - e.g. you cannot see any progress and also pag
 
 Dual licensed GPL v3 or MPL 2.0
 
-<a href="https://github.com/izderadicka/ffrecorder">Source and XPI</a> is available on Github.
+[Source and XPI](https://github.com/izderadicka/ffrecorder) is available on Github.

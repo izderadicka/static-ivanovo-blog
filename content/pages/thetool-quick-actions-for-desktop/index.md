@@ -14,7 +14,7 @@ source_date_gmt = "2012-11-13 12:53:52"
 menu_order = 0
 parent = "/projects/python/"
 +++
-TheTool is a small tool enabling one to quickly do some tasks (tasks that relate to everyday usage) in Linux desktop. This tool is rebuild of <a href="http://old.zderadicka.eu/toshtool.php">older toshtool utility</a>, which I used for years, now completely rewritten with GTK3 framework and python (using GObject Introspection in python). The tool sits in the tray (or indicator panel - depends on desktop) and actions are just a click away.
+TheTool is a small tool enabling one to quickly do some tasks (tasks that relate to everyday usage) in Linux desktop. This tool is rebuild of [older toshtool utility](http://old.zderadicka.eu/toshtool.php), which I used for years, now completely rewritten with GTK3 framework and python (using GObject Introspection in python). The tool sits in the tray (or indicator panel - depends on desktop) and actions are just a click away.
 
 
 
@@ -48,16 +48,16 @@ Recently it enables these tasks:
 </ul>
 
 
-<strong>How actions works</strong>:
+**How actions works**:
 
 
-<ol>
-<li>Define your own actions via <strong>Settings / Define Actions /Add</strong></li>
-<li>To define an action select it's type and set right parameters</li>
-<li>Define your known networks so you can assign actions to be  executed when you connect to the network (and that network is default interface for you computer - e.g. if you are connected both to wired Ethernet and Wi-Fi, wired connection is the default).  Use <strong>Settings / Configure Known Networks / Add</strong> to add network - easiest way is to use "<strong>Set from current networ</strong>k" button.</li>
-<li>Assign actions to the network you are adding or assign actions to unknown network (<strong>Settings / Configure Unknown Network</strong>).</li>
-<li>You can also assign actions to tray icon menu -<strong> Settings/ Configure Quick Actions</strong></li>
-</ol>
+
+1. Define your own actions via **Settings / Define Actions /Add**
+1. To define an action select it's type and set right parameters
+1. Define your known networks so you can assign actions to be  executed when you connect to the network (and that network is default interface for you computer - e.g. if you are connected both to wired Ethernet and Wi-Fi, wired connection is the default).  Use **Settings / Configure Known Networks / Add** to add network - easiest way is to use "**Set from current networ**k" button.
+1. Assign actions to the network you are adding or assign actions to unknown network (**Settings / Configure Unknown Network**).
+1. You can also assign actions to tray icon menu -** Settings/ Configure Quick Actions**
+
 
 
 Since I’m using my computer to listen music , audio books at evening I want to set some time-out, so computer suspends after I fall asleep. I missed some easy tool to enable this in few clicks, so I built this one. Another problem was connecting with notebook to different networks, some require proxy some not - automatic proxy configuration do not work well (a bit for browser, but not for other programs - shell, pidgin ...) so this was another function that I added to the tool.
@@ -65,11 +65,11 @@ Since I’m using my computer to listen music , audio books at evening I want to
 I plan also to add more features:
 
 
-<ul>
-<li>More actions - change any setting via GSettings, call any DBUS method, launch programs, disable/enabe ports</li>
-<li>One click disabling of screensaver ( not all video player have support for disabling screensaver)</li>
-<li>Any other idea for quick task that need to be accessible very quickly</li>
-</ul>
+
+- More actions - change any setting via GSettings, call any DBUS method, launch programs, disable/enabe ports
+- One click disabling of screensaver ( not all video player have support for disabling screensaver)
+- Any other idea for quick task that need to be accessible very quickly
+
 
 
 Will see what plans I can realize.
@@ -108,11 +108,11 @@ Will see what plans I can realize.
 
 
 
-TheTool is licensed under GPL v3 - <a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a>
-<a href="https://github.com/izderadicka/thetool">Source</a> available on GitHib.
+TheTool is licensed under GPL v3 - [http://www.gnu.org/licenses/gpl.html](http://www.gnu.org/licenses/gpl.html)
+[Source](https://github.com/izderadicka/thetool) available on GitHib.
 
-<strong>To install:</strong>
-<a href="https://github.com/izderadicka/thetool/archive/master.zip">Download</a> and extract source, go to extracted folder and run:
+**To install:**
+[Download](https://github.com/izderadicka/thetool/archive/master.zip) and extract source, go to extracted folder and run:
 
 `sudo ./setup.py install`
 

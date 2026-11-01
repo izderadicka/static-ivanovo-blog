@@ -28,21 +28,22 @@ def build(base_url=None, drafts=False, root=ROOT):
     zola = require_version('zola', (root / '.zola-version').read_text().strip())
     pagefind = require_version('pagefind', (root / '.pagefind-version').read_text().strip())
     records = read_content(root, drafts)
-    command = [zola, '--root', str(root), 'build']
+    public = root / ('.build/preview' if drafts or base_url else 'public')
+    command = [zola, '--root', str(root), 'build', '--output-dir', str(public), '--force']
     if base_url:
         command += ['--base-url', base_url]
     if drafts:
         command.append('--drafts')
     subprocess.run(command, check=True)
-    subprocess.run([pagefind, '--site', str(root / 'public'), '--root-selector',
+    subprocess.run([pagefind, '--site', str(public), '--root-selector',
                     '[data-pagefind-body]', '--include-characters', '+#:_/'], check=True)
     subprocess.run([zola, '--root', str(root), 'check', '--skip-external-links'], check=True)
-    report = validate(root, records, base_url or config['base_url'])
+    report = validate(root, records, base_url or config['base_url'], public=public)
     write_json(root / '.build/validation.json', report)
     if report['failures']:
         raise ValueError(f"{len(report['failures'])} validation failures; see .build/validation.json")
     print(f"Validated {len(records)} articles/pages and {report['local_links']} local references.")
-    return root / 'public'
+    return public
 
 
 def main():

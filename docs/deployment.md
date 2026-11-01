@@ -29,16 +29,18 @@ For a local installation, from the repository root:
 
 ```sh
 python3 scripts/build_site.py
-mkdir -p .build/published
-rsync -a --delete public/ .build/published/
-docker compose -f deploy/compose.yaml up -d --wait
+docker compose -f deploy/compose.yaml up -d --force-recreate --wait
 ```
 
-The backend listens at **http://127.0.0.1:8080/**. To update it, repeat only the
-build and rsync commands. Keep the destination directory in place; copy its
-contents rather than replacing the mounted directory. No reload is needed for
-content updates. The published copy is separate from `public/` so local previews
-do not change the running server.
+The backend listens at **http://127.0.0.1:8080/** and mounts `../public` directly
+(relative to `deploy/`). Repeat those two commands for an update. Zola replaces
+the output directory during a build, so recreating the container attaches its
+bind mount to the newly built directory. A reload alone does not refresh that mount.
+
+Python previews and review builds write `.build/preview/`, leaving `public/`
+untouched. For raw Zola previews, use
+`zola serve --drafts --output-dir .build/preview --force` as well. Run production builds
+without `--drafts` or `--base-url` before starting the Docker server.
 
 For a server directory such as `/srv/ivanovo`, set `BLOG_SITE_ROOT=/srv/ivanovo`
 in `deploy/.env` (see `.env.example`) and copy there instead. Paths refer to the
@@ -65,9 +67,10 @@ rm -rf content/_generated
 rm -f data/site.json
 ```
 
-Then build and copy into the new published directory. Change any existing
-`BLOG_SITE_ROOT` override from the old release-store directory to the new document
-root, then recreate the container:
+Then build production output. Remove an existing `BLOG_SITE_ROOT` override to use
+`../public`, or point it at a separately maintained document root. This also applies
+to an override of `../.build/published` from the earlier simplified configuration.
+Recreate the container:
 
 ```sh
 docker compose -f deploy/compose.yaml up -d --force-recreate --wait
@@ -86,7 +89,9 @@ behind an HTTPS proxy. The container and site mounts are read-only.
 URLs. New posts need no entry. If you deliberately change an old URL, update that
 map and reload Nginx after checking the configuration. `/feed/rss2/` redirects to
 `/feed/`; retired calendar archives redirect to the corresponding year anchor on
-`/archives/`, and category/tag/author archives redirect to `/archives/`. These
+`/archives/`, and author archives redirect to `/archives/`. Tags and categories are served as
+native Zola topic pages. Four legacy taxonomy spellings redirect to their native
+Zola URLs. These
 HTTP redirects are optional compatibility provided by this server, not additional
 rendered archive pages. Other static hosts need equivalent redirect configuration
 if you want those old archive and query URLs supported.

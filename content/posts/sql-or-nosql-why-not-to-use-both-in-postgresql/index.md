@@ -11,8 +11,9 @@ author = "admin"
 source_url = "http://zderadicka.eu/sql-or-nosql-why-not-to-use-both-in-postgresql/"
 source_guid = "http://zderadicka.eu/?p=1329"
 source_date_gmt = "2016-05-01 09:40:44"
-categories = ["Programming", "Tools"]
-tags = ["comparison", "MongoDb", "PostgreSQL", "python"]
+[taxonomies]
+category = ["Programming", "Tools"]
+tag = ["comparison", "MongoDb", "PostgreSQL", "python"]
 +++
 NoSQL databases have become very popular in last years and there is a plenty of various options available. It looks like traditional relational databases (RDBMs) are almost not needed any more. NoSQL solutions are advertised as faster, more scalable and easier to use. So who would care about relations, joins, foreign keys and similar stuff (not talking about ACID properties, transactions, transaction isolation)? Who would,  if NoSQLs can make your life much easier. But there is a key insight about NoSQL databases - their wonderful achievements are possible because they made their life easier too is some aspects. But that comes with some price - would you be happy, if your bank will store your saving in MongoDb?
 
@@ -25,16 +26,16 @@ For data I'll use this relational model (simplified):
 
 <a href="/wp-content/uploads/erd.png"><img alt="erd" class="alignnone size-large wp-image-1334" decoding="async" height="712" loading="eager" sizes="(max-width: 884px) 100vw, 884px" src="/wp-content/uploads/erd-1024x825.png" srcset="/wp-content/uploads/erd-1024x825.png 1024w, /wp-content/uploads/erd-300x242.png 300w" width="884"/></a>
 
-This is basically commonly referred author - book schema (used in many database examples),  but here to make it more real life like the relationship between authors and books is many-to-many.  Data are taken from my previous project <a href="/projects/python/mybookshelf-ebooks-library/">mybookshelf</a> \- approximately 30k+ books and ~10k authors - so relatively small database - but with the real data.
+This is basically commonly referred author - book schema (used in many database examples),  but here to make it more real life like the relationship between authors and books is many-to-many.  Data are taken from my previous project [mybookshelf](/projects/python/mybookshelf-ebooks-library/) \- approximately 30k+ books and ~10k authors - so relatively small database - but with the real data.
 
 I've played with these 3 set-ups:
 
 
-<ul>
-<li>classical relationship data store - <a href="http://www.postgresql.org/">PostgreSQL</a> 9.5, accessed from python with psycopg2 and <a href="http://www.sqlalchemy.org/">SQLAlchemy </a><a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORM</a>.</li>
-<li><a href="https://www.mongodb.org/">MongoDB</a> 3.2.5 - in order to leverage capabilities of document based approach, data schema is flattened into one document. Mongo is accessed from pymongo.</li>
-<li>Use PostgreSQL 9.5 JSONB  type for structured documents -  same flattened schema as in Mongo.</li>
-</ul>
+
+- classical relationship data store - [PostgreSQL](http://www.postgresql.org/) 9.5, accessed from python with psycopg2 and [SQLAlchemy ](http://www.sqlalchemy.org/)[ORM](https://en.wikipedia.org/wiki/Object-relational_mapping).
+- [MongoDB](https://www.mongodb.org/) 3.2.5 - in order to leverage capabilities of document based approach, data schema is flattened into one document. Mongo is accessed from pymongo.
+- Use PostgreSQL 9.5 JSONB  type for structured documents -  same flattened schema as in Mongo.
+
 
 
 By no means these tests should be considered as benchmarks, for that purpose they are too simplistic.  Rather it should be considered as quick peek into particular data stores capabilities.

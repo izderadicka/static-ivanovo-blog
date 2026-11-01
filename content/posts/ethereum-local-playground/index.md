@@ -11,10 +11,11 @@ author = "admin"
 source_url = "http://zderadicka.eu/ethereum-local-playground/"
 source_guid = "http://zderadicka.eu/?p=1617"
 source_date_gmt = "2017-08-19 10:44:08"
-categories = ["Admin", "Programming", "Security", "Tools"]
-tags = ["blockchain", "ethereum", "Parity"]
+[taxonomies]
+category = ["Admin", "Programming", "Security", "Tools"]
+tag = ["blockchain", "ethereum", "Parity"]
 +++
-In <a href="/blockchain-madness/">past article</a> I've talked generally about blockchain technologies, in this article we will look into Ethereum from user perspective. We will build local playground, where we can test many functions of Ethereum(Ethers transfers, using and writing smart contracts and more) without spending real Ethers (and thus real money). This guide in intended for users with Linux OS.<span id="more-1617"></span>
+In [past article](/blockchain-madness/) I've talked generally about blockchain technologies, in this article we will look into Ethereum from user perspective. We will build local playground, where we can test many functions of Ethereum(Ethers transfers, using and writing smart contracts and more) without spending real Ethers (and thus real money). This guide in intended for users with Linux OS.<span id="more-1617"></span>
 
 
 ## Setting up Ethereum on my computer
@@ -22,7 +23,7 @@ In <a href="/blockchain-madness/">past article</a> I've talked generally about b
 
 I've explained that Ethereum is distributed peer-to-peer network.   If we join main network any operation in the network costs Ethers, which represent real money.  To play for free we need to join test network, or even better create local development network, which is basically degraded to one node - our client.  Such environment can be very easily set up and yet enable us to try almost all possibilities  of Ethereum network. There are many tutorial how to start with Ethereum client, connect to test network, get some test Ethers and play around. However as Ethereum is developing rapidly, many of them are outdated - so that's also reason why I wrote down my experiences here.
 
-First let's install client - there are many Ethereum clients,  I tried <a href="https://github.com/ethereum/go-ethereum">geth</a> ( written in Go) and <a href="https://parity.io/">parity</a> (written in Rust). I personally found parity more advanced and easier to use then geth (with <a href="https://github.com/ethereum/mist">Mist browser</a>), so I'll continue with parity.
+First let's install client - there are many Ethereum clients,  I tried [geth](https://github.com/ethereum/go-ethereum) ( written in Go) and [parity](https://parity.io/) (written in Rust). I personally found parity more advanced and easier to use then geth (with [Mist browser](https://github.com/ethereum/mist)), so I'll continue with parity.
 
 
 ### 1\. Install Parity
@@ -60,27 +61,27 @@ In order to do anything interesting in our local blockchain we need some Ethers 
 ## Playing around
 
 
-First thing to try is to <strong>send some Ethers</strong> from one account to  another, which is quite straightforward.  In `Accounts tab` select account  and then `Transfer`.  The interesting part of Transfer form is on "advanced sending options",  where we can select maximum amount of <a href="https://ethereum.gitbooks.io/frontier-guide/content/costs.html">gas and gas price</a>, which together determine limit for transaction fee ( amount of gas x gas price).  Also conditions to send transaction in future can be set here.
+First thing to try is to **send some Ethers** from one account to  another, which is quite straightforward.  In `Accounts tab` select account  and then `Transfer`.  The interesting part of Transfer form is on "advanced sending options",  where we can select maximum amount of [gas and gas price](https://ethereum.gitbooks.io/frontier-guide/content/costs.html), which together determine limit for transaction fee ( amount of gas x gas price).  Also conditions to send transaction in future can be set here.
 
 Each transaction has to be authorized and signed by account owner - see  dialog below:<a href="/wp-content/uploads/signature-screen.png"><img alt="signature-screen" class="alignnone size-full wp-image-1641" decoding="async" height="373" loading="eager" sizes="(max-width: 956px) 100vw, 956px" src="/wp-content/uploads/signature-screen.png" srcset="/wp-content/uploads/signature-screen.png 956w, /wp-content/uploads/signature-screen-300x117.png 300w" width="956"/></a>
 
-After transaction is sent to network, we get transaction hash as it's reference, which is linked to <a href="https://etherscan.io/">etherscan.io</a> blockchain explorer. Unfortunately this does not work in our setup, because etherscan.io is exploring main blockchain (or test networks), but not our private development one.  But we can easily set up local replacement - <a href="https://github.com/gobitfly/etherchain-light">etherchain light </a>\- installation is standard as per instructions, parity client must run with ` -tracing=on --fat-db=on --pruning=archive  `options.  Below is detail of transaction we've sent before (copy link from parity wallet, paste it into etherchain light search box and delete everything before 0x):
+After transaction is sent to network, we get transaction hash as it's reference, which is linked to [etherscan.io](https://etherscan.io/) blockchain explorer. Unfortunately this does not work in our setup, because etherscan.io is exploring main blockchain (or test networks), but not our private development one.  But we can easily set up local replacement - [etherchain light ](https://github.com/gobitfly/etherchain-light)\- installation is standard as per instructions, parity client must run with ` -tracing=on --fat-db=on --pruning=archive  `options.  Below is detail of transaction we've sent before (copy link from parity wallet, paste it into etherchain light search box and delete everything before 0x):
 <a href="/wp-content/uploads/transaction2.png"><img alt="transaction2" class="alignnone size-large wp-image-1643" decoding="async" height="592" loading="lazy" sizes="(max-width: 884px) 100vw, 884px" src="/wp-content/uploads/transaction2-1024x686.png" srcset="/wp-content/uploads/transaction2-1024x686.png 1024w, /wp-content/uploads/transaction2-300x201.png 300w, /wp-content/uploads/transaction2.png 1147w" width="884"/></a>
 
 
 ###  Wallet is ready to use Smart Contract
 
 
-As I have explained before Ethereum key feature is Smart Contract - a code that is executed in blockchain. Parity comes with few useful "ready to use" smart contracts.   One of them is <a href="https://github.com/paritytech/parity/wiki/Accounts%2C-Wallets%2C-Vaults">multi-signature wallet</a> \- a contract that stores Ethers for a  group of accounts and several signatures are needed to transfer Ethers from the wallet.  Parity wallet is also good example of potential perils hidden in contracts programming -   just recently implementation of Pahrity wallet had issues which enable unknown hackers to steal 150K Ethers worth $30M.   Such incidents are not so rare in Ethereum (we already mentioned The DAO case in previous article) and show us that complete security is often hard to achieve even for experiences contracts developers. In latest version of Parity wallet contract is already fixed (but it does not fix already deployed contracts, so  wallet users had to move funds from broken wallets).
+As I have explained before Ethereum key feature is Smart Contract - a code that is executed in blockchain. Parity comes with few useful "ready to use" smart contracts.   One of them is [multi-signature wallet](https://github.com/paritytech/parity/wiki/Accounts%2C-Wallets%2C-Vaults) \- a contract that stores Ethers for a  group of accounts and several signatures are needed to transfer Ethers from the wallet.  Parity wallet is also good example of potential perils hidden in contracts programming -   just recently implementation of Pahrity wallet had issues which enable unknown hackers to steal 150K Ethers worth $30M.   Such incidents are not so rare in Ethereum (we already mentioned The DAO case in previous article) and show us that complete security is often hard to achieve even for experiences contracts developers. In latest version of Parity wallet contract is already fixed (but it does not fix already deployed contracts, so  wallet users had to move funds from broken wallets).
 
 We can easily try multi-signature wallet ourselves -  add more accounts and follow the directions from link above, we can create for instance wallet with 3 owners, requiring 2 signatures to send money out, if transfer value is above daily limit (which is set during wallet creation).  Also any change to wallet parameters later - like changing daily limit - requires two signatures. We can try few transactions with the new wallet:
 
 
-<ul>
-<li>send some Ethers to wallet - it's same as sending  Ethers between accounts, just select wallet as recipient</li>
-<li>sent amount smaller then daily limit from wallet to other account - again it's pretty standard</li>
-<li>send amount above the daily limit - now it becomes more interesting - while sending we receive warning that operation has to be approved by other owners.  After we send transaction a request for additional confirmation appears on wallet page as shown below (may need reload page when using dev chain):</li>
-</ul>
+
+- send some Ethers to wallet - it's same as sending  Ethers between accounts, just select wallet as recipient
+- sent amount smaller then daily limit from wallet to other account - again it's pretty standard
+- send amount above the daily limit - now it becomes more interesting - while sending we receive warning that operation has to be approved by other owners.  After we send transaction a request for additional confirmation appears on wallet page as shown below (may need reload page when using dev chain):
+
 
 
  
@@ -90,9 +91,9 @@ We can easily try multi-signature wallet ourselves -  add more accounts and fol
 <a href="/wp-content/uploads/multiwallet.png"><img alt="multiwallet" class="alignnone wp-image-1653 size-large" decoding="async" height="402" loading="lazy" sizes="(max-width: 884px) 100vw, 884px" src="/wp-content/uploads/multiwallet-1024x466.png" srcset="/wp-content/uploads/multiwallet-1024x466.png 1024w, /wp-content/uploads/multiwallet-300x137.png 300w" width="884"/></a>
 
 
-<ul>
-<li>change daily limit -  two accounts must request exactly same change in order to the change to apply</li>
-</ul>
+
+- change daily limit -  two accounts must request exactly same change in order to the change to apply
+
 
 
 
@@ -100,7 +101,7 @@ We can easily try multi-signature wallet ourselves -  add more accounts and fol
 ## Developing our first contract
 
 
-Above we've tried packed contract, now let's try to develop a Smart Contract ourselves.   Smart contracts are developed in language call <a href="https://solidity.readthedocs.io/en/develop/">Solidity</a> (also some other languages exists).  Solidity is language similar to Javascript, but it's typed and compiled to EVM (Ethereum Virtual Machine) bytecode. We start with very simple contract that acts as a global dictionary/hashmap, where everybody can set a string value to given string key (or overwrite existing) and later get the value by querying with yhe key:
+Above we've tried packed contract, now let's try to develop a Smart Contract ourselves.   Smart contracts are developed in language call [Solidity](https://solidity.readthedocs.io/en/develop/) (also some other languages exists).  Solidity is language similar to Javascript, but it's typed and compiled to EVM (Ethereum Virtual Machine) bytecode. We start with very simple contract that acts as a global dictionary/hashmap, where everybody can set a string value to given string key (or overwrite existing) and later get the value by querying with yhe key:
 
 
 ```sh
@@ -131,7 +132,7 @@ Screen for executing method on contract:
 ##  Bit more advanced contract and better development environment
 
 
-While development environment in Parity is fine for simple contracts,  it's pretty basic (most annoying for me was lack of detailed messages for syntactic errors). But we can easily use other development environment, which is more sophisticated - <a href="http://ethereum.github.io/browser-solidity">Remix</a> \- it is written in Javascript and is available online - just click link before.  Remix has it's own VM (Environment is JavaScript VM), where we can test contracts without any interaction with Ethereum blockchain or we can connect it to our  Parity client (Environment is  Web3 Provider). Remix is connected to Parity via JSON RPC, as Remix is started from online URL, Parity must allow cross site browsing - thats exactly why argument  `--jsonrpc-cors http://ethereum.github.io` is needed on Parity startup.
+While development environment in Parity is fine for simple contracts,  it's pretty basic (most annoying for me was lack of detailed messages for syntactic errors). But we can easily use other development environment, which is more sophisticated - [Remix](http://ethereum.github.io/browser-solidity) \- it is written in Javascript and is available online - just click link before.  Remix has it's own VM (Environment is JavaScript VM), where we can test contracts without any interaction with Ethereum blockchain or we can connect it to our  Parity client (Environment is  Web3 Provider). Remix is connected to Parity via JSON RPC, as Remix is started from online URL, Parity must allow cross site browsing - thats exactly why argument  `--jsonrpc-cors http://ethereum.github.io` is needed on Parity startup.
 
 Our first contract was pretty stupid, now we can try to improve it to something more useful -  a central registry of names. For a small fee users can register any name (string) and assign to it any value(string). Once registered the name cannot be registered or its value changed by  anybody else, but owner can transfer it to other person. Here is contract for our registry:
 
@@ -212,7 +213,7 @@ We can also deploy contract to dev blockchain in running Parity client( or whate
 ## Connect to network
 
 
-Until now we have been able to work with disconnected Parity client, now it's time to connect it to the test network <a href="https://kovan-testnet.github.io/website/">Kovan</a>, it's still not main blockchain, but we can try interactions that behaves similarly to main network.  We need to stop Parity client and start it again with this command:
+Until now we have been able to work with disconnected Parity client, now it's time to connect it to the test network [Kovan](https://kovan-testnet.github.io/website/), it's still not main blockchain, but we can try interactions that behaves similarly to main network.  We need to stop Parity client and start it again with this command:
 
 `parity --chain kovan`
 
@@ -220,7 +221,7 @@ at the time of my testing Parity had problem with synchronization using quick wa
 
 `parity --chain kovan --no-warp`
 
-Now we have to wait for a while (can be hours in case of slower sync). In meanwhile we can connect to Parity wallet and create accounts (as we are on different blockchain we will have completely new accounts)  . We can also  try to receive some Kovan Ethers, which we'll need for future tests.  Kovan network provides several <a href="https://github.com/kovan-testnet/faucet">faucets</a>, which give you Kovan Ethers for free. Easiest to use is gist based faucet, just create <a href="https://gist.github.com/">gist</a> document with address of your account and run:
+Now we have to wait for a while (can be hours in case of slower sync). In meanwhile we can connect to Parity wallet and create accounts (as we are on different blockchain we will have completely new accounts)  . We can also  try to receive some Kovan Ethers, which we'll need for future tests.  Kovan network provides several [faucets](https://github.com/kovan-testnet/faucet), which give you Kovan Ethers for free. Easiest to use is gist based faucet, just create [gist](https://gist.github.com/) document with address of your account and run:
 
 `curl http://github-faucet.kovan.network/url --data "address=url_of_your_gist"`
 
@@ -230,7 +231,7 @@ By this method account can receive one Kovan Ether per day.
 ## Create our own currency
 
 
-We are going to try one more Smart Contract - <a href="https://github.com/ethereum/EIPs/issues/20">ERC20 Token</a> \-   this is standard for smart contract representing custom currency implemented in Ethereum -  ERC20 Tokens are often used in ICOs and Ethereum wallets have support for such contracts. Luckily Parity has pre-built support for both creation and usage of ERC20 tokens.
+We are going to try one more Smart Contract - [ERC20 Token](https://github.com/ethereum/EIPs/issues/20) \-   this is standard for smart contract representing custom currency implemented in Ethereum -  ERC20 Tokens are often used in ICOs and Ethereum wallets have support for such contracts. Luckily Parity has pre-built support for both creation and usage of ERC20 tokens.
 
 Let's start in `Contracts tab` with `Develop`/`Load` and load `Token.sol` from `Snippets`:
 

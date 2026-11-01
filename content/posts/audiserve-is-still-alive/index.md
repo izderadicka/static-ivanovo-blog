@@ -11,17 +11,18 @@ author = "admin"
 source_url = "http://zderadicka.eu/audiserve-is-still-alive/"
 source_guid = "http://zderadicka.eu/?p=2331"
 source_date_gmt = "2024-08-17 13:43:51"
-categories = ["Announcement"]
-tags = ["audioserve"]
+[taxonomies]
+category = ["Announcement"]
+tag = ["audioserve"]
 +++
-Unfortunately last couple of years I did not have time and energy to write to my blog.  But I was continuing to work on <a href="https://github.com/izderadicka/audioserve">audioserve</a> \- adding some new features and also updating to latest dependencies.  
+Unfortunately last couple of years I did not have time and energy to write to my blog.  But I was continuing to work on [audioserve](https://github.com/izderadicka/audioserve) \- adding some new features and also updating to latest dependencies.  
 
 
 
 
 
 
-I added <a href="https://www.mend.io/renovate/">renovate</a> to audioserve project, which helps a lot with keeping dependencies up to date.<br/><br/> Also audioserve was presented at <a href="https://merge.berlin/">Merge Opensource conference in Berlin</a> in June 2024.
+I added [renovate](https://www.mend.io/renovate/) to audioserve project, which helps a lot with keeping dependencies up to date.<br/><br/> Also audioserve was presented at [Merge Opensource conference in Berlin](https://merge.berlin/) in June 2024.
 
 
 
